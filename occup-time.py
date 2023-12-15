@@ -18,7 +18,7 @@ filelist_step=1 # select parts of the filelist
 
 timestep_for_selected_file=timestep_for_all_files*filelist_step/1000 #ps
 # Read all the occupations file names at once
-occup_scat_files = glob.glob('ExEy_Zihao_Atomic_orbital_Wannier/occupations_t0.out')+sorted(glob.glob('ExEy_Zihao_Atomic_orbital_Wannier/occupations-*out'))
+occup_scat_files = glob.glob('occupations_t0.out')+sorted(glob.glob('occupations-*out'))
 # Select partial files
 occup_scat_files=occup_scat_files[::filelist_step]
 # Read and plot data from one file at time 
@@ -41,5 +41,5 @@ ax.yaxis.set_pane_color('w')
 ax.zaxis.set_pane_color('w')
 
 ax.view_init(elev=20., azim=-70, roll=0)
-fig.savefig('occup_time.png', bbox_inches="tight")
+fig.savefig('occup_time_Ttot%d_Step%d.png'%(t_tot,timestep_for_selected_file*1000), bbox_inches="tight")
 
