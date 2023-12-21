@@ -10,7 +10,6 @@ import pandas as pd
 fs  = 41.341373335
 sec = 4.1341373335E+16
 Hatree_to_eV = 27.2114
-t_tot = 20.0
 
 Cutoff_list= range(0,30000,1000)
 Window_type_list=['Rectangular', 'Flattop', 'Hann', 'Hamming']  # Rectangular, Flattop, Hann, Hamming 
