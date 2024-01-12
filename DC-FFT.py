@@ -76,35 +76,42 @@ database.to_csv(output_data)
 #Plot the FFT DC results
 if only_jtot:
     fig3,ax3=plt.subplots(1,3,figsize=(16,9),dpi=200)
+    for win_type in Window_type_list:
+        database[(database.Window_type==win_type)].plot('Cutoff','FFT(jx_tot)(0)',ax=ax3[0],logy=True,label=win_type)
+        database[(database.Window_type==win_type)].plot('Cutoff','FFT(jy_tot)(0)',ax=ax3[1],logy=True,label=win_type)
+        database[(database.Window_type==win_type)].plot('Cutoff','FFT(jz_tot)(0)',ax=ax3[2],logy=True,label=win_type)
+    ax3[0].set_title('x')
+    ax3[1].set_title('y')
+    ax3[2].set_title('z')
+    ax3[0].set_ylabel('FFT(j_tot)(0)')
+    fig3.tight_layout()
+    fig3.savefig(output_image)
+    plt.close(fig3)
+
 else:
     fig3,ax3=plt.subplots(3,3,figsize=(16,9),dpi=200)
-for win_type in Window_type_list:
-    database[(database.Window_type==win_type)].plot('Cutoff','FFT(jx_tot)(0)',ax=ax3[0,0],logy=True,label=win_type)
-    database[(database.Window_type==win_type)].plot('Cutoff','FFT(jy_tot)(0)',ax=ax3[0,1],logy=True,label=win_type)
-    database[(database.Window_type==win_type)].plot('Cutoff','FFT(jz_tot)(0)',ax=ax3[0,2],logy=True,label=win_type)
-    if not only_jtot:
+    for win_type in Window_type_list:
+        database[(database.Window_type==win_type)].plot('Cutoff','FFT(jx_tot)(0)',ax=ax3[0,0],logy=True,label=win_type)
+        database[(database.Window_type==win_type)].plot('Cutoff','FFT(jy_tot)(0)',ax=ax3[0,1],logy=True,label=win_type)
+        database[(database.Window_type==win_type)].plot('Cutoff','FFT(jz_tot)(0)',ax=ax3[0,2],logy=True,label=win_type)
         database[(database.Window_type==win_type)].plot('Cutoff','FFT(jx_d)(0)',ax=ax3[1,0],logy=True,label=win_type)
         database[(database.Window_type==win_type)].plot('Cutoff','FFT(jy_d)(0)',ax=ax3[1,1],logy=True,label=win_type)
         database[(database.Window_type==win_type)].plot('Cutoff','FFT(jz_d)(0)',ax=ax3[1,2],logy=True,label=win_type)
         database[(database.Window_type==win_type)].plot('Cutoff','FFT(jx_od)(0)',ax=ax3[2,0],logy=True,label=win_type)
         database[(database.Window_type==win_type)].plot('Cutoff','FFT(jy_od)(0)',ax=ax3[2,1],logy=True,label=win_type)
         database[(database.Window_type==win_type)].plot('Cutoff','FFT(jz_od)(0)',ax=ax3[2,2],logy=True,label=win_type)
-ax3[0,0].set_title('x')
-ax3[0,1].set_title('y')
-ax3[0,2].set_title('z')
-ax3[0,0].set_ylabel('FFT(j_tot)(0)')
-if not only_jtot:
+    ax3[0,0].set_title('x')
+    ax3[0,1].set_title('y')
+    ax3[0,2].set_title('z')
+    ax3[0,0].set_ylabel('FFT(j_tot)(0)')
     ax3[1,0].set_ylabel('FFT(j_d)(0)')
     ax3[2,0].set_ylabel('FFT(j_od)(0)')
-if only_jtot:
-    lines=1
-else:
-    lines=3
-for i in range(lines-1):
-    for j in range(3):
-        ax3[i,j].set_xlabel('')
-fig3.tight_layout()
-fig3.savefig(output_image)
-plt.close(fig3)
+
+    for i in range(2):
+        for j in range(3):
+            ax3[i,j].set_xlabel('')
+    fig3.tight_layout()
+    fig3.savefig(output_image)
+    plt.close(fig3)
 
 
