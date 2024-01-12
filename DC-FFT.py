@@ -57,7 +57,7 @@ for Window_type,Cutoff in list(itertools.product(Window_type_list,Cutoff_list)):
         # at the start of dynamics. The transient can be removed by choosing 
         # appropriate cutoff below
         f_tot, jw_tot = fft_of_j(jtemp[:,0:2:1], Cutoff)
-        if only_jtot:
+        if not only_jtot:
             f_d, jw_d = fft_of_j(jtemp[:,0:3:2], Cutoff)
             f_od, jw_od = fft_of_j(jtemp[:,0:4:3], Cutoff)
         if only_jtot:
