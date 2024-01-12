@@ -15,9 +15,9 @@ Cutoff_list= range(0,30000,1000)
 Window_type_list=['Rectangular', 'Flattop', 'Hann', 'Hamming']  # Rectangular, Flattop, Hann, Hamming 
 output_data='FFT_DC_Convergence.data'
 output_image='FFT_DC_Convergence.png'
-jx_data = np.loadtxt('./jx_elec_tot.out')
-jy_data = np.loadtxt('./jy_elec_tot.out')
-jz_data = np.loadtxt('./jz_elec_tot.out')
+jx_data = np.loadtxt('./jx_elec_tot.out',skiprows=1)
+jy_data = np.loadtxt('./jy_elec_tot.out',skiprows=1)
+jz_data = np.loadtxt('./jz_elec_tot.out',skiprows=1)
 
 # funciton which performs FFT, 
 # shifts frequency bins to only plot positive frequencies, 

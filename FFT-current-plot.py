@@ -16,9 +16,9 @@ only_jtot=True
 Cutoff_list= [12000]
 Window_type_list=['Rectangular', 'Flattop', 'Hann', 'Hamming']  # Rectangular, Flattop, Hann, Hamming 
 light_label='$E_x$'
-jx_data = np.loadtxt('./jx_elec_tot.out')
-jy_data = np.loadtxt('./jy_elec_tot.out')
-jz_data = np.loadtxt('./jz_elec_tot.out')
+jx_data = np.loadtxt('./jx_elec_tot.out',skiprows=1)
+jy_data = np.loadtxt('./jy_elec_tot.out',skiprows=1)
+jz_data = np.loadtxt('./jz_elec_tot.out',skiprows=1)
 
 # funciton which performs FFT, 
 # shifts frequency bins to only plot positive frequencies, 
