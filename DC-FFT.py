@@ -84,7 +84,7 @@ if only_jtot:
     ax3[0].set_title('x')
     ax3[1].set_title('y')
     ax3[2].set_title('z')
-    ax3[0].set_ylabel('FFT($j_tot$)(0) A/cm$^2$')
+    ax3[0].set_ylabel('FFT($j_{tot}$)(0) A/cm$^2$')
     fig3.tight_layout()
     fig3.savefig(output_image)
     plt.close(fig3)
@@ -104,9 +104,9 @@ else:
     ax3[0,0].set_title('x')
     ax3[0,1].set_title('y')
     ax3[0,2].set_title('z')
-    ax3[0,0].set_ylabel('FFT($j_tot$)(0) A/cm$^2$')
-    ax3[1,0].set_ylabel('FFT($j_d$)(0)')
-    ax3[2,0].set_ylabel('FFT($j_od$)(0)')
+    ax3[0,0].set_ylabel('FFT($j_{tot}$)(0) A/cm$^2$')
+    ax3[1,0].set_ylabel('FFT($j_{d}$)(0) A/cm$^2$')
+    ax3[2,0].set_ylabel('FFT($j_{od}$)(0) A/cm$^2$')
 
     for i in range(2):
         for j in range(3):
