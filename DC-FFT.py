@@ -61,12 +61,14 @@ for Window_type,Cutoff in list(itertools.product(Window_type_list,Cutoff_list)):
             f_od, jw_od = fft_of_j(jtemp[:,0:4:3], Cutoff)
         if only_jtot:
             resultdisc={'FFT(j'+jdirection+'_tot)(0)':abs(jw_tot[0]),
-                    'j'+jdirection+'_tot_mean': np.mean(jtemp[Cutoff:,1])}
+                    'j'+jdirection+'_tot_mean': np.mean(jtemp[Cutoff:,1]),
+                    'time(fs)':jtemp[Cutoff,0]/fs}
         else:
             resultdisc={'FFT(j'+jdirection+'_tot)(0)':abs(jw_tot[0]),
                     'FFT(j'+jdirection+'_d)(0)': abs(jw_d[0]),
                     'FFT(j'+jdirection+'_od)(0)': abs(jw_od[0]),
-                    'j'+jdirection+'_tot_mean': np.mean(jtemp[Cutoff:,1])}
+                    'j'+jdirection+'_tot_mean': np.mean(jtemp[Cutoff:,1]),
+                    'time(fs)':jtemp[Cutoff,0]/fs}
         
         database.loc[database_newline_index,list(paramdict)]=list(paramdict.values())
         database.loc[database_newline_index,list(resultdisc)]=list(resultdisc.values())
@@ -76,9 +78,9 @@ database.to_csv(output_data)
 if only_jtot:
     fig3,ax3=plt.subplots(1,3,figsize=(16,9),dpi=200)
     for win_type in Window_type_list:
-        database[(database.Window_type==win_type)].plot('Cutoff','FFT(jx_tot)(0)',ax=ax3[0],logy=True,label=win_type)
-        database[(database.Window_type==win_type)].plot('Cutoff','FFT(jy_tot)(0)',ax=ax3[1],logy=True,label=win_type)
-        database[(database.Window_type==win_type)].plot('Cutoff','FFT(jz_tot)(0)',ax=ax3[2],logy=True,label=win_type)
+        database[(database.Window_type==win_type)].plot('time(fs)','FFT(jx_tot)(0)',ax=ax3[0],logy=True,label=win_type,xlabel='time/fs',ylabel='FFT(jx_tot)(0) A/cm$^2')
+        database[(database.Window_type==win_type)].plot('time(fs)','FFT(jy_tot)(0)',ax=ax3[1],logy=True,label=win_type,xlabel='time/fs',ylabel='FFT(jy_tot)(0) A/cm$^2')
+        database[(database.Window_type==win_type)].plot('time(fs)','FFT(jz_tot)(0)',ax=ax3[2],logy=True,label=win_type,xlabel='time/fs',ylabel='FFT(jz_tot)(0) A/cm$^2')
     ax3[0].set_title('x')
     ax3[1].set_title('y')
     ax3[2].set_title('z')
@@ -90,15 +92,15 @@ if only_jtot:
 else:
     fig3,ax3=plt.subplots(3,3,figsize=(16,9),dpi=200)
     for win_type in Window_type_list:
-        database[(database.Window_type==win_type)].plot('Cutoff','FFT(jx_tot)(0)',ax=ax3[0,0],logy=True,label=win_type)
-        database[(database.Window_type==win_type)].plot('Cutoff','FFT(jy_tot)(0)',ax=ax3[0,1],logy=True,label=win_type)
-        database[(database.Window_type==win_type)].plot('Cutoff','FFT(jz_tot)(0)',ax=ax3[0,2],logy=True,label=win_type)
-        database[(database.Window_type==win_type)].plot('Cutoff','FFT(jx_d)(0)',ax=ax3[1,0],logy=True,label=win_type)
-        database[(database.Window_type==win_type)].plot('Cutoff','FFT(jy_d)(0)',ax=ax3[1,1],logy=True,label=win_type)
-        database[(database.Window_type==win_type)].plot('Cutoff','FFT(jz_d)(0)',ax=ax3[1,2],logy=True,label=win_type)
-        database[(database.Window_type==win_type)].plot('Cutoff','FFT(jx_od)(0)',ax=ax3[2,0],logy=True,label=win_type)
-        database[(database.Window_type==win_type)].plot('Cutoff','FFT(jy_od)(0)',ax=ax3[2,1],logy=True,label=win_type)
-        database[(database.Window_type==win_type)].plot('Cutoff','FFT(jz_od)(0)',ax=ax3[2,2],logy=True,label=win_type)
+        database[(database.Window_type==win_type)].plot('time(fs)','FFT(jx_tot)(0)',ax=ax3[0,0],logy=True,label=win_type,xlabel='time/fs',ylabel='FFT(jx_tot)(0) A/cm$^2')
+        database[(database.Window_type==win_type)].plot('time(fs)','FFT(jy_tot)(0)',ax=ax3[0,1],logy=True,label=win_type,xlabel='time/fs',ylabel='FFT(jy_tot)(0) A/cm$^2')
+        database[(database.Window_type==win_type)].plot('time(fs)','FFT(jz_tot)(0)',ax=ax3[0,2],logy=True,label=win_type,xlabel='time/fs',ylabel='FFT(jz_tot)(0) A/cm$^2')
+        database[(database.Window_type==win_type)].plot('time(fs)','FFT(jx_d)(0)',ax=ax3[1,0],logy=True,label=win_type,xlabel='time/fs',ylabel='FFT(jx_d)(0) A/cm$^2')
+        database[(database.Window_type==win_type)].plot('time(fs)','FFT(jy_d)(0)',ax=ax3[1,1],logy=True,label=win_type,xlabel='time/fs',ylabel='FFT(jy_d)(0) A/cm$^2')
+        database[(database.Window_type==win_type)].plot('time(fs)','FFT(jz_d)(0)',ax=ax3[1,2],logy=True,label=win_type,xlabel='time/fs',ylabel='FFT(jz_d)(0) A/cm$^2')
+        database[(database.Window_type==win_type)].plot('time(fs)','FFT(jx_od)(0)',ax=ax3[2,0],logy=True,label=win_type,xlabel='time/fs',ylabel='FFT(jx_od)(0) A/cm$^2')
+        database[(database.Window_type==win_type)].plot('time(fs)','FFT(jy_od)(0)',ax=ax3[2,1],logy=True,label=win_type,xlabel='time/fs',ylabel='FFT(jy_od)(0) A/cm$^2')
+        database[(database.Window_type==win_type)].plot('time(fs)','FFT(jz_od)(0)',ax=ax3[2,2],logy=True,label=win_type,xlabel='time/fs',ylabel='FFT(jz_od)(0) A/cm$^2')
     ax3[0,0].set_title('x')
     ax3[0,1].set_title('y')
     ax3[0,2].set_title('z')
