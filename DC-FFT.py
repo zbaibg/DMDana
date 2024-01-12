@@ -10,7 +10,7 @@ import pandas as pd
 fs  = 41.341373335
 sec = 4.1341373335E+16
 Hatree_to_eV = 27.2114
-
+only_jtot=True
 Cutoff_list= range(0,30000,1000)
 Window_type_list=['Rectangular', 'Flattop', 'Hann', 'Hamming']  # Rectangular, Flattop, Hann, Hamming 
 output_data='FFT_DC_Convergence.data'
@@ -57,38 +57,50 @@ for Window_type,Cutoff in list(itertools.product(Window_type_list,Cutoff_list)):
         # at the start of dynamics. The transient can be removed by choosing 
         # appropriate cutoff below
         f_tot, jw_tot = fft_of_j(jtemp[:,0:2:1], Cutoff)
-        f_d, jw_d = fft_of_j(jtemp[:,0:3:2], Cutoff)
-        f_od, jw_od = fft_of_j(jtemp[:,0:4:3], Cutoff)
-
-        resultdisc={'FFT(j'+jdirection+'_tot)(0)':abs(jw_tot[0]),
+        if only_jtot:
+            f_d, jw_d = fft_of_j(jtemp[:,0:3:2], Cutoff)
+            f_od, jw_od = fft_of_j(jtemp[:,0:4:3], Cutoff)
+        if only_jtot:
+            resultdisc={'FFT(j'+jdirection+'_tot)(0)':abs(jw_tot[0]),
+                    'j'+jdirection+'_tot_mean': np.mean(jtemp[Cutoff:,1])}
+        else:
+            resultdisc={'FFT(j'+jdirection+'_tot)(0)':abs(jw_tot[0]),
                     'FFT(j'+jdirection+'_d)(0)': abs(jw_d[0]),
                     'FFT(j'+jdirection+'_od)(0)': abs(jw_od[0]),
                     'j'+jdirection+'_tot_mean': np.mean(jtemp[Cutoff:,1])}
-        
         
         database.loc[database_newline_index,list(paramdict)]=list(paramdict.values())
         database.loc[database_newline_index,list(resultdisc)]=list(resultdisc.values())
 database.to_csv(output_data)
 
 #Plot the FFT DC results
-fig3,ax3=plt.subplots(3,3,figsize=(16,9),dpi=200)
+if only_jtot:
+    fig3,ax3=plt.subplots(1,3,figsize=(16,9),dpi=200)
+else:
+    fig3,ax3=plt.subplots(3,3,figsize=(16,9),dpi=200)
 for win_type in Window_type_list:
     database[(database.Window_type==win_type)].plot('Cutoff','FFT(jx_tot)(0)',ax=ax3[0,0],logy=True,label=win_type)
     database[(database.Window_type==win_type)].plot('Cutoff','FFT(jy_tot)(0)',ax=ax3[0,1],logy=True,label=win_type)
     database[(database.Window_type==win_type)].plot('Cutoff','FFT(jz_tot)(0)',ax=ax3[0,2],logy=True,label=win_type)
-    database[(database.Window_type==win_type)].plot('Cutoff','FFT(jx_d)(0)',ax=ax3[1,0],logy=True,label=win_type)
-    database[(database.Window_type==win_type)].plot('Cutoff','FFT(jy_d)(0)',ax=ax3[1,1],logy=True,label=win_type)
-    database[(database.Window_type==win_type)].plot('Cutoff','FFT(jz_d)(0)',ax=ax3[1,2],logy=True,label=win_type)
-    database[(database.Window_type==win_type)].plot('Cutoff','FFT(jx_od)(0)',ax=ax3[2,0],logy=True,label=win_type)
-    database[(database.Window_type==win_type)].plot('Cutoff','FFT(jy_od)(0)',ax=ax3[2,1],logy=True,label=win_type)
-    database[(database.Window_type==win_type)].plot('Cutoff','FFT(jz_od)(0)',ax=ax3[2,2],logy=True,label=win_type)
+    if not only_jtot:
+        database[(database.Window_type==win_type)].plot('Cutoff','FFT(jx_d)(0)',ax=ax3[1,0],logy=True,label=win_type)
+        database[(database.Window_type==win_type)].plot('Cutoff','FFT(jy_d)(0)',ax=ax3[1,1],logy=True,label=win_type)
+        database[(database.Window_type==win_type)].plot('Cutoff','FFT(jz_d)(0)',ax=ax3[1,2],logy=True,label=win_type)
+        database[(database.Window_type==win_type)].plot('Cutoff','FFT(jx_od)(0)',ax=ax3[2,0],logy=True,label=win_type)
+        database[(database.Window_type==win_type)].plot('Cutoff','FFT(jy_od)(0)',ax=ax3[2,1],logy=True,label=win_type)
+        database[(database.Window_type==win_type)].plot('Cutoff','FFT(jz_od)(0)',ax=ax3[2,2],logy=True,label=win_type)
 ax3[0,0].set_title('x')
 ax3[0,1].set_title('y')
 ax3[0,2].set_title('z')
 ax3[0,0].set_ylabel('FFT(j_tot)(0)')
-ax3[1,0].set_ylabel('FFT(j_d)(0)')
-ax3[2,0].set_ylabel('FFT(j_od)(0)')
-for i in range(2):
+if not only_jtot:
+    ax3[1,0].set_ylabel('FFT(j_d)(0)')
+    ax3[2,0].set_ylabel('FFT(j_od)(0)')
+if only_jtot:
+    lines=1
+else:
+    lines=3
+for i in range(lines-1):
     for j in range(3):
         ax3[i,j].set_xlabel('')
 fig3.tight_layout()
