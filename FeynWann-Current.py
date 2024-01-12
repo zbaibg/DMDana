@@ -16,7 +16,7 @@ with open('lindbladLinear.out') as f:
             currentx.append(line.split()[2])
             currenty.append(line.split()[3])
             currentz.append(line.split()[4])
-time=np.array(time,dtype=float)/fs
+time=np.array(time,dtype=float)*fs
 jx_elec_tot['time(a.u.)']=time
 jx_elec_tot['j(t)(A/cm^2)']=currentx
 jy_elec_tot['time']=time
@@ -26,5 +26,5 @@ jz_elec_tot['j(t)(A/cm^2)']=currentz
 
 
 jx_elec_tot.to_csv('jx_elec_tot.out',sep='\t',index=False)
-jy_elec_tot.to_csv('jy_elec_tot.out',sep=' ',index=False)
-jz_elec_tot.to_csv('jz_elec_tot.out',sep=' ',index=False)
+jy_elec_tot.to_csv('jy_elec_tot.out',sep='\t',index=False)
+jz_elec_tot.to_csv('jz_elec_tot.out',sep='\t',index=False)
