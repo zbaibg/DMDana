@@ -10,7 +10,7 @@ import pandas as pd
 fs  = 41.341373335
 Hatree_to_eV = 27.2114
 only_jtot=True
-Cutoff_list= range(0,30000,1000)
+Cutoff_list= range(0,300,10)#it counts the number of pieces in jx(yz)_elec_tot.out
 Window_type_list=['Rectangular', 'Flattop', 'Hann', 'Hamming']  # Rectangular, Flattop, Hann, Hamming 
 output_data='FFT_DC_Convergence.data'
 output_image='FFT_DC_Convergence.png'
@@ -68,7 +68,7 @@ for Window_type,Cutoff in list(itertools.product(Window_type_list,Cutoff_list)):
                     'FFT(j'+jdirection+'_d)(0)': abs(jw_d[0]),
                     'FFT(j'+jdirection+'_od)(0)': abs(jw_od[0]),
                     'j'+jdirection+'_tot_mean': np.mean(jtemp[Cutoff:,1]),
-                    'time(fs)':jtemp[Cutoff,0]/fs}
+                    'time(fs)':jtemp[Cutoff,0]*fs}
         
         database.loc[database_newline_index,list(paramdict)]=list(paramdict.values())
         database.loc[database_newline_index,list(resultdisc)]=list(resultdisc.values())

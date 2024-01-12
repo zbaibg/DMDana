@@ -12,7 +12,7 @@ fs  = 41.341373335
 Hatree_to_eV = 27.2114
 
 only_jtot=True
-Cutoff_list= [12000]
+Cutoff_list= [150]#it counts the number of pieces in jx(yz)_elec_tot.out
 Window_type_list=['Rectangular', 'Flattop', 'Hann', 'Hamming']  # Rectangular, Flattop, Hann, Hamming 
 light_label='$E_{x}E_{y}$'
 jx_data = np.loadtxt('./jx_elec_tot.out',skiprows=1)
