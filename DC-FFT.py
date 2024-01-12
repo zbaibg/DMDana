@@ -8,7 +8,6 @@ import scipy.signal.windows as sgl
 import itertools
 import pandas as pd
 fs  = 41.341373335
-sec = 4.1341373335E+16
 Hatree_to_eV = 27.2114
 only_jtot=True
 Cutoff_list= range(0,30000,1000)

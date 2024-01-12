@@ -9,13 +9,12 @@ import scipy.signal.windows as sgl
 import itertools
 import pandas as pd
 fs  = 41.341373335
-sec = 4.1341373335E+16
 Hatree_to_eV = 27.2114
 
 only_jtot=True
 Cutoff_list= [12000]
 Window_type_list=['Rectangular', 'Flattop', 'Hann', 'Hamming']  # Rectangular, Flattop, Hann, Hamming 
-light_label='$E_x$'
+light_label='$E_{x}E_{y}$'
 jx_data = np.loadtxt('./jx_elec_tot.out',skiprows=1)
 jy_data = np.loadtxt('./jy_elec_tot.out',skiprows=1)
 jz_data = np.loadtxt('./jz_elec_tot.out',skiprows=1)
