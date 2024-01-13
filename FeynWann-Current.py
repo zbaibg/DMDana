@@ -17,6 +17,9 @@ with open('lindbladLinear.out') as f:
             currenty.append(line.split()[3])
             currentz.append(line.split()[4])
 time=np.array(time,dtype=float)*fs
+currentx=np.array(currentx,dtype=float)/10000# turn A/m2 to A/cm2
+currenty=np.array(currenty,dtype=float)/10000# turn A/m2 to A/cm2
+currentz=np.array(currentz,dtype=float)/10000# turn A/m2 to A/cm2
 jx_elec_tot['time(a.u.)']=time
 jx_elec_tot['j(t)(A/cm^2)']=currentx
 jy_elec_tot['time']=time
