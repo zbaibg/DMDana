@@ -88,6 +88,7 @@ if not only_jtot:
             for i in range(3):
                 ax2[i][j].ticklabel_format(style='sci', axis='y', scilimits=(0,0))
                 ax2[i][j].yaxis.major.formatter._useMathText = True
+                ax2[i][j].yscale("log")
             ax2[0][0].set_ylabel('$\hat{j}^{tot}(\omega)$ A/cm$^2$')
             ax2[1][0].set_ylabel('$\hat{j}^{diag}(\omega)$ A/cm$^2$')
             ax2[2][0].set_ylabel('$\hat{j}^{off-diag}(\omega)$ A/cm$^2$')
