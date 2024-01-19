@@ -9,7 +9,7 @@ import scipy.signal.windows as sgl
 import itertools
 import pandas as pd
 fs  = 41.341373335
-Hatree_to_eV = 27.2114
+Hatree_to_eV = 27.211386245988
 
 only_jtot=True
 Cutoff_list= [150]#it counts the number of pieces in jx(yz)_elec_tot.out

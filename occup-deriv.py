@@ -11,7 +11,7 @@ import glob
 
 fs  = 41.341373335
 sec = 4.1341373335E+16
-Hatree_to_eV = 27.2114
+#Hatree_to_eV = 27.211386245988
 timestep_for_all_files=100 #fs
 filelist_step=1 # select parts of the filelist
 timestep_for_selected_file=timestep_for_all_files*filelist_step

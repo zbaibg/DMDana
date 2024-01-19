@@ -10,7 +10,7 @@ import glob
 
 fs  = 41.341373335
 sec = 4.1341373335E+16
-Hatree_to_eV = 27.2114
+Hatree_to_eV = 27.211386245988
 
 timestep_for_all_files=100 #fs
 t_tot = 2000 # fs
