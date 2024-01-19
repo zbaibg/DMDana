@@ -7,16 +7,35 @@ import matplotlib.pyplot as plt
 import scipy.signal.windows as sgl
 import itertools
 import pandas as pd
+import configparser
+config = configparser.ConfigParser(inline_comment_prefixes="#")
+config.read('DMDana.ini')
+Input=config['DC-FFT']
+
 fs  = 41.341373335
 Hatree_to_eV = 27.211386245988
-only_jtot=True
-Cutoff_list= range(0,300,10)#it counts the number of pieces in jx(yz)_elec_tot.out
-Window_type_list=['Rectangular', 'Flattop', 'Hann', 'Hamming']  # Rectangular, Flattop, Hann, Hamming 
-output_data='FFT_DC_Convergence.data'
-output_image='FFT_DC_Convergence.png'
-jx_data = np.loadtxt('./jx_elec_tot.out',skiprows=1)
-jy_data = np.loadtxt('./jy_elec_tot.out',skiprows=1)
-jz_data = np.loadtxt('./jz_elec_tot.out',skiprows=1)
+
+only_jtot=Input.getboolean('only_jtot')
+if only_jtot==None:
+    raise ValueError('only_jtot is not correct setted.')
+
+Window_type_list=[i.strip() for i in Input['Window_type_list'].split(',')]  # Rectangular, Flattop, Hann, Hamming 
+output_data=Input['output_data']
+output_image=Input['output_image']
+
+jx_data = np.loadtxt(Input['jx_data'],skiprows=1)
+jy_data = np.loadtxt(Input['jy_data'],skiprows=1)
+jz_data = np.loadtxt(Input['jz_data'],skiprows=1)
+
+if jx_data.shape[0]!= jy_data.shape[0] or jx_data.shape[0]!= jz_data.shape[0] or jy_data.shape[0]!= jz_data.shape[0]:
+    raise ValueError('The line number in jx_data jy_data jz_data are not the same. Please deal with your data.' )
+
+Cutoff_min=Input.getint('Cutoff_min')#These "Cutoff" values counts the number of pieces in jx(yz)_elec_tot.out
+Cutoff_max=Input.getint('Cutoff_max')
+if Cutoff_max==-1:
+    Cutoff_max=jx_data.shape[0]-1
+Cutoff_step=Input.getint('Cutoff_step')
+Cutoff_list= range(Cutoff_min,Cutoff_max,Cutoff_step)
 
 # funciton which performs FFT, 
 # shifts frequency bins to only plot positive frequencies, 

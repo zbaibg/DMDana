@@ -7,14 +7,18 @@ import matplotlib.pyplot as plt
 import scipy.signal.windows as sgl
 from scipy.optimize import curve_fit
 import glob
+import configparser
+config = configparser.ConfigParser(inline_comment_prefixes="#")
+config.read('DMDana.ini')
+Input=config['occup-time']
 
 fs  = 41.341373335
 sec = 4.1341373335E+16
 Hatree_to_eV = 27.211386245988
 
-timestep_for_all_files=100 #fs
-t_tot = 2000 # fs
-filelist_step=1 # select parts of the filelist
+timestep_for_all_files=Input.getint('timestep_for_occupation_output') #fs
+t_tot = Input.getint('t_max') # fs
+filelist_step=Input.getint('filelist_step') # select parts of the filelist
 
 timestep_for_selected_file=timestep_for_all_files*filelist_step/1000 #ps
 # Read all the occupations file names at once

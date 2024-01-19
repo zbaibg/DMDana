@@ -8,16 +8,25 @@ import os
 import scipy.signal.windows as sgl
 import itertools
 import pandas as pd
+import configparser
+config = configparser.ConfigParser(inline_comment_prefixes="#")
+config.read('DMDana.ini')
+Input=config['FFT-current-plot']
 fs  = 41.341373335
 Hatree_to_eV = 27.211386245988
 
-only_jtot=True
-Cutoff_list= [150]#it counts the number of pieces in jx(yz)_elec_tot.out
-Window_type_list=['Rectangular', 'Flattop', 'Hann', 'Hamming']  # Rectangular, Flattop, Hann, Hamming 
-light_label='$E_{x}E_{y}$'
-jx_data = np.loadtxt('./jx_elec_tot.out',skiprows=1)
-jy_data = np.loadtxt('./jy_elec_tot.out',skiprows=1)
-jz_data = np.loadtxt('./jz_elec_tot.out',skiprows=1)
+only_jtot=Input.getboolean('only_jtot')
+if only_jtot==None:
+    raise ValueError('only_jtot is not correct setted.')
+
+Cutoff_list= [int(i) for i in Input['Cutoff_list'].split(',')]#it counts the number of pieces in jx(yz)_elec_tot.out
+Window_type_list=[i.strip() for i in Input['Window_type_list'].split(',')]  # Rectangular, Flattop, Hann, Hamming 
+light_label=Input['light_label']
+jx_data = np.loadtxt(Input['jx_data'],skiprows=1)
+jy_data = np.loadtxt(Input['jy_data'],skiprows=1)
+jz_data = np.loadtxt(Input['jz_data'],skiprows=1)
+if jx_data.shape[0]!= jy_data.shape[0] or jx_data.shape[0]!= jz_data.shape[0] or jy_data.shape[0]!= jz_data.shape[0]:
+    raise ValueError('The line number in jx_data jy_data jz_data are not the same. Please deal with your data.' )
 
 # funciton which performs FFT, 
 # shifts frequency bins to only plot positive frequencies, 
@@ -88,7 +97,7 @@ if not only_jtot:
             for i in range(3):
                 ax2[i][j].ticklabel_format(style='sci', axis='y', scilimits=(0,0))
                 ax2[i][j].yaxis.major.formatter._useMathText = True
-                ax2[i][j].yscale("log")
+                #x2[i][j].yscale("log")
             ax2[0][0].set_ylabel('$\hat{j}^{tot}(\omega)$ A/cm$^2$')
             ax2[1][0].set_ylabel('$\hat{j}^{diag}(\omega)$ A/cm$^2$')
             ax2[2][0].set_ylabel('$\hat{j}^{off-diag}(\omega)$ A/cm$^2$')
@@ -138,7 +147,7 @@ else:
             ax2[j].set_title(jdirection)
             ax2[j].set_xlabel('$\omega$ (eV)')
             ax2[j].plot(f_tot, abs(jw_tot), label='total')
-            ax2[j].yscale("log")
+            #ax2[j].yscale("log")
         fig2.tight_layout()
         fig2.savefig('./'+output_prefix+'-j-fft.png')
         plt.close(fig1)
