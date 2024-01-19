@@ -138,6 +138,7 @@ else:
             ax2[j].set_title(jdirection)
             ax2[j].set_xlabel('$\omega$ (eV)')
             ax2[j].plot(f_tot, abs(jw_tot), label='total')
+            ax2[j].yscale("log")
         fig2.tight_layout()
         fig2.savefig('./'+output_prefix+'-j-fft.png')
         plt.close(fig1)
