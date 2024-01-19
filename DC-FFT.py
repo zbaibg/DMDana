@@ -68,7 +68,7 @@ for Window_type,Cutoff in list(itertools.product(Window_type_list,Cutoff_list)):
                     'FFT(j'+jdirection+'_d)(0)': abs(jw_d[0]),
                     'FFT(j'+jdirection+'_od)(0)': abs(jw_od[0]),
                     'j'+jdirection+'_tot_mean': np.mean(jtemp[Cutoff:,1]),
-                    'time(fs)':jtemp[Cutoff,0]*fs}
+                    'time(fs)':jtemp[Cutoff,0]/fs}
         
         database.loc[database_newline_index,list(paramdict)]=list(paramdict.values())
         database.loc[database_newline_index,list(resultdisc)]=list(resultdisc.values())
