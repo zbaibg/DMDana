@@ -20,8 +20,8 @@ if only_jtot==None:
     raise ValueError('only_jtot is not correct setted.')
 
 Window_type_list=[i.strip() for i in Input['Window_type_list'].split(',')]  # Rectangular, Flattop, Hann, Hamming 
-output_data=Input['output_data']
-output_image=Input['output_image']
+output_data=Input['Database_output']
+output_image=Input['Convergence_test_figure_output']
 
 jx_data = np.loadtxt(Input['jx_data'],skiprows=1)
 jy_data = np.loadtxt(Input['jy_data'],skiprows=1)
