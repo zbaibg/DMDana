@@ -21,7 +21,7 @@ if only_jtot==None:
 
 Cutoff_list= [int(i) for i in Input['Cutoff_list'].split(',')]#it counts the number of pieces in jx(yz)_elec_tot.out
 Window_type_list=[i.strip() for i in Input['Window_type_list'].split(',')]  # Rectangular, Flattop, Hann, Hamming 
-light_label=Input['light_label']
+light_label=' '+Input['light_label']
 jx_data = np.loadtxt(Input['jx_data'],skiprows=1)
 jy_data = np.loadtxt(Input['jy_data'],skiprows=1)
 jz_data = np.loadtxt(Input['jz_data'],skiprows=1)
@@ -76,7 +76,7 @@ if not only_jtot:
                 output_prefix=output_prefix+str(paramdict[name])+';'
 
         fig2, ax2 = plt.subplots(3,3,figsize=(10,6),dpi=200, sharex=True)
-        fig2.suptitle('FFT of Current for Light with '+light_label+' Polarizaion')
+        fig2.suptitle('FFT Spectrum of Current'+light_label)
         for jtemp,jdirection,j in [(jx_data,'x',0),(jy_data,'y',1),(jz_data,'z',2)]:
             # FFT of different contributions
             # as it is clear from the above graphs that there a transient at 
@@ -113,7 +113,7 @@ else:
             else:
                 output_prefix=output_prefix+str(paramdict[name])+';'
         fig2, ax2 = plt.subplots(1,3,figsize=(10,6),dpi=200, sharex=True)
-        fig2.suptitle('FFT of Current for Light with '+light_label+' Polarizaion')
+        fig2.suptitle('FFT Spectrum of Current'+light_label)
         for jtemp,jdirection,j in [(jx_data,'x',0),(jy_data,'y',1),(jz_data,'z',2)]:
             # FFT of different contributions
             # as it is clear from the above graphs that there a transient at 
