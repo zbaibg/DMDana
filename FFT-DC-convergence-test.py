@@ -20,9 +20,11 @@ if only_jtot==None:
     raise ValueError('only_jtot is not correct setted.')
 
 Window_type_list=[i.strip() for i in Input['Window_type_list'].split(',')]  # Rectangular, Flattop, Hann, Hamming 
-output_data_csv=Input['Database_output_csv']
-output_data_xlsx=Input['Database_output_xlsx']
-output_image=Input['Convergence_test_figure_output']
+Database_output_filename_csv=Input['Database_output_filename_csv']
+Database_output_filename_xlsx=Input['Database_output_filename_xlsx']
+Database_output_csv=Input.getboolean('Database_output_csv')
+Database_output_xlsx=Input.getboolean('Database_output_xlsx')
+Figure_output_filename=Input['Figure_output_filename']
 
 jx_data = np.loadtxt(Input['jx_data'],skiprows=1)
 jy_data = np.loadtxt(Input['jy_data'],skiprows=1)
@@ -91,8 +93,10 @@ for Window_type,Cutoff in list(itertools.product(Window_type_list,Cutoff_list)):
         
         database.loc[database_newline_index,list(paramdict)]=list(paramdict.values())
         database.loc[database_newline_index,list(resultdisc)]=list(resultdisc.values())
-database.to_csv(output_data_csv)
-database.to_excel(output_data_xlsx)
+if Database_output_csv:
+    database.to_csv(Database_output_filename_csv)
+if Database_output_xlsx:
+    database.to_excel(Database_output_filename_xlsx)
 
 #Plot the FFT DC results
 if only_jtot:
@@ -106,7 +110,7 @@ if only_jtot:
     ax3[2].set_title('z')
     ax3[0].set_ylabel('FFT($j_{tot}$)(0) A/cm$^2$')
     fig3.tight_layout()
-    fig3.savefig(output_image)
+    fig3.savefig(Figure_output_filename)
     plt.close(fig3)
 
 else:
@@ -132,7 +136,7 @@ else:
         for j in range(3):
             ax3[i,j].set_xlabel('')
     fig3.tight_layout()
-    fig3.savefig(output_image)
+    fig3.savefig(Figure_output_filename)
     plt.close(fig3)
 
 

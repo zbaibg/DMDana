@@ -30,6 +30,12 @@ if jx_data.shape[0]!= jy_data.shape[0] or jx_data.shape[0]!= jz_data.shape[0] or
 Log_y_scale=Input.getboolean('Log_y_scale')
 if Log_y_scale==None:
     Log_y_scale=True
+
+Summary_output_csv=Input.getboolean('Summary_output_csv')
+Summary_output_xlsx=Input.getboolean('Summary_output_xlsx')
+Summary_output_filename_csv=Input['Summary_output_filename_csv']
+Summary_output_filename_xlsx=Input['Summary_output_filename_xlsx']
+
 # funciton which performs FFT, 
 # shifts frequency bins to only plot positive frequencies, 
 # changes bins to physical units (eV), applies window to time domain data, 
@@ -127,5 +133,36 @@ else:
         plt.close(fig2)
 
 
-
+#Calculate information of current spectrums to output for convenience.
+database=pd.DataFrame()
+for Window_type,Cutoff in list(itertools.product(Window_type_list,Cutoff_list)):
+    paramdict=dict(Cutoff=Cutoff,FFT_integral_start_time_fs=jx_data[Cutoff,0]/fs,FFT_integral_end_time_fs=jx_data[-1,0]/fs,Window_type=Window_type)
+    database_newline_index=database.shape[0]
+    for jtemp,jdirection,j in [(jx_data,'x',0),(jy_data,'y',1),(jz_data,'z',2)]:
+        
+        # FFT of different contributions
+        # as it is clear from the above graphs that there a transient at 
+        # at the start of dynamics. The transient can be removed by choosing 
+        # appropriate cutoff below
+        f_tot, jw_tot = fft_of_j(jtemp[:,0:2:1], Cutoff)
+        if not only_jtot:
+            f_d, jw_d = fft_of_j(jtemp[:,0:3:2], Cutoff)
+            f_od, jw_od = fft_of_j(jtemp[:,0:4:3], Cutoff)
+        if only_jtot:
+            resultdisc={'FFT(j'+jdirection+'_tot)(0)':abs(jw_tot[0]),
+                    'j'+jdirection+'_tot_mean': np.mean(jtemp[Cutoff:,1]),
+                    'time(fs)':jtemp[Cutoff,0]/fs}
+        else:
+            resultdisc={'FFT(j'+jdirection+'_tot)(0)':abs(jw_tot[0]),
+                    'FFT(j'+jdirection+'_d)(0)': abs(jw_d[0]),
+                    'FFT(j'+jdirection+'_od)(0)': abs(jw_od[0]),
+                    'j'+jdirection+'_tot_mean': np.mean(jtemp[Cutoff:,1])}
+        
+        database.loc[database_newline_index,list(paramdict)]=list(paramdict.values())
+        database.loc[database_newline_index,list(resultdisc)]=list(resultdisc.values())
+database=database.transpose()
+if Summary_output_csv:
+    database.to_csv(Summary_output_filename_csv)
+if Summary_output_xlsx:
+    database.to_excel(Summary_output_filename_xlsx)
 
