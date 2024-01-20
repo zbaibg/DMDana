@@ -27,7 +27,9 @@ jy_data = np.loadtxt(Input['jy_data'],skiprows=1)
 jz_data = np.loadtxt(Input['jz_data'],skiprows=1)
 if jx_data.shape[0]!= jy_data.shape[0] or jx_data.shape[0]!= jz_data.shape[0] or jy_data.shape[0]!= jz_data.shape[0]:
     raise ValueError('The line number in jx_data jy_data jz_data are not the same. Please deal with your data.' )
-
+Log_y_scale=Input.getboolean('Log_y_scale')
+if Log_y_scale==None:
+    Log_y_scale=True
 # funciton which performs FFT, 
 # shifts frequency bins to only plot positive frequencies, 
 # changes bins to physical units (eV), applies window to time domain data, 
@@ -80,7 +82,8 @@ if not only_jtot:
             for i in range(3):
                 ax2[i][j].ticklabel_format(style='sci', axis='y', scilimits=(0,0))
                 ax2[i][j].yaxis.major.formatter._useMathText = True
-                #x2[i][j].yscale("log")
+                if Log_y_scale:
+                    ax2[i][j].set_yscale('log')
             ax2[0][0].set_ylabel('$\hat{j}^{tot}(\omega)$ A/cm$^2$')
             ax2[1][0].set_ylabel('$\hat{j}^{diag}(\omega)$ A/cm$^2$')
             ax2[2][0].set_ylabel('$\hat{j}^{off-diag}(\omega)$ A/cm$^2$')
@@ -117,7 +120,8 @@ else:
             ax2[j].set_title(jdirection)
             ax2[j].set_xlabel('$\omega$ (eV)')
             ax2[j].plot(f_tot, abs(jw_tot), label='total')
-            #ax2[j].yscale("log")
+            if Log_y_scale:
+                ax2[j].set_yscale('log')
         fig2.tight_layout()
         fig2.savefig('./'+output_prefix+'-j-fft.png')
         plt.close(fig2)
