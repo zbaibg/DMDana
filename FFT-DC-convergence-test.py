@@ -10,7 +10,7 @@ import pandas as pd
 import configparser
 config = configparser.ConfigParser(inline_comment_prefixes="#")
 config.read('DMDana.ini')
-Input=config['FFT-DC-convergence']
+Input=config['FFT-DC-convergence-test']
 
 fs  = 41.341373335
 Hatree_to_eV = 27.211386245988
