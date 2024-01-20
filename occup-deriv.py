@@ -1,8 +1,8 @@
 #! /usr/bin/env python
-'''_summary_
+"""_summary_
 This script plots the E-axis maximum for the time derivative of the occupation funciton f(E,t), namely (df/dt)max_in_E_axis.
 (Using second center finite difference)
-'''
+"""
 import numpy as np
 import matplotlib.pyplot as plt
 import scipy.signal.windows as sgl
@@ -11,7 +11,7 @@ import glob
 import configparser
 config = configparser.ConfigParser(inline_comment_prefixes="#")
 config.read('DMDana.ini')
-Input=config['FFT-current-plot']
+Input=config['occup-deriv']
 fs  = 41.341373335
 sec = 4.1341373335E+16
 #Hatree_to_eV = 27.211386245988
