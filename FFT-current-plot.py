@@ -1,6 +1,6 @@
 #!python
 """_summary_
-This script plots the current figures and FFT spectra with different parameters in batch.
+This script plots FFT spectra with different parameters in batch.
 """
 import numpy as np
 import matplotlib.pyplot as plt
@@ -11,7 +11,7 @@ import pandas as pd
 import configparser
 config = configparser.ConfigParser(inline_comment_prefixes="#")
 config.read('DMDana.ini')
-Input=config['FFT-current-plot']
+Input=config['FFT-spectrum-plot']
 fs  = 41.341373335
 Hatree_to_eV = 27.211386245988
 
@@ -54,25 +54,8 @@ def fft_of_j(j_t, cutoff):
     shifted_fft = fft[:N_jt//2]
     return shifted_freq_bins, (1/N_jt)*(shifted_fft)
 
-#Plot Current
-if not only_jtot:
-    fig1, ax1 = plt.subplots(3,3, figsize=(10,6),dpi=200,sharex=True)
-    fig1.suptitle('Current for Light with '+light_label+' Polarizaion')
-    for jtemp,jdirection,j in [(jx_data,'x',0),(jy_data,'y',1),(jz_data,'z',2)]:
-        for i in range(3):
-            ax1[i][j].ticklabel_format(style='sci', axis='y', scilimits=(0,0))
-            ax1[i][j].yaxis.major.formatter._useMathText = True 
-        ax1[0][0].set_ylabel('$j^{tot}(t)$ A/cm$^2$')
-        ax1[1][0].set_ylabel('$j^{diag}(t)$ A/cm$^2$')
-        ax1[2][0].set_ylabel('$j^{off-diag}(t)$ A/cm$^2$')
-        ax1[0][j].set_title(jdirection)
-        ax1[-1][j].set_xlabel('t (fs)')  
-        ax1[0][j].plot(jtemp[:,0]/fs, jtemp[:,1], label='$j'+jdirection+'^{tot}(t)$    polarization = '+light_label)
-        ax1[1][j].plot(jtemp[:,0]/fs, jtemp[:,2], label=r'$j'+jdirection+'^{diag}(t)$    polarization = '+light_label)
-        ax1[2][j].plot(jtemp[:,0]/fs, jtemp[:,3], label=r'$j'+jdirection+'^{off-diag}(t)$    polarization = '+light_label)
-    fig1.tight_layout()
-    fig1.savefig('./j.png')
 
+if not only_jtot:
     #Plot FFT spectra
     for Window_type,Cutoff in list(itertools.product(Window_type_list,Cutoff_list)):
         paramdict=dict(Cutoff=Cutoff,Window_type=Window_type)
@@ -108,21 +91,8 @@ if not only_jtot:
             ax2[2][j].plot(f_tot, abs(jw_od), label='off-diagonal')
         fig2.tight_layout()
         fig2.savefig('./'+output_prefix+'-j-fft.png')
-        plt.close(fig1)
         plt.close(fig2)
 else:
-    
-    fig1, ax1 = plt.subplots(1,3, figsize=(10,6),dpi=200,sharex=True)
-    fig1.suptitle('Current for Light with '+light_label+' Polarizaion')
-    for jtemp,jdirection,j in [(jx_data,'x',0),(jy_data,'y',1),(jz_data,'z',2)]:
-        ax1[j].ticklabel_format(style='sci', axis='y', scilimits=(0,0))
-        ax1[j].yaxis.major.formatter._useMathText = True 
-        ax1[0].set_ylabel('$j^{tot}(t)$ A/cm$^2$')
-        ax1[j].set_title(jdirection)
-        ax1[j].set_xlabel('t (fs)')  
-        ax1[j].plot(jtemp[:,0]/fs, jtemp[:,1], label='$j'+jdirection+'^{tot}(t)$    polarization = '+light_label)
-    fig1.tight_layout()
-    fig1.savefig('./j.png')
     #Plot FFT spectra
     for Window_type,Cutoff in list(itertools.product(Window_type_list,Cutoff_list)):
         paramdict=dict(Cutoff=Cutoff,Window_type=Window_type)
@@ -150,7 +120,6 @@ else:
             #ax2[j].yscale("log")
         fig2.tight_layout()
         fig2.savefig('./'+output_prefix+'-j-fft.png')
-        plt.close(fig1)
         plt.close(fig2)
 
 
