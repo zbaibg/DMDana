@@ -1,4 +1,4 @@
-#!python
+#! /usr/bin/env python
 '''_summary_
 This script plots the E-axis maximum for the time derivative of the occupation funciton f(E,t), namely (df/dt)max_in_E_axis.
 (Using second center finite difference)

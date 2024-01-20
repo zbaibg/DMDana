@@ -1,4 +1,4 @@
-#!python
+#! /usr/bin/env python
 """_summary_
 This script plots the DC components of FFT results with different parameters in batch. It also output the data to text.
 """

@@ -1,4 +1,4 @@
-#!python
+#! /usr/bin/env python
 """_summary_
 This script plots the current figures
 """

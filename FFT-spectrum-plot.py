@@ -1,4 +1,4 @@
-#!python
+#! /usr/bin/env python
 """_summary_
 This script plots FFT spectra with different parameters in batch.
 """

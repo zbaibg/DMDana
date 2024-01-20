@@ -1,4 +1,4 @@
-#!python
+#! /usr/bin/env python
 '''_summary_
 This script plot the occupation functions with time, f(E,t). It also plots the E-axis maximum for the time derivative of f(E,t), (df/dt)max_in_E_axis.
 '''
