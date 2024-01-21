@@ -7,9 +7,9 @@ So be sure that your occupation filelists include complete number of files and a
 """
 import numpy as np
 import matplotlib.pyplot as plt
-from init import init
+from config import init
 init('occup-deriv')
-from init import *
+from config import *
 #This much be done after running initialization function in order to import variables correctly
 n = len(occup_selected_files)#number of files left in "occup_selected_files"
 data= np.full((n, 5646), np.nan)# why 5646?

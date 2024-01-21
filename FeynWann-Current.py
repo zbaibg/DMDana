@@ -1,10 +1,11 @@
 #! /usr/bin/env python
 import pandas as pd
 import numpy as np
-from init import init
+from config import init
 init('FeynWann-Current')
-from init import *
+from config import *
 #This much be done after running initialization function in order to import variables correctly
+
 jx_elec_tot=pd.DataFrame()
 jy_elec_tot=pd.DataFrame()
 jz_elec_tot=pd.DataFrame()

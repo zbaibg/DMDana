@@ -7,9 +7,9 @@ import matplotlib.pyplot as plt
 import scipy.signal.windows as sgl
 import itertools
 import pandas as pd
-from init import init
+from config import init
 init('FFT-DC-convergence-test')
-from init import *
+from config import *
 #This much be done after running initialization function in order to import variables correctly
 
 

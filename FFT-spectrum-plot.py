@@ -7,9 +7,9 @@ import matplotlib.pyplot as plt
 import scipy.signal.windows as sgl
 import itertools
 import pandas as pd
-from init import init
+from config import init
 init('FFT-spectrum-plot')
-from init import *
+from config import *
 #This much be done after running initialization function in order to import variables correctly
 
 Cutoff_list= [int(i) for i in Input['Cutoff_list'].split(',')]#it counts the number of pieces in jx(yz)_elec_tot.out

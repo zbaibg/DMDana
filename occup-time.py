@@ -6,9 +6,9 @@ So be sure that your occupation filelists include complete number of files and a
 """
 import numpy as np
 import matplotlib.pyplot as plt
-from init import init
+from config import init
 init('occup-time')
-from init import *
+from config import *
 #This much be done after running initialization function in order to import variables correctly
 fig = plt.figure(figsize=(12, 10))
 ax =fig.add_subplot(111,projection='3d')

@@ -4,9 +4,9 @@ This script plots the current figures
 """
 
 import matplotlib.pyplot as plt
-from init import init
+from config import init
 init('current-plot')
-from init import * 
+from config import *
 #This much be done after running initialization function in order to import variables correctly
 
 current_plot_output=Input['current_plot_output']
