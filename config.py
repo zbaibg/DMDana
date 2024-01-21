@@ -33,7 +33,7 @@ funcname=None
 def init(funcname_in):
     global funcname,logfile
     funcname=funcname_in
-    initiallog()
+    initiallog()#this should be done after setting global variable "funcname" 
     if funcname in ['FFT-DC-convergence-test','current-plot','FFT-spectrum-plot']:
         init_current()
     if funcname in ['occup-time','occup-deriv']:
@@ -89,7 +89,7 @@ def init_occup():
         # is needed to do calculation. This should be modified.
     occup_t_tot=occup_maxmium_file_number_plotted_exclude_t0*occup_timestep_for_selected_file_fs#fs
     
-def initiallog():
+def initiallog():#this should be done after setting global variable "funcname" 
     global funcname,logfile
     logfile=open('DMDana_'+funcname+'.log','w')
     repo = git.Repo(sys.path[0],search_parent_directories=True)
