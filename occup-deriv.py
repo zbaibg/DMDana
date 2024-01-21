@@ -7,23 +7,23 @@ So be sure that your occupation filelists include complete number of files and a
 """
 import numpy as np
 import matplotlib.pyplot as plt
-from config import init
-init('occup-deriv')
-from config import *
-#This much be done after running initialization function in order to import variables correctly
-n = len(occup_selected_files)#number of files left in "occup_selected_files"
+import config
+from constant import *
+config.init('occup-deriv')
+
+n = len(config.occup_selected_files)#number of files left in "occup_selected_files"
 data= np.full((n, 5646), np.nan)# why 5646?
 dfdt = np.full((n,5646), np.nan)
 dfdtMax = np.full((n), np.nan)
-tarray=np.array(range(n))*occup_timestep_for_selected_file_fs/1000#ps
+tarray=np.array(range(n))*config.occup_timestep_for_selected_file_fs/1000#ps
 for ind in range(n):
-    data[ind,:] = np.loadtxt(occup_selected_files[ind])[:,1]
-dfdt=np.gradient(data,occup_timestep_for_selected_file_fs,axis=0)#df/fs
+    data[ind,:] = np.loadtxt(config.occup_selected_files[ind])[:,1]
+dfdt=np.gradient(data,config.occup_timestep_for_selected_file_fs,axis=0)#df/fs
 dfdtMax = np.max(dfdt,axis=1)
 fig4, ax4 = plt.subplots(figsize=(10, 8))
-ax4.plot(tarray[0:occup_maxmium_file_number_plotted_exclude_t0+1], dfdtMax[0:occup_maxmium_file_number_plotted_exclude_t0+1], '--.')
+ax4.plot(tarray[0:config.occup_maxmium_file_number_plotted_exclude_t0+1], dfdtMax[0:config.occup_maxmium_file_number_plotted_exclude_t0+1], '--.')
 ax4.set_yscale('log')
 ax4.set_xlabel('t (ps)')
 ax4.set_ylabel(r'max$[\frac{df}{dt}]$ unit:df/fs')
-fig4.savefig('dfdt_max_Ttot%dfs_Step%dfs.png'%(occup_t_tot,occup_timestep_for_selected_file_fs))
-end()
+fig4.savefig('dfdt_max_Ttot%dfs_Step%dfs.png'%(config.occup_t_tot,config.occup_timestep_for_selected_file_fs))
+config.end()

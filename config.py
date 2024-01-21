@@ -4,6 +4,7 @@ import glob
 import git
 import datetime
 import sys
+from constant import *
 """_summary_
 1. Import common options from configuration files.
 2. Include scientific constants.
@@ -12,9 +13,7 @@ import sys
 logfile=None
 config = configparser.ConfigParser(inline_comment_prefixes="#")
 config.read('DMDana.ini')
-fs  = 41.341373335
-sec = 4.1341373335E+16
-Hatree_to_eV = 27.211386245988
+
 Input=None
 only_jtot=None
 jx_data=None

@@ -7,23 +7,23 @@ import matplotlib.pyplot as plt
 import scipy.signal.windows as sgl
 import itertools
 import pandas as pd
-from config import init
-init('FFT-DC-convergence-test')
-from config import *
-#This much be done after running initialization function in order to import variables correctly
+from constant import *
+import config
+config.init('FFT-DC-convergence-test')
 
 
-Window_type_list=[i.strip() for i in Input['Window_type_list'].split(',')]  # Rectangular, Flattop, Hann, Hamming 
-Database_output_filename_csv=Input['Database_output_filename_csv']
-Database_output_filename_xlsx=Input['Database_output_filename_xlsx']
-Database_output_csv=Input.getboolean('Database_output_csv')
-Database_output_xlsx=Input.getboolean('Database_output_xlsx')
-Figure_output_filename=Input['Figure_output_filename']
-Cutoff_min=Input.getint('Cutoff_min')#These "Cutoff" values counts the number of pieces in jx(yz)_elec_tot.out
-Cutoff_max=Input.getint('Cutoff_max')
+
+Window_type_list=[i.strip() for i in config.Input['Window_type_list'].split(',')]  # Rectangular, Flattop, Hann, Hamming 
+Database_output_filename_csv=config.Input['Database_output_filename_csv']
+Database_output_filename_xlsx=config.Input['Database_output_filename_xlsx']
+Database_output_csv=config.Input.getboolean('Database_output_csv')
+Database_output_xlsx=config.Input.getboolean('Database_output_xlsx')
+Figure_output_filename=config.Input['Figure_output_filename']
+Cutoff_min=config.Input.getint('Cutoff_min')#These "Cutoff" values counts the number of pieces in jx(yz)_elec_tot.out
+Cutoff_max=config.Input.getint('Cutoff_max')
 if Cutoff_max==-1:
-    Cutoff_max=jx_data.shape[0]-1
-Cutoff_step=Input.getint('Cutoff_step')
+    Cutoff_max=config.jx_data.shape[0]-1
+Cutoff_step=config.Input.getint('Cutoff_step')
 Cutoff_list= range(Cutoff_min,Cutoff_max,Cutoff_step)
 
 # funciton which performs FFT, 
@@ -55,19 +55,19 @@ def fft_of_j(j_t, cutoff):
 #Calculate FFT DC results and output the data
 database=pd.DataFrame()
 for Window_type,Cutoff in list(itertools.product(Window_type_list,Cutoff_list)):
-    paramdict=dict(Cutoff=Cutoff,FFT_integral_start_time_fs=jx_data[Cutoff,0]/fs,FFT_integral_end_time_fs=jx_data[-1,0]/fs,Window_type=Window_type)
+    paramdict=dict(Cutoff=Cutoff,FFT_integral_start_time_fs=config.jx_data[Cutoff,0]/fs,FFT_integral_end_time_fs=config.jx_data[-1,0]/fs,Window_type=Window_type)
     database_newline_index=database.shape[0]
-    for jtemp,jdirection,j in [(jx_data,'x',0),(jy_data,'y',1),(jz_data,'z',2)]:
+    for jtemp,jdirection,j in [(config.jx_data,'x',0),(config.jy_data,'y',1),(config.jz_data,'z',2)]:
         
         # FFT of different contributions
         # as it is clear from the above graphs that there a transient at 
         # at the start of dynamics. The transient can be removed by choosing 
         # appropriate cutoff below
         f_tot, jw_tot = fft_of_j(jtemp[:,0:2:1], Cutoff)
-        if not only_jtot:
+        if not config.only_jtot:
             f_d, jw_d = fft_of_j(jtemp[:,0:3:2], Cutoff)
             f_od, jw_od = fft_of_j(jtemp[:,0:4:3], Cutoff)
-        if only_jtot:
+        if config.only_jtot:
             resultdisc={'FFT(j'+jdirection+'_tot)(0)':abs(jw_tot[0]),
                     'j'+jdirection+'_tot_mean': np.mean(jtemp[Cutoff:,1]),
                     'time(fs)':jtemp[Cutoff,0]/fs}
@@ -85,7 +85,7 @@ if Database_output_xlsx:
     database.to_excel(Database_output_filename_xlsx)
 
 #Plot the FFT DC results
-if only_jtot:
+if config.only_jtot:
     fig3,ax3=plt.subplots(1,3,figsize=(16,9),dpi=200)
     for win_type in Window_type_list:
         database[(database.Window_type==win_type)].plot('FFT_integral_start_time_fs','FFT(jx_tot)(0)',ax=ax3[0],logy=True,label=win_type,xlabel='cutoff time/fs')
@@ -126,4 +126,4 @@ else:
     plt.close(fig3)
 
 
-end()
+config.end()

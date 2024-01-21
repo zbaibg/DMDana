@@ -1,10 +1,9 @@
 #! /usr/bin/env python
 import pandas as pd
 import numpy as np
-from config import init
-init('FeynWann-Current')
-from config import *
-#This much be done after running initialization function in order to import variables correctly
+from constant import *
+import config
+config.init('FeynWann-Current')
 
 jx_elec_tot=pd.DataFrame()
 jy_elec_tot=pd.DataFrame()
@@ -36,4 +35,4 @@ jz_elec_tot['j(t)(A/cm^2)']=currentz
 jx_elec_tot.to_csv('jx_elec_tot.out',sep='\t',index=False)
 jy_elec_tot.to_csv('jy_elec_tot.out',sep='\t',index=False)
 jz_elec_tot.to_csv('jz_elec_tot.out',sep='\t',index=False)
-end()
+config.end()

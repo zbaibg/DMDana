@@ -6,19 +6,20 @@ So be sure that your occupation filelists include complete number of files and a
 """
 import numpy as np
 import matplotlib.pyplot as plt
-from config import init
-init('occup-time')
-from config import *
+from constant import *
+import config
+config.init('occup-time')
+
 #This much be done after running initialization function in order to import variables correctly
 fig = plt.figure(figsize=(12, 10))
 ax =fig.add_subplot(111,projection='3d')
-for index, file in enumerate(occup_selected_files):
-    if index*occup_timestep_for_selected_file_ps>occup_t_tot/1000:
+for index, file in enumerate(config.occup_selected_files):
+    if index*config.occup_timestep_for_selected_file_ps>config.occup_t_tot/1000:
         break
     data = np.loadtxt(file)
-    ax.scatter(data[:,0]*Hatree_to_eV, data[:,1], zs=index*occup_timestep_for_selected_file_ps, zdir='y')
+    ax.scatter(data[:,0]*Hatree_to_eV, data[:,1], zs=index*config.occup_timestep_for_selected_file_ps, zdir='y')
 ax.set_xlim(0.05*Hatree_to_eV, 0.06*Hatree_to_eV)
-ax.set_ylim(0, occup_t_tot/1000)
+ax.set_ylim(0, config.occup_t_tot/1000)
 ax.set_zlim(0, 1)
 
 ax.set_xlabel('E (eV)')
@@ -29,6 +30,6 @@ ax.yaxis.set_pane_color('w')
 ax.zaxis.set_pane_color('w')
 
 ax.view_init(elev=20., azim=-70, roll=0)
-fig.savefig('occup_time_Ttot%dfs_Step%dfs.png'%(occup_t_tot,occup_timestep_for_selected_file_ps*1000), bbox_inches="tight")
+fig.savefig('occup_time_Ttot%dfs_Step%dfs.png'%(config.occup_t_tot,config.occup_timestep_for_selected_file_ps*1000), bbox_inches="tight")
 
-end()
+config.end()

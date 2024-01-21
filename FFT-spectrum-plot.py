@@ -7,22 +7,21 @@ import matplotlib.pyplot as plt
 import scipy.signal.windows as sgl
 import itertools
 import pandas as pd
-from config import init
-init('FFT-spectrum-plot')
-from config import *
-#This much be done after running initialization function in order to import variables correctly
+from constant import *
+import config
+config.init('FFT-spectrum-plot')
 
-Cutoff_list= [int(i) for i in Input['Cutoff_list'].split(',')]#it counts the number of pieces in jx(yz)_elec_tot.out
-Window_type_list=[i.strip() for i in Input['Window_type_list'].split(',')]  # Rectangular, Flattop, Hann, Hamming 
+Cutoff_list= [int(i) for i in config.Input['Cutoff_list'].split(',')]#it counts the number of pieces in jx(yz)_elec_tot.out
+Window_type_list=[i.strip() for i in config.Input['Window_type_list'].split(',')]  # Rectangular, Flattop, Hann, Hamming 
 
-Log_y_scale=Input.getboolean('Log_y_scale')
+Log_y_scale=config.Input.getboolean('Log_y_scale')
 if Log_y_scale==None:
     Log_y_scale=True
 
-Summary_output_csv=Input.getboolean('Summary_output_csv')
-Summary_output_xlsx=Input.getboolean('Summary_output_xlsx')
-Summary_output_filename_csv=Input['Summary_output_filename_csv']
-Summary_output_filename_xlsx=Input['Summary_output_filename_xlsx']
+Summary_output_csv=config.Input.getboolean('Summary_output_csv')
+Summary_output_xlsx=config.Input.getboolean('Summary_output_xlsx')
+Summary_output_filename_csv=config.Input['Summary_output_filename_csv']
+Summary_output_filename_xlsx=config.Input['Summary_output_filename_xlsx']
 
 # funciton which performs FFT, 
 # shifts frequency bins to only plot positive frequencies, 
@@ -51,7 +50,7 @@ def fft_of_j(j_t, cutoff):
     return shifted_freq_bins, (1/N_jt)*(shifted_fft)
 
 
-if not only_jtot:
+if not config.only_jtot:
     #Plot FFT spectra
     for Window_type,Cutoff in list(itertools.product(Window_type_list,Cutoff_list)):
         paramdict=dict(Cutoff=Cutoff,Window_type=Window_type)
@@ -64,8 +63,8 @@ if not only_jtot:
                 output_prefix=output_prefix+str(paramdict[name])+';'
 
         fig2, ax2 = plt.subplots(3,3,figsize=(10,6),dpi=200, sharex=True)
-        fig2.suptitle('FFT Spectrum of Current'+light_label)
-        for jtemp,jdirection,j in [(jx_data,'x',0),(jy_data,'y',1),(jz_data,'z',2)]:
+        fig2.suptitle('FFT Spectrum of Current'+config.light_label)
+        for jtemp,jdirection,j in [(config.jx_data,'x',0),(config.jy_data,'y',1),(config.jz_data,'z',2)]:
             # FFT of different contributions
             # as it is clear from the above graphs that there a transient at 
             # at the start of dynamics. The transient can be removed by choosing 
@@ -101,8 +100,8 @@ else:
             else:
                 output_prefix=output_prefix+str(paramdict[name])+';'
         fig2, ax2 = plt.subplots(1,3,figsize=(10,6),dpi=200, sharex=True)
-        fig2.suptitle('FFT Spectrum of Current'+light_label)
-        for jtemp,jdirection,j in [(jx_data,'x',0),(jy_data,'y',1),(jz_data,'z',2)]:
+        fig2.suptitle('FFT Spectrum of Current'+config.light_label)
+        for jtemp,jdirection,j in [(config.jx_data,'x',0),(config.jy_data,'y',1),(config.jz_data,'z',2)]:
             # FFT of different contributions
             # as it is clear from the above graphs that there a transient at 
             # at the start of dynamics. The transient can be removed by choosing 
@@ -124,19 +123,19 @@ else:
 #Calculate information of current spectrums to output for convenience.
 database=pd.DataFrame()
 for Window_type,Cutoff in list(itertools.product(Window_type_list,Cutoff_list)):
-    paramdict=dict(Cutoff=Cutoff,FFT_integral_start_time_fs=jx_data[Cutoff,0]/fs,FFT_integral_end_time_fs=jx_data[-1,0]/fs,Window_type=Window_type)
+    paramdict=dict(Cutoff=Cutoff,FFT_integral_start_time_fs=config.jx_data[Cutoff,0]/fs,FFT_integral_end_time_fs=config.jx_data[-1,0]/fs,Window_type=Window_type)
     database_newline_index=database.shape[0]
-    for jtemp,jdirection,j in [(jx_data,'x',0),(jy_data,'y',1),(jz_data,'z',2)]:
+    for jtemp,jdirection,j in [(config.jx_data,'x',0),(config.jy_data,'y',1),(config.jz_data,'z',2)]:
         
         # FFT of different contributions
         # as it is clear from the above graphs that there a transient at 
         # at the start of dynamics. The transient can be removed by choosing 
         # appropriate cutoff below
         f_tot, jw_tot = fft_of_j(jtemp[:,0:2:1], Cutoff)
-        if not only_jtot:
+        if not config.only_jtot:
             f_d, jw_d = fft_of_j(jtemp[:,0:3:2], Cutoff)
             f_od, jw_od = fft_of_j(jtemp[:,0:4:3], Cutoff)
-        if only_jtot:
+        if config.only_jtot:
             resultdisc={'FFT(j'+jdirection+'_tot)(0)':abs(jw_tot[0]),
                     'j'+jdirection+'_tot_mean': np.mean(jtemp[Cutoff:,1]),
                     'time(fs)':jtemp[Cutoff,0]/fs}
@@ -154,4 +153,4 @@ if Summary_output_csv:
 if Summary_output_xlsx:
     database.to_excel(Summary_output_filename_xlsx)
 
-end()
+config.end()

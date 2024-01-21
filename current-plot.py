@@ -4,17 +4,16 @@ This script plots the current figures
 """
 
 import matplotlib.pyplot as plt
-from config import init
-init('current-plot')
-from config import *
-#This much be done after running initialization function in order to import variables correctly
+import config
+from constant import *
+config.init('current-plot')
 
-current_plot_output=Input['current_plot_output']
+current_plot_output=config.Input['current_plot_output']
 #Plot Current
-if not only_jtot:
+if not config.only_jtot:
     fig1, ax1 = plt.subplots(3,3, figsize=(10,6),dpi=200,sharex=True)
-    fig1.suptitle('Current'+light_label)
-    for jtemp,jdirection,j in [(jx_data,'x',0),(jy_data,'y',1),(jz_data,'z',2)]:
+    fig1.suptitle('Current'+config.light_label)
+    for jtemp,jdirection,j in [(config.jx_data,'x',0),(config.jy_data,'y',1),(config.jz_data,'z',2)]:
         for i in range(3):
             ax1[i][j].ticklabel_format(style='sci', axis='y', scilimits=(0,0))
             ax1[i][j].yaxis.major.formatter._useMathText = True 
@@ -31,8 +30,8 @@ if not only_jtot:
     plt.close(fig1)
 else:
     fig1, ax1 = plt.subplots(1,3, figsize=(10,6),dpi=200,sharex=True)
-    fig1.suptitle('Current'+light_label)
-    for jtemp,jdirection,j in [(jx_data,'x',0),(jy_data,'y',1),(jz_data,'z',2)]:
+    fig1.suptitle('Current'+config.light_label)
+    for jtemp,jdirection,j in [(config.jx_data,'x',0),(config.jy_data,'y',1),(config.jz_data,'z',2)]:
         ax1[j].ticklabel_format(style='sci', axis='y', scilimits=(0,0))
         ax1[j].yaxis.major.formatter._useMathText = True 
         ax1[0].set_ylabel('$j^{tot}(t)$ A/cm$^2$')
@@ -42,4 +41,4 @@ else:
     fig1.tight_layout()
     fig1.savefig(current_plot_output)
     plt.close(fig1)
-end()
+config.end()
