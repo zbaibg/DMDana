@@ -4,29 +4,17 @@ This script plots FFT spectra with different parameters in batch.
 """
 import numpy as np
 import matplotlib.pyplot as plt
-import os
 import scipy.signal.windows as sgl
 import itertools
 import pandas as pd
-import configparser
-config = configparser.ConfigParser(inline_comment_prefixes="#")
-config.read('DMDana.ini')
-Input=config['FFT-spectrum-plot']
-fs  = 41.341373335
-Hatree_to_eV = 27.211386245988
-
-only_jtot=Input.getboolean('only_jtot')
-if only_jtot==None:
-    raise ValueError('only_jtot is not correct setted.')
+from init import init
+init('FFT-spectrum-plot')
+from init import *
+#This much be done after running initialization function in order to import variables correctly
 
 Cutoff_list= [int(i) for i in Input['Cutoff_list'].split(',')]#it counts the number of pieces in jx(yz)_elec_tot.out
 Window_type_list=[i.strip() for i in Input['Window_type_list'].split(',')]  # Rectangular, Flattop, Hann, Hamming 
-light_label=' '+Input['light_label']
-jx_data = np.loadtxt(Input['jx_data'],skiprows=1)
-jy_data = np.loadtxt(Input['jy_data'],skiprows=1)
-jz_data = np.loadtxt(Input['jz_data'],skiprows=1)
-if jx_data.shape[0]!= jy_data.shape[0] or jx_data.shape[0]!= jz_data.shape[0] or jy_data.shape[0]!= jz_data.shape[0]:
-    raise ValueError('The line number in jx_data jy_data jz_data are not the same. Please deal with your data.' )
+
 Log_y_scale=Input.getboolean('Log_y_scale')
 if Log_y_scale==None:
     Log_y_scale=True
@@ -71,7 +59,7 @@ if not only_jtot:
         for name in paramdict:
             output_prefix=output_prefix+name+'='
             if type(paramdict[name])==int:
-                output_prefix=output_prefix+'%.3e'%(paramdict[name])+';'
+                output_prefix=output_prefix+'%d'%(paramdict[name])+';'
             else:
                 output_prefix=output_prefix+str(paramdict[name])+';'
 
@@ -109,7 +97,7 @@ else:
         for name in paramdict:
             output_prefix=output_prefix+name+'='
             if type(paramdict[name])==int:
-                output_prefix=output_prefix+'%.3e'%(paramdict[name])+';'
+                output_prefix=output_prefix+'%d'%(paramdict[name])+';'
             else:
                 output_prefix=output_prefix+str(paramdict[name])+';'
         fig2, ax2 = plt.subplots(1,3,figsize=(10,6),dpi=200, sharex=True)
@@ -166,3 +154,4 @@ if Summary_output_csv:
 if Summary_output_xlsx:
     database.to_excel(Summary_output_filename_xlsx)
 
+end()

@@ -7,17 +7,11 @@ import matplotlib.pyplot as plt
 import scipy.signal.windows as sgl
 import itertools
 import pandas as pd
-import configparser
-config = configparser.ConfigParser(inline_comment_prefixes="#")
-config.read('DMDana.ini')
-Input=config['FFT-DC-convergence-test']
+from init import init
+init('FFT-DC-convergence-test')
+from init import *
+#This much be done after running initialization function in order to import variables correctly
 
-fs  = 41.341373335
-Hatree_to_eV = 27.211386245988
-
-only_jtot=Input.getboolean('only_jtot')
-if only_jtot==None:
-    raise ValueError('only_jtot is not correct setted.')
 
 Window_type_list=[i.strip() for i in Input['Window_type_list'].split(',')]  # Rectangular, Flattop, Hann, Hamming 
 Database_output_filename_csv=Input['Database_output_filename_csv']
@@ -25,14 +19,6 @@ Database_output_filename_xlsx=Input['Database_output_filename_xlsx']
 Database_output_csv=Input.getboolean('Database_output_csv')
 Database_output_xlsx=Input.getboolean('Database_output_xlsx')
 Figure_output_filename=Input['Figure_output_filename']
-
-jx_data = np.loadtxt(Input['jx_data'],skiprows=1)
-jy_data = np.loadtxt(Input['jy_data'],skiprows=1)
-jz_data = np.loadtxt(Input['jz_data'],skiprows=1)
-
-if jx_data.shape[0]!= jy_data.shape[0] or jx_data.shape[0]!= jz_data.shape[0] or jy_data.shape[0]!= jz_data.shape[0]:
-    raise ValueError('The line number in jx_data jy_data jz_data are not the same. Please deal with your data.' )
-
 Cutoff_min=Input.getint('Cutoff_min')#These "Cutoff" values counts the number of pieces in jx(yz)_elec_tot.out
 Cutoff_max=Input.getint('Cutoff_max')
 if Cutoff_max==-1:
@@ -140,3 +126,4 @@ else:
     plt.close(fig3)
 
 
+end()

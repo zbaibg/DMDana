@@ -2,24 +2,13 @@
 """_summary_
 This script plots the current figures
 """
-import numpy as np
+
 import matplotlib.pyplot as plt
-import scipy.signal.windows as sgl
-import configparser
-config = configparser.ConfigParser(inline_comment_prefixes="#")
-config.read('DMDana.ini')
-Input=config['current-plot']
-fs  = 41.341373335
-#Hatree_to_eV = 27.211386245988
-only_jtot=Input.getboolean('only_jtot')
-if only_jtot==None:
-    raise ValueError('only_jtot is not correct setted.')
-jx_data = np.loadtxt(Input['jx_data'],skiprows=1)
-jy_data = np.loadtxt(Input['jy_data'],skiprows=1)
-jz_data = np.loadtxt(Input['jz_data'],skiprows=1)
-if jx_data.shape[0]!= jy_data.shape[0] or jx_data.shape[0]!= jz_data.shape[0] or jy_data.shape[0]!= jz_data.shape[0]:
-    raise ValueError('The line number in jx_data jy_data jz_data are not the same. Please deal with your data.' )
-light_label=' '+Input['light_label']
+from init import init
+init('current-plot')
+from init import * 
+#This much be done after running initialization function in order to import variables correctly
+
 current_plot_output=Input['current_plot_output']
 #Plot Current
 if not only_jtot:
@@ -53,3 +42,4 @@ else:
     fig1.tight_layout()
     fig1.savefig(current_plot_output)
     plt.close(fig1)
+end()
