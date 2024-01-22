@@ -68,14 +68,14 @@ for Window_type,Cutoff in list(itertools.product(Window_type_list,Cutoff_list)):
             f_d, jw_d = fft_of_j(jtemp[:,0:3:2], Cutoff)
             f_od, jw_od = fft_of_j(jtemp[:,0:4:3], Cutoff)
         if config.only_jtot:
-            resultdisc={'FFT(j'+jdirection+'_tot)(0)':abs(jw_tot[0]),
-                    'j'+jdirection+'_tot_mean': np.mean(jtemp[Cutoff:,1]),
+            resultdisc={'FFT(j'+jdirection+'_tot)(0) (with sign)':np.real(jw_tot[0]),
+                    'j'+jdirection+'_tot_mean (with sign)': np.mean(jtemp[Cutoff:,1]),
                     'time(fs)':jtemp[Cutoff,0]/fs}
         else:
-            resultdisc={'FFT(j'+jdirection+'_tot)(0)':abs(jw_tot[0]),
-                    'FFT(j'+jdirection+'_d)(0)': abs(jw_d[0]),
-                    'FFT(j'+jdirection+'_od)(0)': abs(jw_od[0]),
-                    'j'+jdirection+'_tot_mean': np.mean(jtemp[Cutoff:,1])}
+            resultdisc={'FFT(j'+jdirection+'_tot)(0) (with sign)':np.real(jw_tot[0]),
+                    'FFT(j'+jdirection+'_d)(0) (with sign)': np.real(jw_d[0]),
+                    'FFT(j'+jdirection+'_od)(0) (with sign)': np.real(jw_od[0]),
+                    'j'+jdirection+'_tot_mean (with sign)': np.mean(jtemp[Cutoff:,1])}
         
         database.loc[database_newline_index,list(paramdict)]=list(paramdict.values())
         database.loc[database_newline_index,list(resultdisc)]=list(resultdisc.values())
