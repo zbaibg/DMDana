@@ -68,14 +68,14 @@ for Window_type,Cutoff in list(itertools.product(Window_type_list,Cutoff_list)):
             f_d, jw_d = fft_of_j(jtemp[:,0:3:2], Cutoff)
             f_od, jw_od = fft_of_j(jtemp[:,0:4:3], Cutoff)
         if config.only_jtot:
-            resultdisc={'FFT(j'+jdirection+'_tot)(0) (with sign)':np.real(jw_tot[0]),
-                    'j'+jdirection+'_tot_mean (with sign)': np.mean(jtemp[Cutoff:,1]),
+            resultdisc={'FFT(j'+jdirection+'_tot)(0)':np.real(jw_tot[0]),
+                    'j'+jdirection+'_tot_mean': np.mean(jtemp[Cutoff:,1]),
                     'time(fs)':jtemp[Cutoff,0]/fs}
         else:
-            resultdisc={'FFT(j'+jdirection+'_tot)(0) (with sign)':np.real(jw_tot[0]),
-                    'FFT(j'+jdirection+'_d)(0) (with sign)': np.real(jw_d[0]),
-                    'FFT(j'+jdirection+'_od)(0) (with sign)': np.real(jw_od[0]),
-                    'j'+jdirection+'_tot_mean (with sign)': np.mean(jtemp[Cutoff:,1])}
+            resultdisc={'FFT(j'+jdirection+'_tot)(0)':np.real(jw_tot[0]),
+                    'FFT(j'+jdirection+'_d)(0)': np.real(jw_d[0]),
+                    'FFT(j'+jdirection+'_od)(0)': np.real(jw_od[0]),
+                    'j'+jdirection+'_tot_mean': np.mean(jtemp[Cutoff:,1])}
         
         database.loc[database_newline_index,list(paramdict)]=list(paramdict.values())
         database.loc[database_newline_index,list(resultdisc)]=list(resultdisc.values())
@@ -88,13 +88,21 @@ if Database_output_xlsx:
 if config.only_jtot:
     fig3,ax3=plt.subplots(1,3,figsize=(16,9),dpi=200)
     for win_type in Window_type_list:
-        database[(database.Window_type==win_type)].plot('FFT_integral_start_time_fs','FFT(jx_tot)(0)',ax=ax3[0],logy=True,label=win_type,xlabel='cutoff time/fs')
-        database[(database.Window_type==win_type)].plot('FFT_integral_start_time_fs','FFT(jy_tot)(0)',ax=ax3[1],logy=True,label=win_type,xlabel='cutoff time/fs')
-        database[(database.Window_type==win_type)].plot('FFT_integral_start_time_fs','FFT(jz_tot)(0)',ax=ax3[2],logy=True,label=win_type,xlabel='cutoff time/fs')
+        plottime=database[(database.Window_type==win_type)]['FFT_integral_start_time_fs']
+        plotjx_tot=database[(database.Window_type==win_type)]['FFT(jx_tot)(0)']
+        plotjy_tot=database[(database.Window_type==win_type)]['FFT(jy_tot)(0)']
+        plotjz_tot=database[(database.Window_type==win_type)]['FFT(jz_tot)(0)']
+        ax3[0].plot(plottime,np.abs(plotjx_tot),label=win_type)
+        ax3[1].plot(plottime,np.abs(plotjy_tot),label=win_type)
+        ax3[2].plot(plottime,np.abs(plotjz_tot),label=win_type)
     ax3[0].set_title('x')
     ax3[1].set_title('y')
     ax3[2].set_title('z')
     ax3[0].set_ylabel('FFT($j_{tot}$)(0) A/cm$^2$')
+    for i in range(3):
+        ax3[i].set_yscale('log')
+        ax3[i].set_xlabel('cutoff time/fs')
+        ax3[i].legend()
     fig3.tight_layout()
     fig3.savefig(Figure_output_filename)
     plt.close(fig3)
@@ -102,28 +110,37 @@ if config.only_jtot:
 else:
     fig3,ax3=plt.subplots(3,3,figsize=(16,9),dpi=200)
     for win_type in Window_type_list:
-        database[(database.Window_type==win_type)].plot('FFT_integral_start_time_fs','FFT(jx_tot)(0)',ax=ax3[0,0],logy=True,label=win_type,xlabel='cutoff time/fs')
-        database[(database.Window_type==win_type)].plot('FFT_integral_start_time_fs','FFT(jy_tot)(0)',ax=ax3[0,1],logy=True,label=win_type,xlabel='cutoff time/fs')
-        database[(database.Window_type==win_type)].plot('FFT_integral_start_time_fs','FFT(jz_tot)(0)',ax=ax3[0,2],logy=True,label=win_type,xlabel='cutoff time/fs')
-        database[(database.Window_type==win_type)].plot('FFT_integral_start_time_fs','FFT(jx_d)(0)',ax=ax3[1,0],logy=True,label=win_type,xlabel='cutoff time/fs')
-        database[(database.Window_type==win_type)].plot('FFT_integral_start_time_fs','FFT(jy_d)(0)',ax=ax3[1,1],logy=True,label=win_type,xlabel='cutoff time/fs')
-        database[(database.Window_type==win_type)].plot('FFT_integral_start_time_fs','FFT(jz_d)(0)',ax=ax3[1,2],logy=True,label=win_type,xlabel='cutoff time/fs')
-        database[(database.Window_type==win_type)].plot('FFT_integral_start_time_fs','FFT(jx_od)(0)',ax=ax3[2,0],logy=True,label=win_type,xlabel='cutoff time/fs')
-        database[(database.Window_type==win_type)].plot('FFT_integral_start_time_fs','FFT(jy_od)(0)',ax=ax3[2,1],logy=True,label=win_type,xlabel='cutoff time/fs')
-        database[(database.Window_type==win_type)].plot('FFT_integral_start_time_fs','FFT(jz_od)(0)',ax=ax3[2,2],logy=True,label=win_type,xlabel='cutoff time/fs')
+        plottime=database[(database.Window_type==win_type)]['FFT_integral_start_time_fs']
+        plotjx_tot=database[(database.Window_type==win_type)]['FFT(jx_tot)(0)']
+        plotjy_tot=database[(database.Window_type==win_type)]['FFT(jy_tot)(0)']
+        plotjz_tot=database[(database.Window_type==win_type)]['FFT(jz_tot)(0)']
+        plotjx_d=database[(database.Window_type==win_type)]['FFT(jx_d)(0)']
+        plotjy_d=database[(database.Window_type==win_type)]['FFT(jy_d)(0)']
+        plotjz_d=database[(database.Window_type==win_type)]['FFT(jz_d)(0)']       
+        plotjx_od=database[(database.Window_type==win_type)]['FFT(jx_od)(0)']
+        plotjy_od=database[(database.Window_type==win_type)]['FFT(jy_od)(0)']
+        plotjz_od=database[(database.Window_type==win_type)]['FFT(jz_od)(0)']    
+        ax3[0,0].plot(plottime,np.abs(plotjx_tot),label=win_type)
+        ax3[0,1].plot(plottime,np.abs(plotjy_tot),label=win_type)
+        ax3[0,2].plot(plottime,np.abs(plotjz_tot),label=win_type)
+        ax3[1,0].plot(plottime,np.abs(plotjx_d),label=win_type)
+        ax3[1,1].plot(plottime,np.abs(plotjy_d),label=win_type)
+        ax3[1,2].plot(plottime,np.abs(plotjz_d),label=win_type)
+        ax3[2,0].plot(plottime,np.abs(plotjx_od),label=win_type)
+        ax3[2,1].plot(plottime,np.abs(plotjy_od),label=win_type)
+        ax3[2,2].plot(plottime,np.abs(plotjz_od),label=win_type)
     ax3[0,0].set_title('x')
     ax3[0,1].set_title('y')
     ax3[0,2].set_title('z')
     ax3[0,0].set_ylabel('FFT($j_{tot}$)(0) A/cm$^2$')
     ax3[1,0].set_ylabel('FFT($j_{d}$)(0) A/cm$^2$')
     ax3[2,0].set_ylabel('FFT($j_{od}$)(0) A/cm$^2$')
-
-    for i in range(2):
+    for i in range(3):
+        ax3[2,i].set_xlabel('cutoff time/fs')
         for j in range(3):
-            ax3[i,j].set_xlabel('')
+            ax3[i,j].set_yscale('log')
+            ax3[i,j].legend()
     fig3.tight_layout()
     fig3.savefig(Figure_output_filename)
     plt.close(fig3)
-
-
 config.end()
