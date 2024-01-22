@@ -94,11 +94,15 @@ def initiallog():#this should be done after setting global variable "funcname"
     logfile=open('DMDana_'+funcname+'.log','w')
     repo = git.Repo(sys.path[0],search_parent_directories=True)
     sha = repo.head.object.hexsha
-    logfile.write("==========DMDana=========\n")
+    logfile.write("============DMDana============\n")
     logfile.write("Git hash %s (%s)\n"%(sha[:7],sha))
     logfile.write("Submodule: %s\n"%funcname)
     logfile.write("Start time: %s\n"%datetime.datetime.now())
-    
+    logfile.write("===Configuration Parameter===\n")
+    paramdict=dict((config.items(funcname)))
+    for i in paramdict:
+        logfile.write("%-35s"%i+':\t'+paramdict[i])
+    logfile.write("===Initialization finished===\n")
                         
 def endlog():
     global funcname,logfile
