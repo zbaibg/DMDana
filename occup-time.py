@@ -18,7 +18,10 @@ for index, file in enumerate(config.occup_selected_files):
         break
     data = np.loadtxt(file)
     ax.scatter(data[:,0]*Hatree_to_eV, data[:,1], zs=index*config.occup_timestep_for_selected_file_ps, zdir='y')
-ax.set_xlim(0.05*Hatree_to_eV, 0.06*Hatree_to_eV)
+occup_time_plot_lowE=config.Input.getfloat('occup_time_plot_lowE')
+occup_time_plot_highE=config.Input.getfloat('occup_time_plot_highE')
+if occup_time_plot_highE!=None and occup_time_plot_lowE!=None:
+    ax.set_xlim(occup_time_plot_lowE, occup_time_plot_highE)
 ax.set_ylim(0, config.occup_t_tot/1000)
 ax.set_zlim(0, 1)
 
