@@ -101,7 +101,7 @@ def initiallog():#this should be done after setting global variable "funcname"
     logfile.write("===Configuration Parameter===\n")
     paramdict=dict((config.items(funcname)))
     for i in paramdict:
-        logfile.write("%-35s"%i+':\t'+paramdict[i])
+        logfile.write("%-35s"%i+':\t'+paramdict[i]+'\n')
     logfile.write("===Initialization finished===\n")
                         
 def endlog():
