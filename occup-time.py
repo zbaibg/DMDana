@@ -13,14 +13,19 @@ config.init('occup-time')
 #This much be done after running initialization function in order to import variables correctly
 fig = plt.figure(figsize=(12, 10))
 ax =fig.add_subplot(111,projection='3d')
+occup_time_plot_lowE=config.Input.getfloat('occup_time_plot_lowE')
+occup_time_plot_highE=config.Input.getfloat('occup_time_plot_highE')
+occup_time_plot_set_Erange=config.Input.getboolean('occup_time_plot_set_Erange')
 for index, file in enumerate(config.occup_selected_files):
     if index*config.occup_timestep_for_selected_file_ps>config.occup_t_tot/1000:
         break
     data = np.loadtxt(file)
+    if occup_time_plot_set_Erange:
+        data=data[data[:,0].argsort()]
+        data=data[np.logical_and(data[:,0]>occup_time_plot_lowE,data[:,0]<occup_time_plot_highE)]
     ax.scatter(data[:,0]*Hatree_to_eV, data[:,1], zs=index*config.occup_timestep_for_selected_file_ps, zdir='y')
-occup_time_plot_lowE=config.Input.getfloat('occup_time_plot_lowE')
-occup_time_plot_highE=config.Input.getfloat('occup_time_plot_highE')
-if occup_time_plot_highE!=None and occup_time_plot_lowE!=None:
+
+if occup_time_plot_set_Erange:
     ax.set_xlim(occup_time_plot_lowE, occup_time_plot_highE)
 ax.set_ylim(0, config.occup_t_tot/1000)
 ax.set_zlim(0, 1)
