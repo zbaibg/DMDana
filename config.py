@@ -4,6 +4,7 @@ import glob
 import git
 import datetime
 import sys
+import os
 from constant import *
 """_summary_
 1. Import common options from configuration files.
@@ -13,7 +14,10 @@ class configclass:
     def __init__(self):
         self.logfile=None
         self.config = configparser.ConfigParser(inline_comment_prefixes="#")
-        self.config.read('DMDana.ini')
+        if (os.path.isfile('DMDana.ini')):
+            self.config.read('DMDana.ini')
+        else:
+            raise ValueError('DMDana.ini does not exist. Please run "DMDana.py init" to initialize it.')
 
         self.Input=None
         self.only_jtot=None

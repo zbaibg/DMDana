@@ -4,7 +4,7 @@ This script plots the current figures
 """
 
 import matplotlib.pyplot as plt
-import config
+from constant import *
 from config import configclass
 def do():
     config=configclass()
