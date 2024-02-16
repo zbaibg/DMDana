@@ -2,7 +2,9 @@
 import pandas as pd
 import numpy as np
 from constant import *
-import config
+from config import configclass
+
+config=configclass()
 config.init('FeynWann-Current')
 
 jx_elec_tot=pd.DataFrame()

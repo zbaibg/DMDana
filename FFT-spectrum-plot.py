@@ -8,7 +8,8 @@ import scipy.signal.windows as sgl
 import itertools
 import pandas as pd
 from constant import *
-import config
+from config import configclass
+config=configclass()
 config.init('FFT-spectrum-plot')
 
 Cutoff_list= [int(i) for i in config.Input['Cutoff_list'].split(',')]#it counts the number of pieces in jx(yz)_elec_tot.out

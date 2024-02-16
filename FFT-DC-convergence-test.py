@@ -8,7 +8,10 @@ import scipy.signal.windows as sgl
 import itertools
 import pandas as pd
 from constant import *
-import config
+from config import configclass
+
+
+config=configclass()
 config.init('FFT-DC-convergence-test')
 
 

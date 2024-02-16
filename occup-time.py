@@ -7,7 +7,8 @@ So be sure that your occupation filelists include complete number of files and a
 import numpy as np
 import matplotlib.pyplot as plt
 from constant import *
-import config
+from config import configclass
+config=configclass()
 config.init('occup-time')
 
 #This much be done after running initialization function in order to import variables correctly

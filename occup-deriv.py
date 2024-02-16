@@ -7,8 +7,9 @@ So be sure that your occupation filelists include complete number of files and a
 """
 import numpy as np
 import matplotlib.pyplot as plt
-import config
 from constant import *
+from config import configclass
+config=configclass()
 config.init('occup-deriv')
 
 n = len(config.occup_selected_files)#number of files left in "occup_selected_files"

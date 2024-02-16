@@ -5,7 +5,8 @@ This script plots the current figures
 
 import matplotlib.pyplot as plt
 import config
-from constant import *
+from config import configclass
+config=configclass()
 config.init('current-plot')
 
 current_plot_output=config.Input['current_plot_output']
