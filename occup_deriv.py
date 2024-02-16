@@ -10,9 +10,7 @@ import matplotlib.pyplot as plt
 from constant import *
 from config import configclass
 def do():
-    config=configclass()
-    config.init('occup-deriv')
-
+    config=configclass('occup-deriv')
     n = len(config.occup_selected_files)#number of files left in "occup_selected_files"
     data= np.full((n, 5646), np.nan)# why 5646?
     dfdt = np.full((n,5646), np.nan)

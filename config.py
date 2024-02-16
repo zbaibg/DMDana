@@ -11,7 +11,7 @@ from constant import *
 2. Include scientific constants.
 """
 class configclass: 
-    def __init__(self):
+    def __init__(self,funcname_in):
         self.logfile=None
         self.config = configparser.ConfigParser(inline_comment_prefixes="#")
         if (os.path.isfile('DMDana.ini')):
@@ -32,10 +32,6 @@ class configclass:
         self.occup_selected_files=None #The filelists to be dealt with. Note: its length might be larger than 
                                 # occup_maxmium_file_number_plotted_exclude_t0+1 for later possible 
                                 # calculations, eg. second-order finite difference
-        self.funcname=None
-
-
-    def init(self,funcname_in):
         self.funcname=funcname_in
         self.initiallog()#this should be done after setting global variable "funcname" 
         if self.funcname in ['FFT-DC-convergence-test','current-plot','FFT-spectrum-plot']:

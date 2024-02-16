@@ -7,9 +7,7 @@ import matplotlib.pyplot as plt
 from constant import *
 from config import configclass
 def do():
-    config=configclass()
-    config.init('current-plot')
-
+    config=configclass('current-plot')
     current_plot_output=config.Input['current_plot_output']
     #Plot Current
     if not config.only_jtot:

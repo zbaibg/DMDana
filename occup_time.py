@@ -10,8 +10,7 @@ import matplotlib.pyplot as plt
 from constant import *
 from config import configclass
 def do():
-    config=configclass()
-    config.init('occup-time')
+    config=configclass('occup-time')
     occup_time_plot_lowE=config.Input.getfloat('occup_time_plot_lowE')
     occup_time_plot_highE=config.Input.getfloat('occup_time_plot_highE')
     occup_time_plot_set_Erange=config.Input.getboolean('occup_time_plot_set_Erange',False)

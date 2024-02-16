@@ -10,9 +10,7 @@ import pandas as pd
 from constant import *
 from config import configclass
 def do():
-    config=configclass()
-    config.init('FFT-spectrum-plot')
-
+    config=configclass('FFT-spectrum-plot')
     Cutoff_list= [int(i) for i in config.Input['Cutoff_list'].split(',')]#it counts the number of pieces in jx(yz)_elec_tot.out
     Window_type_list=[i.strip() for i in config.Input['Window_type_list'].split(',')]  # Rectangular, Flattop, Hann, Hamming 
 

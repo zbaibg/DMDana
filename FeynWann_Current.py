@@ -4,9 +4,7 @@ import numpy as np
 from constant import *
 from config import configclass
 def do():
-    config=configclass()
-    config.init('FeynWann-Current')
-
+    config=configclass('FeynWann-Current')
     jx_elec_tot=pd.DataFrame()
     jy_elec_tot=pd.DataFrame()
     jz_elec_tot=pd.DataFrame()
