@@ -18,6 +18,9 @@ def do():
     dfdt = np.full((n,5646), np.nan)
     dfdtMax = np.full((n), np.nan)
     tarray=np.array(range(n))*config.occup_timestep_for_selected_file_fs/1000#ps
+    #note that t in occupations_t0.out is actually not 0
+    #but if occup_timestep_for_selected_file_fs is much larger than t0,
+    #it is fine to take t0 as 0 as it does here. 
     for ind in range(n):
         data[ind,:] = np.loadtxt(config.occup_selected_files[ind])[:,1]
     dfdt=np.gradient(data,config.occup_timestep_for_selected_file_fs,axis=0)#df/fs

@@ -62,14 +62,22 @@ class configclass:
     def init_occup(self,):
         self.config.read('DMDana.ini')
         self.Input=self.config[self.funcname]
-        occup_timestep_for_all_files=self.Input.getint('timestep_for_occupation_output') #fs
-        filelist_step=self.Input.getint('filelist_step') # select parts of the filelist
-        self.occup_timestep_for_selected_file_fs=occup_timestep_for_all_files*filelist_step
-        self.occup_timestep_for_selected_file_ps=self.occup_timestep_for_selected_file_fs/1000 #ps
         # Read all the occupations file names at once
         if glob.glob('occupations_t0.out')==[]:
             raise ValueError("Did not found occupations_t0.out")
         self.occup_selected_files = glob.glob('occupations_t0.out')+sorted(glob.glob('occupations-*out'))
+        with open(self.occup_selected_files[1]) as f:
+            firstline_this_file=f.readline()
+            t1_fs=float(firstline_this_file.split()[12])/fs 
+        with open(self.occup_selected_files[2]) as f:
+            firstline_this_file=f.readline()
+            t2_fs=float(firstline_this_file.split()[12])/fs
+                     
+        #occup_timestep_for_all_files=self.Input.getint('timestep_for_occupation_output') #fs
+        occup_timestep_for_all_files=t2_fs-t1_fs #fs
+        filelist_step=self.Input.getint('filelist_step') # select parts of the filelist
+        self.occup_timestep_for_selected_file_fs=occup_timestep_for_all_files*filelist_step
+        self.occup_timestep_for_selected_file_ps=self.occup_timestep_for_selected_file_fs/1000 #ps
         # Select partial files
         self.occup_selected_files=self.occup_selected_files[::filelist_step]
         self.occup_t_tot = self.Input.getint('t_max') # fs
