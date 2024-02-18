@@ -2,7 +2,7 @@
 
 1. download this.
 2. Add ```export PATH="{download-path}:$PATH"``` in your ```~/.bashrc```, where ```{download-path}``` is the path where you download DMDana. Then restart your shell.
-3. run ```sh {download-path}/install_dependency.sh``` to install python dependencies it needs.
+3. Update your python to versions ```>3.2``` and run ```sh {download-path}/install_dependency.sh``` to install python dependencies it needs.
 4. Optional: to support CLI auto-completion run ```activate-global-python-argcomplete --user```, and restart your shell.
 ## Usage
 1. run ```cd {DMD-folder}```, where ```{DMD-folder}``` is your DMD folder path

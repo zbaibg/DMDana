@@ -1,1 +1,1 @@
-pip install numpy matplotlib scipy configparser glob git-python datetime sys os logging pandas itertools argparse argcomplete
+pip install numpy matplotlib scipy git-python pandas argcomplete
