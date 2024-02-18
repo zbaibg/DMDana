@@ -83,7 +83,7 @@ def plot_tot(database):
     ax3[0].set_title('x')
     ax3[1].set_title('y')
     ax3[2].set_title('z')
-    ax3[0].set_ylabel('FFT($j_{tot}$)(0) A/cm$^2$')
+    ax3[0].set_ylabel('abs[FFT($j_{tot}$)(0)] A/cm$^2$')
     for i in range(3):
         ax3[i].set_yscale('log')
         ax3[i].set_xlabel('cutoff time/fs')
@@ -116,9 +116,9 @@ def plot_tot_diag_offdiag(database):
         ax3[0,0].set_title('x')
         ax3[0,1].set_title('y')
         ax3[0,2].set_title('z')
-        ax3[0,0].set_ylabel('FFT($j_{tot}$)(0) A/cm$^2$')
-        ax3[1,0].set_ylabel('FFT($j_{d}$)(0) A/cm$^2$')
-        ax3[2,0].set_ylabel('FFT($j_{od}$)(0) A/cm$^2$')
+        ax3[0,0].set_ylabel('abs[FFT($j_{tot}$)(0)] A/cm$^2$')
+        ax3[1,0].set_ylabel('abs[FFT($j_{d}$)(0)] A/cm$^2$')
+        ax3[2,0].set_ylabel('abs[FFT($j_{od}$)(0)] A/cm$^2$')
         for i in range(3):
             ax3[2,i].set_xlabel('cutoff time/fs')
             for j in range(3):
