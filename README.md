@@ -1,7 +1,7 @@
 ## Installation
 
 1. download this.
-2. run ```export PATH="{download-path}/DMDana:$PATH"```, where {download-path} is the path where you download DMDana.
+2. Add ```export PATH="{download-path}/DMDana:$PATH"``` in your ```~/.bashrc```, where {download-path} is the path where you download DMDana. Then restart your shell.
 3. install relevant python libraries whenever it output lack of dependencies.
 4. Optional: to support CLI auto-completion run ```activate-global-python-argcomplete --user``` (after you install argcomplete by ```pip install argcomplete```), and restart your shell.
 ## Usage
