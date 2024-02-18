@@ -12,13 +12,13 @@ from global_variable import config
 #Read input
 occup_time_plot_lowE=config.Input.getfloat('occup_time_plot_lowE')
 occup_time_plot_highE=config.Input.getfloat('occup_time_plot_highE')
-occup_time_plot_set_Erange=config.Input.getboolean('occup_time_plot_set_Erange',False)
-plot_occupation_number_min=config.Input.getfloat('plot_occupation_number_min',0)
-plot_occupation_number_max=config.Input.getfloat('plot_occupation_number_max',1)
-Substract_initial_occupation=config.Input.getboolean('Substract_initial_occupation',True)
-plot_occupation_number_setlimit=config.Input.getboolean("plot_occupation_number_setlimit",True)
-figure_style=config.Input.get('figure_style','3D')
-output_all_figure_types=config.Input.getboolean('output_all_figure_types',True)
+occup_time_plot_set_Erange=config.Input.getboolean('occup_time_plot_set_Erange')
+plot_occupation_number_min=config.Input.getfloat('plot_occupation_number_min')
+plot_occupation_number_max=config.Input.getfloat('plot_occupation_number_max')
+Substract_initial_occupation=config.Input.getboolean('Substract_initial_occupation')
+plot_occupation_number_setlimit=config.Input.getboolean("plot_occupation_number_setlimit")
+figure_style=config.Input.get('figure_style')
+output_all_figure_types=config.Input.getboolean('output_all_figure_types')
 occup_selected_files=config.occup_selected_files
 occup_t_tot=config.occup_t_tot
 occup_timestep_for_selected_file_ps=config.occup_timestep_for_selected_file_ps

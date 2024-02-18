@@ -8,15 +8,15 @@ from constant import *
 import numpy as np
 from global_variable import config
 #Read input
-tmax=config.Input.getint("t_max",-1)
+tmax=config.Input.getint("t_max")
 jx_data=config.jx_data
 jy_data=config.jy_data
 jz_data=config.jz_data
 if tmax==-1:
     tmax=np.max(jx_data[:,0])/fs
-tmin=config.Input.getint("t_min",0)
+tmin=config.Input.getint("t_min")
 total_time=tmax-tmin 
-current_plot_output=config.Input.get('current_plot_output',"j.png")
+current_plot_output=config.Input.get('current_plot_output')
 light_label=config.light_label
 only_jtot=config.only_jtot
 

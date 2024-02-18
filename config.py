@@ -15,7 +15,7 @@ class configclass:
         self.logfile=None
         self.config = configparser.ConfigParser(inline_comment_prefixes="#")
         if (os.path.isfile('DMDana.ini')):
-            self.config.read('DMDana.ini')
+            self.config.read([sys.path[0]+'/DMDana.ini','./DMDana.ini','DMDana.ini'])
         else:
             raise ValueError('DMDana.ini does not exist. Please run "DMDana.py init" to initialize it.')
 
@@ -33,6 +33,7 @@ class configclass:
                                 # occup_maxmium_file_number_plotted_exclude_t0+1 for later possible 
                                 # calculations, eg. second-order finite difference
         self.funcname=funcname_in
+        self.DMDparam_value=dict()
         self.initiallog()#this should be done after setting global variable "funcname" 
         if self.funcname in ['FFT-DC-convergence-test','current-plot','FFT-spectrum-plot']:
             self.init_current()
@@ -50,8 +51,28 @@ class configclass:
         self.jz_data = np.loadtxt(self.Input['jz_data'],skiprows=1)
         if not (len(self.jx_data)==len(self.jy_data)==len(self.jz_data)):
             raise ValueError('The line number in jx_data jy_data jz_data are not the same. Please deal with your data.' )
-        self.light_label=' '+self.Input['light_label']
-
+        self.read_DMD_param()
+        pumpPoltype=self.DMDparam_value['pumpPoltype']
+        pumpA0=float(self.DMDparam_value['pumpA0'])
+        pumpE=float(self.DMDparam_value['pumpE'])
+        self.light_label=' '+'for light of %s Polarization, %.2e a.u Amplitude, and %.2e eV Energy'%(pumpPoltype,pumpA0,pumpE)
+    def read_DMD_param(self):
+        if(not os.path.isfile("param.in")):
+            raise ValueError("param.in does not exist.")
+        with open("param.in") as f:
+            for line in f:
+                self.process_DMD_param_line(line)
+    def process_DMD_param_line(self, line):
+        list_for_this_line=line.split()
+        if list_for_this_line==[]:
+            return
+        elif list_for_this_line[0][0]=="#":
+            return
+        else:
+            if len(list_for_this_line)>=3:
+                self.DMDparam_value[list_for_this_line[0]]=list_for_this_line[2]
+            else:
+                raise ValueError("param.in is not correctly setted.")       
     def init_occup(self,):
         self.config.read('DMDana.ini')
         self.Input=self.config[self.funcname]

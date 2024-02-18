@@ -21,11 +21,21 @@ if __name__ == "__main__":
     if args.command==None:
         parser.print_help()
         exit()
-    
     #CLI parameter solved. Now we can start the main program.
+
+    #init command: initialize the DMDana.ini file if it does not exist.
+    if args.command == "init":
+        import sys,shutil,os
+        if(not os.path.isfile('DMDana.ini')):
+            shutil.copyfile(sys.path[0]+'/DMDana_default.ini','./DMDana.ini')
+        else:
+            print("DMDana.ini already exists.")
+        exit()
+        
+    #other commands    
     from config import configclass
     import logging
-    import global_variable
+    import global_variable    
     funcname=args.command
     logging.basicConfig(
         level=logging.INFO,
@@ -49,11 +59,6 @@ if __name__ == "__main__":
     elif funcname == "occup_time":
         import occup_time
         occup_time.do()
-    elif funcname == "init":
-        import sys,shutil,os
-        if(not os.path.isfile('DMDana.ini')):
-            shutil.copyfile(sys.path[0]+'/DMDana.ini','./DMDana.ini')
-        else:
-            print("DMDana.ini already exists.")
+
             
     logging.info('Done successfully!')
