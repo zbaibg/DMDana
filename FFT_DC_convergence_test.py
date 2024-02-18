@@ -18,13 +18,13 @@ Database_output_xlsx=config.Input.getboolean('Database_output_xlsx')
 Figure_output_filename=config.Input['Figure_output_filename']
 Cutoff_min=config.Input.getint('Cutoff_min')#These "Cutoff" values counts the number of pieces in jx(yz)_elec_tot.out
 Cutoff_max=config.Input.getint('Cutoff_max')
+jx_data=config.jx_data
+jy_data=config.jy_data
+jz_data=config.jz_data
 if Cutoff_max<=0:
     Cutoff_max=jx_data.shape[0]-1
 Cutoff_step=config.Input.getint('Cutoff_step')
 Cutoff_list= range(Cutoff_min,Cutoff_max,Cutoff_step)
-jx_data=config.jx_data
-jy_data=config.jy_data
-jz_data=config.jz_data
 only_jtot=config.only_jtot
 
 # funciton which performs FFT, 
