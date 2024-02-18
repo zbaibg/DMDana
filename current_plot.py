@@ -5,9 +5,8 @@ This script plots the current figures
 
 import matplotlib.pyplot as plt
 from constant import *
-from config import configclass
+from global_variable import config
 def do():
-    config=configclass('current-plot')
     current_plot_output=config.Input['current_plot_output']
     #Plot Current
     if not config.only_jtot:
@@ -41,4 +40,3 @@ def do():
         fig1.tight_layout()
         fig1.savefig(current_plot_output)
         plt.close(fig1)
-    config.end()

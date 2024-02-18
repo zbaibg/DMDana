@@ -6,9 +6,9 @@ import datetime
 import sys
 import os
 from constant import *
+import logging
 """_summary_
 1. Import common options from configuration files.
-2. Include scientific constants.
 """
 class configclass: 
     def __init__(self,funcname_in):
@@ -39,9 +39,6 @@ class configclass:
         if self.funcname in ['occup-time','occup-deriv']:
             self.init_occup()
         
-    def end(self,):
-        self.endlog()
-
     def init_current(self,):
         self.config.read('DMDana.ini')
         self.Input=self.config[self.funcname]
@@ -51,7 +48,7 @@ class configclass:
         self.jx_data = np.loadtxt(self.Input['jx_data'],skiprows=1)
         self.jy_data = np.loadtxt(self.Input['jy_data'],skiprows=1)
         self.jz_data = np.loadtxt(self.Input['jz_data'],skiprows=1)
-        if self.jx_data.shape[0]!= self.jy_data.shape[0] or self.jx_data.shape[0]!= self.jz_data.shape[0] or self.jy_data.shape[0]!= self.jz_data.shape[0]:
+        if not (len(self.jx_data)==len(self.jy_data)==len(self.jz_data)):
             raise ValueError('The line number in jx_data jy_data jz_data are not the same. Please deal with your data.' )
         self.light_label=' '+self.Input['light_label']
 
@@ -95,19 +92,15 @@ class configclass:
         self.occup_t_tot=self.occup_maxmium_file_number_plotted_exclude_t0*self.occup_timestep_for_selected_file_fs#fs
         
     def initiallog(self,):#this should be done after setting global variable "funcname" 
-        self.logfile=open('DMDana_'+self.funcname+'.log','w')
         repo = git.Repo(sys.path[0],search_parent_directories=True)
         sha = repo.head.object.hexsha
-        self.logfile.write("============DMDana============\n")
-        self.logfile.write("Git hash %s (%s)\n"%(sha[:7],sha))
-        self.logfile.write("Submodule: %s\n"%self.funcname)
-        self.logfile.write("Start time: %s\n"%datetime.datetime.now())
-        self.logfile.write("===Configuration Parameter===\n")
+        logging.info("============DMDana============")
+        logging.info("Git hash %s (%s)"%(sha[:7],sha))
+        logging.info("Submodule: %s"%self.funcname)
+        logging.info("Start time: %s"%datetime.datetime.now())
+        logging.info("===Configuration Parameter===")
         paramdict=dict((self.config.items(self.funcname)))
         for i in paramdict:
-            self.logfile.write("%-35s"%i+':\t'+paramdict[i]+'\n')
-        self.logfile.write("===Initialization finished===\n")
+            logging.info("%-35s"%i+':\t'+paramdict[i]+'')
+        logging.info("===Initialization finished===")
                             
-    def endlog(self,):
-        self.logfile.write("End time: %s\n"%datetime.datetime.now())
-        self.logfile.close()

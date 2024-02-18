@@ -8,9 +8,8 @@ import scipy.signal.windows as sgl
 import itertools
 import pandas as pd
 from constant import *
-from config import configclass
+from global_variable import config
 def do():
-    config=configclass('FFT-spectrum-plot')
     Cutoff_list= [int(i) for i in config.Input['Cutoff_list'].split(',')]#it counts the number of pieces in jx(yz)_elec_tot.out
     Window_type_list=[i.strip() for i in config.Input['Window_type_list'].split(',')]  # Rectangular, Flattop, Hann, Hamming 
 
@@ -152,5 +151,3 @@ def do():
         database.to_csv(Summary_output_filename_csv)
     if Summary_output_xlsx:
         database.to_excel(Summary_output_filename_xlsx)
-
-    config.end()

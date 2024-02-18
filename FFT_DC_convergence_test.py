@@ -8,9 +8,8 @@ import scipy.signal.windows as sgl
 import itertools
 import pandas as pd
 from constant import *
-from config import configclass
+from global_variable import config
 def do():
-    config=configclass('FFT-DC-convergence-test')
     Window_type_list=[i.strip() for i in config.Input['Window_type_list'].split(',')]  # Rectangular, Flattop, Hann, Hamming 
     Database_output_filename_csv=config.Input['Database_output_filename_csv']
     Database_output_filename_xlsx=config.Input['Database_output_filename_xlsx']
@@ -141,4 +140,3 @@ def do():
         fig3.tight_layout()
         fig3.savefig(Figure_output_filename)
         plt.close(fig3)
-    config.end()

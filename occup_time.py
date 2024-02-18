@@ -8,9 +8,8 @@ import numpy as np
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 from constant import *
-from config import configclass
+from global_variable import config
 def do():
-    config=configclass('occup-time')
     occup_time_plot_lowE=config.Input.getfloat('occup_time_plot_lowE')
     occup_time_plot_highE=config.Input.getfloat('occup_time_plot_highE')
     occup_time_plot_set_Erange=config.Input.getboolean('occup_time_plot_set_Erange',False)
@@ -93,4 +92,3 @@ def do():
                 do_per_figure_type()
     else:
         do_per_figure_type()
-    config.end()

@@ -2,9 +2,8 @@
 import pandas as pd
 import numpy as np
 from constant import *
-from config import configclass
+from global_variable import config
 def do():
-    config=configclass('FeynWann-Current')
     jx_elec_tot=pd.DataFrame()
     jy_elec_tot=pd.DataFrame()
     jz_elec_tot=pd.DataFrame()
@@ -35,4 +34,3 @@ def do():
     jx_elec_tot.to_csv('jx_elec_tot.out',sep='\t',index=False)
     jy_elec_tot.to_csv('jy_elec_tot.out',sep='\t',index=False)
     jz_elec_tot.to_csv('jz_elec_tot.out',sep='\t',index=False)
-    config.end()

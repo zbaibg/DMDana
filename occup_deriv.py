@@ -8,9 +8,8 @@ So be sure that your occupation filelists include complete number of files and a
 import numpy as np
 import matplotlib.pyplot as plt
 from constant import *
-from config import configclass
+from global_variable import config
 def do():
-    config=configclass('occup-deriv')
     n = len(config.occup_selected_files)#number of files left in "occup_selected_files"
     data= np.full((n, 5646), np.nan)# why 5646?
     dfdt = np.full((n,5646), np.nan)
@@ -29,4 +28,3 @@ def do():
     ax4.set_xlabel('t (ps)')
     ax4.set_ylabel(r'max$[\frac{df}{dt}]$ unit:df/fs')
     fig4.savefig('dfdt_max_Ttot%dfs_Step%dfs.png'%(config.occup_t_tot,config.occup_timestep_for_selected_file_fs))
-    config.end()
