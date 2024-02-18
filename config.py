@@ -15,7 +15,7 @@ class configclass:
         self.logfile=None
         self.config = configparser.ConfigParser(inline_comment_prefixes="#")
         if (os.path.isfile('DMDana.ini')):
-            self.config.read([sys.path[0]+'/DMDana.ini','./DMDana.ini','DMDana.ini'])
+            self.config.read([sys.path[0]+'/DMDana_default.ini','./DMDana.ini','DMDana.ini'])
         else:
             raise ValueError('DMDana.ini does not exist. Please run "DMDana init" to initialize it.')
 
