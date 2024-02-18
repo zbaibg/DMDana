@@ -14,10 +14,11 @@ occup_selected_files=config.occup_selected_files
 occup_timestep_for_selected_file_fs=config.occup_timestep_for_selected_file_fs
 occup_maxmium_file_number_plotted_exclude_t0=config.occup_maxmium_file_number_plotted_exclude_t0
 occup_t_tot=config.occup_t_tot
+data_first=np.loadtxt('occupations_t0.out')
 def do():
     n = len(occup_selected_files)#number of files left in "occup_selected_files"
-    data= np.full((n, 5646), np.nan)# why 5646?
-    dfdt = np.full((n,5646), np.nan)
+    data= np.full((n, len(data_first)), np.nan)# why 5646?
+    dfdt = np.full((n,len(data_first)), np.nan)
     dfdtMax = np.full((n), np.nan)
     tarray=np.array(range(n))*occup_timestep_for_selected_file_fs/1000#ps
     #note that t in occupations_t0.out is actually not 0
