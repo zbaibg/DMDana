@@ -4,11 +4,11 @@ This script plots the DC components of FFT results with different parameters in 
 """
 import numpy as np
 import matplotlib.pyplot as plt
-import scipy.signal.windows as sgl
 import itertools
 import pandas as pd
 from constant import *
 from global_variable import config
+from common import fft_of_j
 #Read input
 Window_type_list=[i.strip() for i in config.Input['Window_type_list'].split(',')]  # Rectangular, Flattop, Hann, Hamming 
 Database_output_filename_csv=config.Input['Database_output_filename_csv']
@@ -27,36 +27,13 @@ Cutoff_step=config.Input.getint('Cutoff_step')
 Cutoff_list= range(Cutoff_min,Cutoff_max,Cutoff_step)
 only_jtot=config.only_jtot
 
-# funciton which performs FFT, 
-# shifts frequency bins to only plot positive frequencies, 
-# changes bins to physical units (eV), applies window to time domain data, 
-# and returns a normalized FFT
-def fft_of_j(j_t, cutoff,Window_type):
-    dt = j_t[1,0] - j_t[0,0]
-    N_jt = j_t[cutoff:,1].shape[0]
-    freq_bins = np.fft.fftfreq(N_jt, dt)*(2.0*np.pi*Hatree_to_eV)
-    shifted_freq_bins = freq_bins[:len(freq_bins)//2]
-
-    if Window_type=='Flattop':#Rectangular, Flattop, Hann, Hamming 
-        window = sgl.flattop(N_jt, sym=False)
-    elif Window_type=='Hann':
-        window = sgl.hann(N_jt, sym=False)
-    elif Window_type=='Hamming':
-        window = sgl.hamming(N_jt,sym=False)
-    elif Window_type=='Rectangular':
-        window= 1
-    else:
-        raise ValueError('Window type is not supported')
-    win_jt = window*j_t[cutoff:,1]
-    
-    fft = np.fft.fft(win_jt)/np.mean(window)
-    shifted_fft = fft[:N_jt//2]
-    return shifted_freq_bins, (1/N_jt)*(shifted_fft)
 def do():
-
-
+    database=calculate_and_output_database()
+    plot(database)
+    
+def calculate_and_output_database():
     #Calculate FFT DC results and output the data
-    database=pd.DataFrame()
+    database=pd.DataFrame(dtype=object)
     for Window_type,Cutoff in list(itertools.product(Window_type_list,Cutoff_list)):
         paramdict=dict(Cutoff=Cutoff,FFT_integral_start_time_fs=jx_data[Cutoff,0]/fs,FFT_integral_end_time_fs=jx_data[-1,0]/fs,Window_type=Window_type)
         database_newline_index=database.shape[0]
@@ -86,31 +63,35 @@ def do():
         database.to_csv(Database_output_filename_csv)
     if Database_output_xlsx:
         database.to_excel(Database_output_filename_xlsx)
-
+    return database
+def plot(database):
     #Plot the FFT DC results
     if only_jtot:
-        fig3,ax3=plt.subplots(1,3,figsize=(16,9),dpi=200)
-        for win_type in Window_type_list:
-            plottime=database[(database.Window_type==win_type)]['FFT_integral_start_time_fs']
-            plotjx_tot=database[(database.Window_type==win_type)]['FFT(jx_tot)(0)']
-            plotjy_tot=database[(database.Window_type==win_type)]['FFT(jy_tot)(0)']
-            plotjz_tot=database[(database.Window_type==win_type)]['FFT(jz_tot)(0)']
-            ax3[0].plot(plottime,np.abs(plotjx_tot),label=win_type)
-            ax3[1].plot(plottime,np.abs(plotjy_tot),label=win_type)
-            ax3[2].plot(plottime,np.abs(plotjz_tot),label=win_type)
-        ax3[0].set_title('x')
-        ax3[1].set_title('y')
-        ax3[2].set_title('z')
-        ax3[0].set_ylabel('FFT($j_{tot}$)(0) A/cm$^2$')
-        for i in range(3):
-            ax3[i].set_yscale('log')
-            ax3[i].set_xlabel('cutoff time/fs')
-            ax3[i].legend()
-        fig3.tight_layout()
-        fig3.savefig(Figure_output_filename)
-        plt.close(fig3)
-
+        plot_tot(database)
     else:
+        plot_tot_diag_offdiag(database)
+def plot_tot(database):
+    fig3,ax3=plt.subplots(1,3,figsize=(16,9),dpi=200)
+    for win_type in Window_type_list:
+        plottime=database[(database.Window_type==win_type)]['FFT_integral_start_time_fs']
+        plotjx_tot=database[(database.Window_type==win_type)]['FFT(jx_tot)(0)']
+        plotjy_tot=database[(database.Window_type==win_type)]['FFT(jy_tot)(0)']
+        plotjz_tot=database[(database.Window_type==win_type)]['FFT(jz_tot)(0)']
+        ax3[0].plot(plottime,np.abs(plotjx_tot),label=win_type)
+        ax3[1].plot(plottime,np.abs(plotjy_tot),label=win_type)
+        ax3[2].plot(plottime,np.abs(plotjz_tot),label=win_type)
+    ax3[0].set_title('x')
+    ax3[1].set_title('y')
+    ax3[2].set_title('z')
+    ax3[0].set_ylabel('FFT($j_{tot}$)(0) A/cm$^2$')
+    for i in range(3):
+        ax3[i].set_yscale('log')
+        ax3[i].set_xlabel('cutoff time/fs')
+        ax3[i].legend()
+    fig3.tight_layout()
+    fig3.savefig(Figure_output_filename)
+    plt.close(fig3)
+def plot_tot_diag_offdiag(database):
         fig3,ax3=plt.subplots(3,3,figsize=(16,9),dpi=200)
         for win_type in Window_type_list:
             plottime=database[(database.Window_type==win_type)]['FFT_integral_start_time_fs']
@@ -146,3 +127,4 @@ def do():
         fig3.tight_layout()
         fig3.savefig(Figure_output_filename)
         plt.close(fig3)
+        
