@@ -1,8 +1,9 @@
 ## Installation
 
-1. download this
-2. run ```export PATH="{download-path}/DMDana:$PATH"```, where {download-path} is the path where you download DMDana
-
+1. download this.
+2. run ```export PATH="{download-path}/DMDana:$PATH"```, where {download-path} is the path where you download DMDana.
+3. install relevant python libraries whenever it output lack of dependencies.
+3. Optional: to support CLI auto-completion run ```activate-global-python-argcomplete``` (after you install argcomplete by ```pip install argcomplete```)
 ## Usage
 1. run ```cd {DMD-folder}```, where ```{DMD-folder}``` is your DMD folder path
 2. run ```DMDana init``` to create ```DMDana.ini``` in this folder, ```DMDana.ini``` is the configuration file of DMDana.
