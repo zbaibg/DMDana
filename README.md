@@ -26,3 +26,13 @@ Hint: DMDana support CLI auto-completion, try press ```TAB``` button after you t
 |occup_time|This plots the occupation functions with time, namely f(E,t)  of different styles in batch.|
 |occup_deriv|This plots the E-axis maximum for the time derivative of the occupation funciton f(E,t), namely (df/dt)max_in_E_axis.|
 
+## Demo for Plotting and Data Outputted
+Using DMDana, you can easily get the following figures or data with custom setting.
+![pic](/pic-demo/j.png)
+![pic](/pic-demo/occup-time1.png)
+![pic](/pic-demo/occup-time2.png)
+![pic](/pic-demo/occup-time4.png)
+![pic](/pic-demo/occup-time3.png)
+![pic](/pic-demo/fft.png)
+![pic](/pic-demo/fft-test.png)
+![pic](/pic-demo/fft-data.png)
