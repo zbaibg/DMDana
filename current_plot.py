@@ -7,17 +7,23 @@ import matplotlib.pyplot as plt
 from constant import *
 import numpy as np
 from global_variable import config
+#Read input
 tmax=config.Input.get("tmax",-1)
+jx_data=config.jx_data
+jy_data=config.jy_data
+jz_data=config.jz_data
 if tmax==-1:
-    tmax=np.max(config.jx_data[:,0])/fs
+    tmax=np.max(jx_data[:,0])/fs
 tmin=config.Input.get("tmin",0)
 current_plot_output=config.Input.get('current_plot_output',"j.png")
+light_label=config.light_label
+only_jtot=config.only_jtot
 def do():
     #Plot Current
-    if not config.only_jtot:
+    if not only_jtot:
         fig1, ax1 = plt.subplots(3,3, figsize=(10,6),dpi=200,sharex=True)
-        fig1.suptitle('Current'+config.light_label)
-        for jtemp,jdirection,j in [(config.jx_data,'x',0),(config.jy_data,'y',1),(config.jz_data,'z',2)]:
+        fig1.suptitle('Current'+light_label)
+        for jtemp,jdirection,j in [(jx_data,'x',0),(jy_data,'y',1),(jz_data,'z',2)]:
             for i in range(3):
                 ax1[i][j].ticklabel_format(style='sci', axis='y', scilimits=(0,0))
                 ax1[i][j].yaxis.major.formatter._useMathText = True 
@@ -36,8 +42,8 @@ def do():
         plt.close(fig1)
     else:
         fig1, ax1 = plt.subplots(1,3, figsize=(10,6),dpi=200,sharex=True)
-        fig1.suptitle('Current'+config.light_label)
-        for jtemp,jdirection,j in [(config.jx_data,'x',0),(config.jy_data,'y',1),(config.jz_data,'z',2)]:
+        fig1.suptitle('Current'+light_label)
+        for jtemp,jdirection,j in [(jx_data,'x',0),(jy_data,'y',1),(jz_data,'z',2)]:
             ax1[j].ticklabel_format(style='sci', axis='y', scilimits=(0,0))
             ax1[j].yaxis.major.formatter._useMathText = True 
             ax1[0].set_ylabel('$j^{tot}(t)$ A/cm$^2$')
