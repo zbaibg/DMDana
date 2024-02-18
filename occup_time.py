@@ -76,7 +76,7 @@ class plot_occup:
                 data[:,1]=data[:,1]-data_first[:,1]
             if occup_time_plot_set_Erange:
                 #data=data[data[:,0].argsort()]
-                data=data[np.logical_and(data[:,0]>occup_time_plot_lowE,data[:,0]<occup_time_plot_highE)]
+                data=data[np.logical_and(data[:,0]>occup_time_plot_lowE/Hatree_to_eV,data[:,0]<occup_time_plot_highE/Hatree_to_eV)]
             figtemp=plot_data_function(data,time_this_file_fs)            
             temp_occupation_max_for_alldata=max(temp_occupation_max_for_alldata,np.max(data[:,1]))
             temp_occupation_min_for_alldata=min(temp_occupation_min_for_alldata,np.min(data[:,1]))
