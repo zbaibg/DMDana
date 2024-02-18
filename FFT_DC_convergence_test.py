@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 """_summary_
-This script plots the DC components of FFT results with different parameters in batch. It also output the data to text.
+This plots the change of the Direct Current component calculated by different FFT-time-range and FFT-window-functions. This aims to check FFT convergence. It could also output the analysis results to files.
 """
 import numpy as np
 import matplotlib.pyplot as plt

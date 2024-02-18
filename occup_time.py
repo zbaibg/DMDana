@@ -1,8 +1,8 @@
 #! /usr/bin/env python
 """_summary_
-This script plot the occupation functions with time, f(E,t).
-This program does not read time from file content for now. It only count the file numbers to get time. 
-So be sure that your occupation filelists include complete number of files and also occupations_t0.out
+This plots the occupation functions with time, namely f(E,t)  of different styles in batch.
+ 
+Be sure that your occupation filelists include complete number of files and also occupations_t0.out
 """
 import numpy as np
 import matplotlib as mpl

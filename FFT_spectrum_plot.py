@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 """_summary_
-This script plots FFT spectra with different parameters in batch.
+This plots FFT spectra of the DMD currents. It could also output the DC components of the current FFT-setting to files
 """
 import numpy as np
 import matplotlib.pyplot as plt
