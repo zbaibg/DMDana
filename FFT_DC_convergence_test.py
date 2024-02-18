@@ -18,7 +18,7 @@ def do():
     Figure_output_filename=config.Input['Figure_output_filename']
     Cutoff_min=config.Input.getint('Cutoff_min')#These "Cutoff" values counts the number of pieces in jx(yz)_elec_tot.out
     Cutoff_max=config.Input.getint('Cutoff_max')
-    if Cutoff_max==-1:
+    if Cutoff_max<=0:
         Cutoff_max=config.jx_data.shape[0]-1
     Cutoff_step=config.Input.getint('Cutoff_step')
     Cutoff_list= range(Cutoff_min,Cutoff_max,Cutoff_step)
