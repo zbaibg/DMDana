@@ -23,9 +23,18 @@ only_jtot=config.only_jtot
 smooth_on=config.Input.getboolean('smooth_on')
 smooth_method=config.Input.get('smooth_method')
 smooth_windowlen=config.Input.getint('smooth_windowlen')
+plot_all=config.Input.getboolean('plot_all')
+smooth_times=config.Input.getint('smooth_times')
 def do():
-    temp=plot_current()
-    temp.plot()
+    global smooth_on
+    if plot_all:
+        smooth_on=False
+        plot_current().plot()
+        smooth_on=True
+        plot_current().plot()
+    else:
+        plot_current().plot()
+
         
 class plot_current:
     def __init__(self):
@@ -58,8 +67,17 @@ class plot_current:
         #    for j in range(3):
         #        ax1[i][j].set_ylim(-self.datamax,self.datamax)
         self.fig1.tight_layout()
-        self.fig1.savefig(current_plot_output)
+        self.savefig()
         plt.close(self.fig1)
+
+    def savefig(self):
+        if not smooth_on:
+            smooth_str='off'
+        else:
+            smooth_str='on_'+smooth_method
+            if smooth_method=='flattop':
+                smooth_str+='_windowlen_%d'%smooth_windowlen
+        self.fig1.savefig("j_smooth_%s.png"%smooth_str)
         
     def plot_tot(self):
         self.fig1, ax1 = plt.subplots(1,3, figsize=(10,6),dpi=200,sharex=True)
@@ -76,18 +94,21 @@ class plot_current:
         #for i in range(3):
         #    ax1[j].set_ylim(-self.datamax,self.datamax)
         self.fig1.tight_layout()
-        self.fig1.savefig(current_plot_output)
+        self.savefig()
         plt.close(self.fig1)
         
     def plot_func(self,ax,data):
         windowlen=smooth_windowlen
         windowdata=sgl.flattop(windowlen, sym=False)
-        if smooth_on:
-            if smooth_method=='savgol':
-                data=savgol_filter(data, 500, 3)
-            elif smooth_method=='window': 
-                size=(max(len(data), len(windowdata)) - min(len(data), len(windowdata)) + 1)
-                data=np.convolve(data,windowdata,mode='valid')/np.sum(windowdata)   
-                self.timedata_cut=self.timedata[int(windowlen/2):len(self.timedata)-int(windowlen/2)+1]
+        data_used=data
+        timedata_used=self.timedata
+        for i in range(smooth_times):
+            if smooth_on:
+                if smooth_method=='savgol':
+                    data_used=savgol_filter(data_used, 500, 3)
+                    timedata_used=self.timedata
+                elif smooth_method=='flattop': 
+                    data_used=np.convolve(data_used,windowdata,mode='valid')/np.sum(windowdata)     
+                    timedata_used=self.timedata[len(self.timedata)//2-len(data_used)//2:len(self.timedata)//2+(len(data_used)+1)//2]
         #self.datamax=np.max([np.max(abs(data)),self.datamax])
-        ax.plot(self.timedata_cut, data)
+        ax.plot(timedata_used, data_used)
