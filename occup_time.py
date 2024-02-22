@@ -12,9 +12,14 @@ from global_variable import config
 #Read input
 occup_time_plot_lowE=config.Input.getfloat('occup_time_plot_lowE')
 occup_time_plot_highE=config.Input.getfloat('occup_time_plot_highE')
+occup_time_plot_lowE_conduction=config.Input.getfloat('occup_time_plot_lowE_conduction')
+occup_time_plot_highE_conduction=config.Input.getfloat('occup_time_plot_highE_conduction')
+occup_time_plot_lowE_valence=config.Input.getfloat('occup_time_plot_lowE_valence')
+occup_time_plot_highE_valence=config.Input.getfloat('occup_time_plot_highE_valence')
 occup_time_plot_set_Erange=config.Input.getboolean('occup_time_plot_set_Erange')
 plot_occupation_number_min=config.Input.getfloat('plot_occupation_number_min')
 plot_occupation_number_max=config.Input.getfloat('plot_occupation_number_max')
+plot_conduction_valence=config.Input.getboolean('plot_conduction_valence')
 Substract_initial_occupation=config.Input.getboolean('Substract_initial_occupation')
 plot_occupation_number_setlimit=config.Input.getboolean("plot_occupation_number_setlimit")
 figure_style=config.Input.get('figure_style')
@@ -131,14 +136,27 @@ class plot_occup:
         else:
             self.ax.set_ylabel('f')        
     def save_fig(self):
+        name="occup_time_Ttot%.1ffs_Step%.1ffs_%semin_%.1femax_%.1f.png"%(occup_t_tot,occup_timestep_for_selected_file_ps*1000,self.figure_style_this,occup_time_plot_lowE,occup_time_plot_highE)
         if self.Substract_initial_occupation_this:
-            self.fig.savefig('delta_occup_time_Ttot%.1ffs_Step%.1ffs_%s.png'%(occup_t_tot,occup_timestep_for_selected_file_ps*1000,self.figure_style_this), bbox_inches="tight")
-        else:
-            self.fig.savefig('occup_time_Ttot%.1ffs_Step%.1ffs_%s.png'%(occup_t_tot,occup_timestep_for_selected_file_ps*1000,self.figure_style_this), bbox_inches="tight")   
+            name="delta_"+name
+        self.fig.savefig(name, bbox_inches="tight")   
         
 def do():
+    global occup_time_plot_set_Erange,occup_time_plot_highE,occup_time_plot_lowE,occup_time_plot_highE_conduction,occup_time_plot_lowE_conduction,occup_time_plot_highE_valence,occup_time_plot_lowE_valence
     print('temperature(K): %.3d'%(temperature_au/Kelvin))
     print('mu(eV): %.3d'%(mu_au/eV))
+
+    do_sub()
+    if plot_conduction_valence:
+        occup_time_plot_set_Erange=True
+        occup_time_plot_highE=occup_time_plot_highE_conduction
+        occup_time_plot_lowE=occup_time_plot_lowE_conduction
+        do_sub()
+        occup_time_plot_highE=occup_time_plot_highE_valence
+        occup_time_plot_lowE=occup_time_plot_lowE_valence
+        do_sub()
+
+def do_sub():
     if output_all_figure_types:
         for figure_style_each in ['3D','heatmap']:
             for Substract_initial_occupation_each in [True,False]:
