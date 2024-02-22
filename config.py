@@ -34,12 +34,27 @@ class configclass:
                                 # calculations, eg. second-order finite difference
         self.funcname=funcname_in
         self.DMDparam_value=dict()
+        self.mu_au=None
+        self.temperature_au=None
         self.initiallog()#this should be done after setting global variable "funcname" 
         if self.funcname in ['FFT-DC-convergence-test','current-plot','FFT-spectrum-plot']:
             self.init_current()
         if self.funcname in ['occup-time','occup-deriv']:
             self.init_occup()
-        
+            
+    def get_mu_temperature(self):
+        with open ("ldbd_data/ldbd_size.dat") as f:
+            for line in f:
+                if "mu" in line:
+                    self.mu_au=float(line.split()[2])
+                if "# T" in line:
+                    self.temperature_au=float(line.split()[0])
+        if self.temperature_au is None:
+            raise ValueError("temperature not found in ldbd_size.dat")
+        if self.mu_au is None:
+            raise ValueError("mu not found in ldbd_size.dat")
+
+    
     def init_current(self,):
         self.config.read('DMDana.ini')
         self.Input=self.config[self.funcname]
@@ -79,6 +94,7 @@ class configclass:
         # Read all the occupations file names at once
         if glob.glob('occupations_t0.out')==[]:
             raise ValueError("Did not found occupations_t0.out")
+        self.get_mu_temperature()
         self.occup_selected_files = glob.glob('occupations_t0.out')+sorted(glob.glob('occupations-*out'))
         with open(self.occup_selected_files[1]) as f:
             firstline_this_file=f.readline()
@@ -88,6 +104,7 @@ class configclass:
             t2_fs=float(firstline_this_file.split()[12])/fs
                      
         #occup_timestep_for_all_files=self.Input.getint('timestep_for_occupation_output') #fs
+        
         occup_timestep_for_all_files=t2_fs-t1_fs #fs
         filelist_step=self.Input.getint('filelist_step') # select parts of the filelist
         self.occup_timestep_for_selected_file_fs=occup_timestep_for_all_files*filelist_step
@@ -111,7 +128,6 @@ class configclass:
             # if in the future, more file number (more than occup_maxmium_file_number_plotted_exclude_t0+2) 
             # is needed to do calculation. This should be modified.
         self.occup_t_tot=self.occup_maxmium_file_number_plotted_exclude_t0*self.occup_timestep_for_selected_file_fs#fs
-        
     def initiallog(self,):#this should be done after setting global variable "funcname" 
         repo = git.Repo(sys.path[0],search_parent_directories=True)
         sha = repo.head.object.hexsha
