@@ -74,7 +74,7 @@ class plot_current:
         if not smooth_on:
             smooth_str='off'
         else:
-            smooth_str='on_'+smooth_method
+            smooth_str='on_%s_smoothtimes_%d'%(smooth_method,smooth_times)
             if smooth_method=='flattop':
                 smooth_str+='_windowlen_%d'%smooth_windowlen
         self.fig1.savefig("j_smooth_%s.png"%smooth_str)
