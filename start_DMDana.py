@@ -11,6 +11,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="DMD post-analysis script collection")  
     subparsers = parser.add_subparsers(dest="command")
     subparsers.add_parser("init",help="initialize the DMDana.ini file if it does not exist.")
+    subparsers.add_parser("clean_output",help="clean all output of DMDana in this folder")
+    subparsers.add_parser("clean_input",help="clean DMDana.ini in this folder")
     subparsers.add_parser("FFT_DC_convergence_test", help="This plots the change of the Direct Current component calculated by different FFT-time-range and FFT-window-functions. This aims to check FFT convergence. It could also output the analysis results to files.")
     subparsers.add_parser("FFT_spectrum_plot",help="This plots FFT spectra of the DMD currents. It could also output the DC components of the current FFT-setting to files")
     subparsers.add_parser("current_plot", help="This plots the current figures")
@@ -31,7 +33,17 @@ if __name__ == "__main__":
         else:
             print("DMDana.ini already exists.")
         exit()
-        
+    if args.command == "clean_output":
+        import os
+        os.system('rm -f DMDana_*.log')
+        os.system('rm -f *.png')
+        os.system('rm -f FFT*')
+        # need to be speific about each file in the future
+        exit()    
+    if args.command == "clean_input":
+        import os
+        os.system('rm -f DMDana.ini')
+        exit()  
     #other commands    
     from config import configclass
     import logging
