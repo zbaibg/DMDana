@@ -10,7 +10,7 @@ import logging
 """_summary_
 1. Import common options from configuration files.
 """
-class configclass: 
+class config_base(object): 
     def __init__(self,funcname_in):
         self.logfile=None
         self.config = configparser.ConfigParser(inline_comment_prefixes="#")
@@ -18,32 +18,20 @@ class configclass:
             self.config.read([sys.path[0]+'/DMDana_default.ini','./DMDana.ini','DMDana.ini'])
         else:
             raise ValueError('DMDana.ini does not exist. Please run "DMDana init" to initialize it.')
-
-        self.Input=None
-        self.only_jtot=None
-        self.jx_data=None
-        self.jy_data=None
-        self.jz_data=None
-        self.light_label=None
-        self.occup_timestep_for_selected_file_fs=None
-        self.occup_timestep_for_selected_file_ps=None
-        self.occup_t_tot=None # maximum time to plot
-        self.occup_maxmium_file_number_plotted_exclude_t0=None # maximum number of files to plot exclude t0
-        self.occup_selected_files=None #The filelists to be dealt with. Note: its length might be larger than 
-                                # occup_maxmium_file_number_plotted_exclude_t0+1 for later possible 
-                                # calculations, eg. second-order finite difference
         self.funcname=funcname_in
         self.DMDparam_value=dict()
         self.mu_au=None
         self.temperature_au=None
-        self.initiallog()#this should be done after setting global variable "funcname" 
-        if self.funcname in ['FFT-DC-convergence-test','current-plot','FFT-spectrum-plot']:
-            self.init_current()
-        if self.funcname in ['occup-time','occup-deriv']:
-            self.init_occup()
-            
-    def get_mu_temperature(self):
-        with open ("ldbd_data/ldbd_size.dat") as f:
+        self.Input=self.config[self.funcname]
+        self.initiallog(self.funcname)
+    def check_and_get_path(self, filepath):
+        if(not os.path.isfile(filepath)):
+            raise ValueError("%s does not exist."%filepath)
+        else:
+            return filepath
+    def get_mu_temperature(self,path='.'):
+        filepath = self.check_and_get_path(path+'/ldbd_data/ldbd_size.dat')
+        with open (filepath) as f:
             for line in f:
                 if "mu" in line:
                     self.mu_au=float(line.split()[2])
@@ -53,28 +41,9 @@ class configclass:
             raise ValueError("temperature not found in ldbd_size.dat")
         if self.mu_au is None:
             raise ValueError("mu not found in ldbd_size.dat")
-
-    
-    def init_current(self,):
-        self.config.read('DMDana.ini')
-        self.Input=self.config[self.funcname]
-        self.only_jtot=self.Input.getboolean('only_jtot')
-        if self.only_jtot==None:
-            raise ValueError('only_jtot is not correct setted.')
-        self.jx_data = np.loadtxt(self.Input['jx_data'],skiprows=1)
-        self.jy_data = np.loadtxt(self.Input['jy_data'],skiprows=1)
-        self.jz_data = np.loadtxt(self.Input['jz_data'],skiprows=1)
-        if not (len(self.jx_data)==len(self.jy_data)==len(self.jz_data)):
-            raise ValueError('The line number in jx_data jy_data jz_data are not the same. Please deal with your data.' )
-        self.read_DMD_param()
-        pumpPoltype=self.DMDparam_value['pumpPoltype']
-        pumpA0=float(self.DMDparam_value['pumpA0'])
-        pumpE=float(self.DMDparam_value['pumpE'])
-        self.light_label=' '+'for light of %s Polarization, %.2e a.u Amplitude, and %.2e eV Energy'%(pumpPoltype,pumpA0,pumpE)
-    def read_DMD_param(self):
-        if(not os.path.isfile("param.in")):
-            raise ValueError("param.in does not exist.")
-        with open("param.in") as f:
+    def read_DMD_param(self,path='.'):
+        filepath = self.check_and_get_path(path+'/param.in')
+        with open(filepath) as f:
             for line in f:
                 self.process_DMD_param_line(line)
     def process_DMD_param_line(self, line):
@@ -88,13 +57,74 @@ class configclass:
                 self.DMDparam_value[list_for_this_line[0]]=list_for_this_line[2]
             else:
                 raise ValueError("param.in is not correctly setted.")       
-    def init_occup(self,):
-        self.config.read('DMDana.ini')
-        self.Input=self.config[self.funcname]
+    def initiallog(self,funcname):#this should be done after setting global variable "funcname" 
+        repo = git.Repo(sys.path[0],search_parent_directories=True)
+        sha = repo.head.object.hexsha
+        logging.info("============DMDana============")
+        logging.info("Git hash %s (%s)"%(sha[:7],sha))
+        logging.info("Submodule: %s"%funcname)
+        logging.info("Start time: %s"%datetime.datetime.now())
+        logging.info("===Configuration Parameter===")
+        paramdict=dict((self.config.items(funcname)))
+        for i in paramdict:
+            logging.info("%-35s"%i+':\t'+paramdict[i]+'')
+        logging.info("===Initialization finished===")
+        
+class config_current(config_base):
+    def __init__(self, funcname_in):
+        super().__init__(funcname_in)
+        self.only_jtot=None
+        self.jx_data=None
+        self.jy_data=None
+        self.jz_data=None
+        self.jx_data_path=None
+        self.jy_data_path=None
+        self.jz_data_path=None
+        self.jfolders=[i.strip() for i in self.Input['folders'].split(',')] 
+        self.folder_number=len(self.jfolders)
+        self.loadcurrent(0)# load the first folder by difault
+        self.read_DMD_param(self.jfolders[0])# Use the param.in in the first folder
+        pumpPoltype=self.DMDparam_value['pumpPoltype']
+        pumpA0=float(self.DMDparam_value['pumpA0'])
+        pumpE=float(self.DMDparam_value['pumpE'])
+        self.light_label=' '+'for light of %s Polarization, %.2e a.u Amplitude, and %.2e eV Energy'%(pumpPoltype,pumpA0,pumpE)
+        
+    # read data in the i_th folder provided by "folders" parameter in DMDana.ini
+    def loadcurrent(self,i):
+        if i>=len(self.jfolders) or i<-len(self.jfolders):
+            raise ValueError("i is out of range.")
+        folder=self.jfolders[i]
+        self.jx_data_path=folder+"/jx_elec_tot.out"
+        self.jy_data_path=folder+"/jy_elec_tot.out"
+        self.jz_data_path=folder+"/jz_elec_tot.out"
+        #self.config.read('DMDana.ini')
+        #self.Input=self.config[self.funcname]
+        self.only_jtot=self.Input.getboolean('only_jtot')
+        if self.only_jtot==None:
+            raise ValueError('only_jtot is not correct setted.')
+        self.jx_data = np.loadtxt(self.jx_data_path,skiprows=1)
+        self.jy_data = np.loadtxt(self.jy_data_path,skiprows=1)
+        self.jz_data = np.loadtxt(self.jz_data_path,skiprows=1)
+        if not (len(self.jx_data)==len(self.jy_data)==len(self.jz_data)):
+            raise ValueError('The line number in jx_data jy_data jz_data are not the same. Please deal with your data.' )
+
+        
+class config_occup(config_base):
+    def __init__(self, funcname_in):
+        super().__init__(funcname_in)
+        self.occup_timestep_for_selected_file_fs=None
+        self.occup_timestep_for_selected_file_ps=None
+        self.occup_t_tot=None # maximum time to plot
+        self.occup_maxmium_file_number_plotted_exclude_t0=None # maximum number of files to plot exclude t0
+        self.occup_selected_files=None #The filelists to be dealt with. Note: its length might be larger than 
+                                # occup_maxmium_file_number_plotted_exclude_t0+1 for later possible 
+                                # calculations, eg. second-order finite difference
+        #self.config.read('DMDana.ini')
+        #self.Input=self.config[self.funcname]
         # Read all the occupations file names at once
         if glob.glob('occupations_t0.out')==[]:
             raise ValueError("Did not found occupations_t0.out")
-        self.get_mu_temperature()
+        self.get_mu_temperature(path='.')
         self.occup_selected_files = glob.glob('occupations_t0.out')+sorted(glob.glob('occupations-*out'))
         with open(self.occup_selected_files[1]) as f:
             firstline_this_file=f.readline()
@@ -128,16 +158,8 @@ class configclass:
             # if in the future, more file number (more than occup_maxmium_file_number_plotted_exclude_t0+2) 
             # is needed to do calculation. This should be modified.
         self.occup_t_tot=self.occup_maxmium_file_number_plotted_exclude_t0*self.occup_timestep_for_selected_file_fs#fs
-    def initiallog(self,):#this should be done after setting global variable "funcname" 
-        repo = git.Repo(sys.path[0],search_parent_directories=True)
-        sha = repo.head.object.hexsha
-        logging.info("============DMDana============")
-        logging.info("Git hash %s (%s)"%(sha[:7],sha))
-        logging.info("Submodule: %s"%self.funcname)
-        logging.info("Start time: %s"%datetime.datetime.now())
-        logging.info("===Configuration Parameter===")
-        paramdict=dict((self.config.items(self.funcname)))
-        for i in paramdict:
-            logging.info("%-35s"%i+':\t'+paramdict[i]+'')
-        logging.info("===Initialization finished===")
-                            
+def autoconfig(funcname):
+    if funcname in ['FFT-DC-convergence-test','current-plot','FFT-spectrum-plot']:
+        return config_current(funcname)
+    if funcname in ['occup-time','occup-deriv']:
+        return config_occup(funcname)

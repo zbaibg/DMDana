@@ -45,7 +45,7 @@ if __name__ == "__main__":
         os.system('rm -f DMDana.ini')
         exit()  
     #other commands    
-    from config import configclass
+    from config import autoconfig
     import logging
     import global_variable    
     funcname=args.command
@@ -55,7 +55,7 @@ if __name__ == "__main__":
         format='%(asctime)s - %(levelname)s - %(message)s',
         datefmt='%m/%d/%Y %I:%M:%S %p',
         filemode='w',)
-    global_variable.config=configclass(funcname.replace('_','-'))
+    global_variable.config=autoconfig(funcname.replace('_','-'))
     if funcname == "FFT_DC_convergence_test":
         import FFT_DC_convergence_test
         FFT_DC_convergence_test.do()

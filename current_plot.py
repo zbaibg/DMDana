@@ -9,14 +9,14 @@ from constant import *
 import numpy as np
 from global_variable import config
 #Read input
+jx_data0=config.jx_data
+jy_data0=config.jy_data
+jz_data0=config.jz_data
 tmax=config.Input.getint("t_max")
-jx_data=config.jx_data
-jy_data=config.jy_data
-jz_data=config.jz_data
 if tmax==-1:
-    tmax=np.max(jx_data[:,0])/fs
+    tmax=np.max(jx_data0[:,0])/fs
 tmin=config.Input.getint("t_min")
-total_time=tmax-tmin 
+total_time=tmax-tmin
 current_plot_output=config.Input.get('current_plot_output')
 light_label=config.light_label
 only_jtot=config.only_jtot
@@ -34,42 +34,47 @@ def do():
         plot_current().plot()
     else:
         plot_current().plot()
-
-        
 class plot_current:
     def __init__(self):
         self.fig1=None
-        self.timedata=jx_data[:,0]/fs
+        self.timedata=None
         self.datamax=0
     def plot(self):
         if only_jtot:
-            self.plot_tot()
+            self.fig1, self.ax = plt.subplots(1,3, figsize=(10,6),dpi=200,sharex=True)
         else:
-            self.plot_tot_diag_offdiag()
-    def plot_tot_diag_offdiag(self):
-        self.fig1, ax1 = plt.subplots(3,3, figsize=(10,6),dpi=200,sharex=True)
-        self.fig1.suptitle('Current'+light_label)
-        for jtemp,jdirection,j in [(jx_data,'x',0),(jy_data,'y',1),(jz_data,'z',2)]:
-            for i in range(3):
-                ax1[i][j].ticklabel_format(style='sci', axis='y', scilimits=(0,0))
-                ax1[i][j].yaxis.major.formatter._useMathText = True 
-                ax1[i][j].set_xlim(tmin-0.05*total_time,tmax+0.05*total_time)
-                
-            ax1[0][0].set_ylabel('$j^{tot}(t)$ A/cm$^2$')
-            ax1[1][0].set_ylabel('$j^{diag}(t)$ A/cm$^2$')
-            ax1[2][0].set_ylabel('$j^{off-diag}(t)$ A/cm$^2$')
-            ax1[0][j].set_title(jdirection)
-            ax1[-1][j].set_xlabel('t (fs)')  
-            self.plot_func(ax1[0][j],jtemp[:,1])#, label='$j'+jdirection+'^{tot}(t)$    polarization = '+light_label)
-            self.plot_func(ax1[1][j],jtemp[:,2])#, label=r'$j'+jdirection+'^{diag}(t)$    polarization = '+light_label)
-            self.plot_func(ax1[2][j],jtemp[:,3])#, label=r'$j'+jdirection+'^{off-diag}(t)$    polarization = '+light_label)
-        #for i in range(3):
-        #    for j in range(3):
-        #        ax1[i][j].set_ylim(-self.datamax,self.datamax)
+            self.fig1, self.ax = plt.subplots(3,3, figsize=(10,6),dpi=200,sharex=True)
+        for folder_i in range(config.folder_number):
+            config.loadcurrent(folder_i)
+            self.jx_data=config.jx_data
+            self.jy_data=config.jy_data
+            self.jz_data=config.jz_data
+            self.timedata=self.jx_data[:,0]/fs
+            if only_jtot:
+                self.plot_tot()
+            else:
+                self.plot_tot_diag_offdiag()
         self.fig1.tight_layout()
         self.savefig()
         plt.close(self.fig1)
-
+    def plot_tot_diag_offdiag(self):
+        self.fig1.suptitle('Current'+light_label)
+        for jtemp,jdirection,j in [(self.jx_data,'x',0),(self.jy_data,'y',1),(self.jz_data,'z',2)]:
+            for i in range(3):
+                self.ax[i][j].ticklabel_format(style='sci', axis='y', scilimits=(0,0))
+                self.ax[i][j].yaxis.major.formatter._useMathText = True 
+                self.ax[i][j].set_xlim(tmin-0.05*total_time,tmax+0.05*total_time)
+            self.ax[0][0].set_ylabel('$j^{tot}(t)$ A/cm$^2$')
+            self.ax[1][0].set_ylabel('$j^{diag}(t)$ A/cm$^2$')
+            self.ax[2][0].set_ylabel('$j^{off-diag}(t)$ A/cm$^2$')
+            self.ax[0][j].set_title(jdirection)
+            self.ax[-1][j].set_xlabel('t (fs)')  
+            self.plot_func(self.ax[0][j],jtemp[:,1])#, label='$j'+jdirection+'^{tot}(t)$    polarization = '+light_label)
+            self.plot_func(self.ax[1][j],jtemp[:,2])#, label=r'$j'+jdirection+'^{diag}(t)$    polarization = '+light_label)
+            self.plot_func(self.ax[2][j],jtemp[:,3])#, label=r'$j'+jdirection+'^{off-diag}(t)$    polarization = '+light_label)
+        #for i in range(3):
+        #    for j in range(3):
+        #        self.ax[i][j].set_ylim(-self.datamax,self.datamax)
     def savefig(self):
         if not smooth_on:
             smooth_str='off'
@@ -78,25 +83,18 @@ class plot_current:
             if smooth_method=='flattop':
                 smooth_str+='_windowlen_%d'%smooth_windowlen
         self.fig1.savefig("j_smooth_%s.png"%smooth_str)
-        
     def plot_tot(self):
-        self.fig1, ax1 = plt.subplots(1,3, figsize=(10,6),dpi=200,sharex=True)
         self.fig1.suptitle('Current'+light_label)
-        for jtemp,jdirection,j in [(jx_data,'x',0),(jy_data,'y',1),(jz_data,'z',2)]:
-            ax1[j].ticklabel_format(style='sci', axis='y', scilimits=(0,0))
-            ax1[j].yaxis.major.formatter._useMathText = True 
-            ax1[0].set_ylabel('$j^{tot}(t)$ A/cm$^2$')
-            ax1[j].set_title(jdirection)
-            ax1[j].set_xlabel('t (fs)')  
-            self.plot_func(ax1[j],jtemp[:,1])#, label='$j'+jdirection+'^{tot}(t)$    polarization = '+light_label)
-            ax1[j].set_xlim(tmin-0.05*total_time,tmax+0.05*total_time)
-            
+        for jtemp,jdirection,j in [(self.jx_data,'x',0),(self.jy_data,'y',1),(self.jz_data,'z',2)]:
+            self.ax[j].ticklabel_format(style='sci', axis='y', scilimits=(0,0))
+            self.ax[j].yaxis.major.formatter._useMathText = True 
+            self.ax[0].set_ylabel('$j^{tot}(t)$ A/cm$^2$')
+            self.ax[j].set_title(jdirection)
+            self.ax[j].set_xlabel('t (fs)')  
+            self.plot_func(self.ax[j],jtemp[:,1])#, label='$j'+jdirection+'^{tot}(t)$    polarization = '+light_label)
+            self.ax[j].set_xlim(tmin-0.05*total_time,tmax+0.05*total_time)
         #for i in range(3):
-        #    ax1[j].set_ylim(-self.datamax,self.datamax)
-        self.fig1.tight_layout()
-        self.savefig()
-        plt.close(self.fig1)
-        
+        #    self.ax[j].set_ylim(-self.datamax,self.datamax)
     def plot_func(self,ax,data):
         windowlen=smooth_windowlen
         windowdata=sgl.flattop(windowlen, sym=False)
