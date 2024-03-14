@@ -44,7 +44,7 @@ class plot_current:
         self.fig1=None
         self.timedata=None
         self.datamax=0
-        self.mintime_plot=self.param.tmin-0.05*self.param.total_time,
+        self.mintime_plot=self.param.tmin-0.05*self.param.total_time
         self.maxtime_plot=self.param.tmax+0.05*self.param.total_time
     def plot(self):
         if self.param.only_jtot:
