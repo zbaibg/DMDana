@@ -43,6 +43,7 @@ class config_base(object):
         self.jfolders=[i.strip() for i in self.Input['folders'].split(',')] 
         self.folder_number=len(self.jfolders)
         self.data_reader=data_reader()
+        self.read_DMD_param(self.jfolders[0])# Use the param.in in the first folder
     def check_and_get_path(self, filepath):
         if(not os.path.isfile(filepath)):
             raise ValueError("%s does not exist."%filepath)
@@ -109,7 +110,6 @@ class config_current(config_base):
         self.jy_data_path=None
         self.jz_data_path=None
         self.loadcurrent_ith(0)# load the first folder by difault
-        self.read_DMD_param(self.jfolders[0])# Use the param.in in the first folder
         pumpPoltype=self.DMDparam_value['pumpPoltype']
         pumpA0=float(self.DMDparam_value['pumpA0'])
         pumpE=float(self.DMDparam_value['pumpE'])
