@@ -44,6 +44,8 @@ class plot_current:
         self.fig1=None
         self.timedata=None
         self.datamax=0
+        self.mintime_plot=self.param.tmin-0.05*self.param.total_time,
+        self.maxtime_plot=self.param.tmax+0.05*self.param.total_time
     def plot(self):
         if self.param.only_jtot:
             self.fig1, self.ax = plt.subplots(1,3, figsize=(10,6),dpi=200,sharex=True)
@@ -68,7 +70,7 @@ class plot_current:
             for i in range(3):
                 self.ax[i][j].ticklabel_format(style='sci', axis='y', scilimits=(0,0))
                 self.ax[i][j].yaxis.major.formatter._useMathText = True 
-                self.ax[i][j].set_xlim(self.param.tmin-0.05*self.param.total_time,self.param.tmax+0.05*self.param.total_time)
+                self.ax[i][j].set_xlim(self.mintime_plot,self.maxtime_plot)
             self.ax[0][0].set_ylabel('$j^{tot}(t)$ A/cm$^2$')
             self.ax[1][0].set_ylabel('$j^{diag}(t)$ A/cm$^2$')
             self.ax[2][0].set_ylabel('$j^{off-diag}(t)$ A/cm$^2$')
@@ -97,7 +99,7 @@ class plot_current:
             self.ax[j].set_title(jdirection)
             self.ax[j].set_xlabel('t (fs)')  
             self.plot_func(self.ax[j],jtemp[:,1])#, label='$j'+jdirection+'^{tot}(t)$    polarization = '+light_label)
-            self.ax[j].set_xlim(self.param.tmin-0.05*self.param.total_time,self.param.tmax+0.05*self.param.total_time)
+            self.ax[j].set_xlim(self.mintime_plot,self.maxtime_plot)
         #for i in range(3):
         #    self.ax[j].set_ylim(-self.datamax,self.datamax)
     def plot_func(self,ax,data):
@@ -114,4 +116,5 @@ class plot_current:
                     data_used=np.convolve(data_used,windowdata,mode='valid')/np.sum(windowdata)     
                     timedata_used=self.timedata[len(self.timedata)//2-len(data_used)//2:len(self.timedata)//2+(len(data_used)+1)//2]
         #self.datamax=np.max([np.max(abs(data)),self.datamax])
-        ax.plot(timedata_used, data_used)
+        time_range_mask=np.logical_and(timedata_used>self.mintime_plot,timedata_used<self.maxtime_plot)
+        ax.plot(timedata_used[time_range_mask], data_used[time_range_mask])
