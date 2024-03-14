@@ -55,7 +55,8 @@ if __name__ == "__main__":
         format='%(asctime)s - %(levelname)s - %(message)s',
         datefmt='%m/%d/%Y %I:%M:%S %p',
         filemode='w',)
-    global_variable.config=autoconfig(funcname.replace('_','-'))
+    config=autoconfig(funcname.replace('_','-'))
+    global_variable.config=config
     if funcname == "FFT_DC_convergence_test":
         import FFT_DC_convergence_test
         FFT_DC_convergence_test.do()
@@ -64,7 +65,7 @@ if __name__ == "__main__":
         FFT_spectrum_plot.do()
     elif funcname == "current_plot":
         import current_plot
-        current_plot.do()
+        current_plot.do(config)
     elif funcname == "occup_deriv":
         import occup_deriv
         occup_deriv.do()

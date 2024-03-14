@@ -143,8 +143,8 @@ class plot_occup:
         
 def do():
     global occup_time_plot_set_Erange,occup_time_plot_highE,occup_time_plot_lowE,occup_time_plot_highE_conduction,occup_time_plot_lowE_conduction,occup_time_plot_highE_valence,occup_time_plot_lowE_valence
-    print('temperature(K): %.3d'%(temperature_au/Kelvin))
-    print('mu(eV): %.3d'%(mu_au/eV))
+    print('temperature(K): %.3e'%(temperature_au/Kelvin))
+    print('mu(eV): %.3e'%(mu_au/eV))
 
     do_sub()
     if plot_conduction_valence:

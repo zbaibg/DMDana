@@ -10,20 +10,39 @@ import logging
 """_summary_
 1. Import common options from configuration files.
 """
+class data_reader(object):
+    def __init__(self):
+        self.jx_data=None
+        self.jy_data=None
+        self.jz_data=None
+    def read_current_file(self,folder):
+        jxpath=folder+"/jx_elec_tot.out"
+        jypath=folder+"/jy_elec_tot.out"
+        jzpath=folder+"/jz_elec_tot.out"
+        self.jx_data=np.loadtxt(jxpath,skiprows=1)
+        self.jy_data=np.loadtxt(jypath,skiprows=1)
+        self.jz_data=np.loadtxt(jzpath,skiprows=1)
+
 class config_base(object): 
-    def __init__(self,funcname_in):
+    def __init__(self,funcname_in,param_path='./DMDana.ini',putlog=True):
+        self.libpath='/'.join(__file__.split('/')[0:-1])
         self.logfile=None
         self.config = configparser.ConfigParser(inline_comment_prefixes="#")
-        if (os.path.isfile('DMDana.ini')):
-            self.config.read([sys.path[0]+'/DMDana_default.ini','./DMDana.ini','DMDana.ini'])
+        if (os.path.isfile(param_path)):
+            default_ini=self.check_and_get_path(self.libpath+'/DMDana_default.ini')
+            self.config.read([default_ini,param_path])
         else:
-            raise ValueError('DMDana.ini does not exist. Please run "DMDana init" to initialize it.')
+            raise ValueError('%s not exist. Please run "DMDana init" to initialize it.'%param_path)
         self.funcname=funcname_in
         self.DMDparam_value=dict()
         self.mu_au=None
         self.temperature_au=None
         self.Input=self.config[self.funcname]
-        self.initiallog(self.funcname)
+        if putlog==True:
+            self.initiallog(self.funcname)
+        self.jfolders=[i.strip() for i in self.Input['folders'].split(',')] 
+        self.folder_number=len(self.jfolders)
+        self.data_reader=data_reader()
     def check_and_get_path(self, filepath):
         if(not os.path.isfile(filepath)):
             raise ValueError("%s does not exist."%filepath)
@@ -41,6 +60,15 @@ class config_base(object):
             raise ValueError("temperature not found in ldbd_size.dat")
         if self.mu_au is None:
             raise ValueError("mu not found in ldbd_size.dat")
+        if 'mu' in self.DMDparam_value:
+            self.mu_au=float(self.DMDparam_value['mu'])/Hatree_to_eV
+        if 'carrier_density' in self.DMDparam_value:
+            if float(self.DMDparam_value['carrier_density'])!=0:
+                assert os.path.isfile('out'), "out file not found(for determine mu from non-zero carrier_density)"
+                with open('out') as f:
+                    for line in f:
+                        if "for given electron density" in line:
+                            self.mu_au=float(line.split()[5])
     def read_DMD_param(self,path='.'):
         filepath = self.check_and_get_path(path+'/param.in')
         with open(filepath) as f:
@@ -71,8 +99,8 @@ class config_base(object):
         logging.info("===Initialization finished===")
         
 class config_current(config_base):
-    def __init__(self, funcname_in):
-        super().__init__(funcname_in)
+    def __init__(self, funcname_in,param_path='./DMDana.ini',putlog=True):
+        super().__init__(funcname_in,param_path,putlog)
         self.only_jtot=None
         self.jx_data=None
         self.jy_data=None
@@ -80,9 +108,7 @@ class config_current(config_base):
         self.jx_data_path=None
         self.jy_data_path=None
         self.jz_data_path=None
-        self.jfolders=[i.strip() for i in self.Input['folders'].split(',')] 
-        self.folder_number=len(self.jfolders)
-        self.loadcurrent(0)# load the first folder by difault
+        self.loadcurrent_ith(0)# load the first folder by difault
         self.read_DMD_param(self.jfolders[0])# Use the param.in in the first folder
         pumpPoltype=self.DMDparam_value['pumpPoltype']
         pumpA0=float(self.DMDparam_value['pumpA0'])
@@ -90,28 +116,27 @@ class config_current(config_base):
         self.light_label=' '+'for light of %s Polarization, %.2e a.u Amplitude, and %.2e eV Energy'%(pumpPoltype,pumpA0,pumpE)
         
     # read data in the i_th folder provided by "folders" parameter in DMDana.ini
-    def loadcurrent(self,i):
+    def loadcurrent_ith(self,i):
         if i>=len(self.jfolders) or i<-len(self.jfolders):
             raise ValueError("i is out of range.")
         folder=self.jfolders[i]
-        self.jx_data_path=folder+"/jx_elec_tot.out"
-        self.jy_data_path=folder+"/jy_elec_tot.out"
-        self.jz_data_path=folder+"/jz_elec_tot.out"
+        self.data_reader.read_current_file(folder)
         #self.config.read('DMDana.ini')
         #self.Input=self.config[self.funcname]
         self.only_jtot=self.Input.getboolean('only_jtot')
         if self.only_jtot==None:
             raise ValueError('only_jtot is not correct setted.')
-        self.jx_data = np.loadtxt(self.jx_data_path,skiprows=1)
-        self.jy_data = np.loadtxt(self.jy_data_path,skiprows=1)
-        self.jz_data = np.loadtxt(self.jz_data_path,skiprows=1)
+        self.jx_data = self.data_reader.jx_data
+        self.jy_data = self.data_reader.jy_data
+        self.jz_data = self.data_reader.jz_data
         if not (len(self.jx_data)==len(self.jy_data)==len(self.jz_data)):
             raise ValueError('The line number in jx_data jy_data jz_data are not the same. Please deal with your data.' )
 
+
         
 class config_occup(config_base):
-    def __init__(self, funcname_in):
-        super().__init__(funcname_in)
+    def __init__(self, funcname_in,param_path='./DMDana.ini',putlog=True):
+        super().__init__(funcname_in,param_path,putlog)
         self.occup_timestep_for_selected_file_fs=None
         self.occup_timestep_for_selected_file_ps=None
         self.occup_t_tot=None # maximum time to plot
