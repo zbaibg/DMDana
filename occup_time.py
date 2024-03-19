@@ -9,6 +9,7 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 from constant import *
 from global_variable import config
+from scipy.optimize import curve_fit
 #Read input
 occup_time_plot_lowE=config.Input.getfloat('occup_time_plot_lowE')
 occup_time_plot_highE=config.Input.getfloat('occup_time_plot_highE')
@@ -22,6 +23,10 @@ plot_occupation_number_max=config.Input.getfloat('plot_occupation_number_max')
 plot_conduction_valence=config.Input.getboolean('plot_conduction_valence')
 Substract_initial_occupation=config.Input.getboolean('Substract_initial_occupation')
 plot_occupation_number_setlimit=config.Input.getboolean("plot_occupation_number_setlimit")
+fit_Boltzmann=config.Input.getboolean('fit_Boltzmann')
+fit_Boltzmann_initial_guess_mu=config.Input.getfloat('fit_Boltzmann_initial_guess_mu')
+fit_Boltzmann_initial_guess_mu_auto=config.Input.getboolean('fit_Boltzmann_initial_guess_mu_auto')
+fit_Boltzmann_initial_guess_T=config.Input.getfloat('fit_Boltzmann_initial_guess_T')
 figure_style=config.Input.get('figure_style')
 output_all_figure_types=config.Input.getboolean('output_all_figure_types')
 occup_selected_files=config.occup_selected_files
@@ -33,7 +38,8 @@ figsize=(12, 10)#Width, height in inches.
 dpi=100.0#The resolution of the figure in dots-per-inch.
 mu_au=config.mu_au
 temperature_au=config.temperature_au
-
+if fit_Boltzmann_initial_guess_mu_auto:
+    fit_Boltzmann_initial_guess_mu=mu_au/eV
 class plot_occup:
     def __init__(self,figure_style_this,Substract_initial_occupation_this):
         self.figure_style_this=figure_style_this #3D or heatmap
@@ -86,6 +92,8 @@ class plot_occup:
         if occup_time_plot_set_Erange:
             #data=data[data[:,0].argsort()]
             data=data[np.logical_and(data[:,0]>occup_time_plot_lowE/Hatree_to_eV,data[:,0]<occup_time_plot_highE/Hatree_to_eV)]
+        if fit_Boltzmann and occup_time_plot_lowE>=0 and self.Substract_initial_occupation_this==False:
+            self.Boltzmann_fit_and_plot(data,time_this_file_fs)
         self.figtemp=self.plot_data_function(data,time_this_file_fs)            
         self.occupation_max_for_alldata=max(self.occupation_max_for_alldata,np.max(data[:,1]))
         self.occupation_min_for_alldata=min(self.occupation_min_for_alldata,np.min(data[:,1]))
@@ -101,14 +109,29 @@ class plot_occup:
         for file in occup_selected_files:
             time_this_file_fs,data=self.read_occup_file(file)
             if time_this_file_fs>occup_t_tot:
-                break
+                break            
             self.plot_one_file(time_this_file_fs,data)
+    def Boltzmann_fit_and_plot(self,data,time_this_file_fs):
+        popt,pcov=curve_fit(Bolzmann,data[:,0]*Hatree_to_eV,data[:,1],p0=[fit_Boltzmann_initial_guess_mu,fit_Boltzmann_initial_guess_T])
+        print("Boltzmann Distribution t(fs) %.3e mu(eV) %.3e T(K) %.3e"%(time_this_file_fs,popt[0],popt[1]))
+        data_fit=np.zeros((1000,2))
+        data_fit[:,0]=np.linspace(occup_time_plot_lowE/Hatree_to_eV,occup_time_plot_highE/Hatree_to_eV,1000)
+        data_fit[:,1]=Bolzmann(data_fit[:,0]*Hatree_to_eV,*popt)
+        self.plot_data_function(data_fit,time_this_file_fs,mode='scatter') 
 
-    def plot_data_func_3D(self,data,time_this_file_fs):
-        return self.ax.scatter(data[:,0]*Hatree_to_eV, data[:,1], zs=time_this_file_fs/1000, zdir='y',c=[time_this_file_fs/1000]*data.shape[0],cmap=cmap, vmin=0,vmax=occup_t_tot/1000)
-    
-    def plot_data_func_heatmap(self,data,time_this_file_fs):
-        return self.ax.scatter(data[:,0]*Hatree_to_eV, data[:,1], c=[time_this_file_fs/1000]*data.shape[0],cmap=cmap, vmin=0,vmax=occup_t_tot/1000)   
+    def plot_data_func_3D(self,data,time_this_file_fs,mode='scatter'):
+        plot_param={'xs':data[:,0]*Hatree_to_eV,"ys":data[:,1], "zs":time_this_file_fs/1000, "zdir":'y',"c":[time_this_file_fs/1000]*data.shape[0],"cmap":cmap, "vmin":0,"vmax":occup_t_tot/1000}
+        if mode=='scatter':
+            return self.ax.scatter(**plot_param)
+        elif mode=='plot':
+            pass # not implemented yet
+        
+    def plot_data_func_heatmap(self,data,time_this_file_fs,mode='scatter'):
+        plot_param={"x":data[:,0]*Hatree_to_eV, "y":data[:,1], "c":[time_this_file_fs/1000]*data.shape[0],"cmap":cmap, "vmin":0,"vmax":occup_t_tot/1000}
+        if mode=='scatter':
+            return self.ax.scatter(**plot_param)
+        elif mode=='plot':
+            pass # not implemented yet
 
     def plot_post_processing_3D_special(self):
         self.ax.set_ylim(0, occup_t_tot/1000)
@@ -165,3 +188,7 @@ def do_sub():
     else:
         temp=plot_occup(figure_style,Substract_initial_occupation)
         temp.do()
+
+#E mu in eV, T in Kelvin
+def Bolzmann(E,mu,T):
+    return np.exp(-(E-mu)*eV/(T*Kelvin))
