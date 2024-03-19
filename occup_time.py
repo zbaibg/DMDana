@@ -27,6 +27,7 @@ fit_Boltzmann=config.Input.getboolean('fit_Boltzmann')
 fit_Boltzmann_initial_guess_mu=config.Input.getfloat('fit_Boltzmann_initial_guess_mu')
 fit_Boltzmann_initial_guess_mu_auto=config.Input.getboolean('fit_Boltzmann_initial_guess_mu_auto')
 fit_Boltzmann_initial_guess_T=config.Input.getfloat('fit_Boltzmann_initial_guess_T')
+fit_Boltzmann_initial_guess_T_auto=config.Input.getboolean('fit_Boltzmann_initial_guess_T_auto')
 figure_style=config.Input.get('figure_style')
 output_all_figure_types=config.Input.getboolean('output_all_figure_types')
 occup_selected_files=config.occup_selected_files
@@ -40,6 +41,8 @@ mu_au=config.mu_au
 temperature_au=config.temperature_au
 if fit_Boltzmann_initial_guess_mu_auto:
     fit_Boltzmann_initial_guess_mu=mu_au/eV
+if fit_Boltzmann_initial_guess_T_auto:
+    fit_Boltzmann_initial_guess_T=temperature_au/Kelvin
 class plot_occup:
     def __init__(self,figure_style_this,Substract_initial_occupation_this):
         self.figure_style_this=figure_style_this #3D or heatmap
