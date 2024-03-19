@@ -54,7 +54,7 @@ if __name__ == "__main__":
         filename='DMDana_'+funcname+'.log',
         format='%(asctime)s - %(levelname)s - %(message)s',
         datefmt='%m/%d/%Y %I:%M:%S %p',
-        filemode='w',)
+        filemode='a',)
     config=autoconfig(funcname.replace('_','-'))
     global_variable.config=config
     if funcname == "FFT_DC_convergence_test":

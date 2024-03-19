@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 from constant import *
 from global_variable import config
 from scipy.optimize import curve_fit
+import logging
 #Read input
 occup_time_plot_lowE=config.Input.getfloat('occup_time_plot_lowE')
 occup_time_plot_highE=config.Input.getfloat('occup_time_plot_highE')
@@ -116,7 +117,7 @@ class plot_occup:
             self.plot_one_file(time_this_file_fs,data)
     def Boltzmann_fit_and_plot(self,data,time_this_file_fs):
         popt,pcov=curve_fit(Bolzmann,data[:,0]*Hatree_to_eV,data[:,1],p0=[fit_Boltzmann_initial_guess_mu,fit_Boltzmann_initial_guess_T])
-        print("Boltzmann Distribution t(fs) %.3e mu(eV) %.3e T(K) %.3e"%(time_this_file_fs,popt[0],popt[1]))
+        logging.info("Boltzmann Distribution t(fs) %.3e mu(eV) %.3e T(K) %.3e"%(time_this_file_fs,popt[0],popt[1]))
         data_fit=np.zeros((1000,2))
         data_fit[:,0]=np.linspace(occup_time_plot_lowE/Hatree_to_eV,occup_time_plot_highE/Hatree_to_eV,1000)
         data_fit[:,1]=Bolzmann(data_fit[:,0]*Hatree_to_eV,*popt)
@@ -169,8 +170,8 @@ class plot_occup:
         
 def do():
     global occup_time_plot_set_Erange,occup_time_plot_highE,occup_time_plot_lowE,occup_time_plot_highE_conduction,occup_time_plot_lowE_conduction,occup_time_plot_highE_valence,occup_time_plot_lowE_valence
-    print('temperature(K): %.3e'%(temperature_au/Kelvin))
-    print('mu(eV): %.3e'%(mu_au/eV))
+    logging.info('temperature(K): %.3e'%(temperature_au/Kelvin))
+    logging.info('mu(eV): %.3e'%(mu_au/eV))
 
     do_sub()
     if plot_conduction_valence:
