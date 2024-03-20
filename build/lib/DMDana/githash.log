@@ -1,0 +1,4 @@
+a47fcd7cc8518dddf476a5748eb19ec0f680dbcca47fcd7cc8518dddf476a5748eb19ec0f680dbcc
+This file is only updated when using pip install.
+The code would first check and use the hash from the .git folder in the parent folder if it exsits (for develop mode).
+If there is no .git folder in the parent folder, the code would check this githash.log file (for installed mode)
