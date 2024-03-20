@@ -41,6 +41,10 @@ cmap = mpl.colormaps['rainbow']
 figsize=(12, 10)#Width, height in inches.
 dpi=100.0#The resolution of the figure in dots-per-inch.
 mu_au=config.mu_au
+EBot_dm_au=config.EBot_dm_au
+ETop_dm_au=config.ETop_dm_au
+EcMin_au=config.EcMin_au
+EvMax_au=config.EvMax_au
 temperature_au=config.temperature_au
 if fit_Boltzmann_initial_guess_mu_auto:
     fit_Boltzmann_initial_guess_mu=mu_au/eV
@@ -71,6 +75,9 @@ class plot_occup:
         self.save_fig()
     def plot_post_processing_common(self):
         if occup_time_plot_set_Erange:
+            assert not occup_time_plot_lowE > ETop_dm_au*Hatree_to_eV , "Erange for plot is out of range of the data"
+            assert not occup_time_plot_highE < EBot_dm_au*Hatree_to_eV , "Erange for plot is out of range of the data"
+            assert not (occup_time_plot_lowE > EvMax_au*Hatree_to_eV and occup_time_plot_highE < EcMin_au*Hatree_to_eV) , "Erange for plot is out of range of the data"
             self.ax.set_xlim(occup_time_plot_lowE, occup_time_plot_highE)
         self.ax.set_xlabel('E (eV)')
         self.fig.colorbar(self.figtemp,label='Time (ps)')    
