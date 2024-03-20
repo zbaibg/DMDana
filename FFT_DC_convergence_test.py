@@ -7,7 +7,9 @@ import matplotlib.pyplot as plt
 import itertools
 import pandas as pd
 from constant import *
+from config import config_current
 from global_variable import config
+config: config_current
 from common import fft_of_j
 #Read input
 Window_type_list=[i.strip() for i in config.Input['Window_type_list'].split(',')]  # Rectangular, Flattop, Hann, Hamming 

@@ -7,9 +7,10 @@ from scipy.signal import savgol_filter
 import matplotlib.pyplot as plt
 from constant import *
 import numpy as np
+from config import config_current
 #Read input
 class param_class(object):
-    def __init__(self,config):
+    def __init__(self,config: config_current):
         self.config=config
         self.jx_data0=self.config.jx_data
         self.jy_data0=self.config.jy_data

@@ -8,7 +8,9 @@ So be sure that your occupation filelists include complete number of files and a
 import numpy as np
 import matplotlib.pyplot as plt
 from constant import *
+from config import config_occup
 from global_variable import config
+config: config_occup
 #Read input
 occup_selected_files=config.occup_selected_files
 occup_timestep_for_selected_file_fs=config.occup_timestep_for_selected_file_fs

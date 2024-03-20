@@ -76,8 +76,13 @@ def get_mu_temperature(DMDparam_value,path='.'):
 
 def get_erange(path='.'):
     filepath = check_and_get_path(path+'/ldbd_data/ldbd_size.dat')
-    EBot_probe_au, ETop_probe_au, EBot_dm_au, ETop_dm_au, EBot_eph_au, ETop_eph_au=read_text_from_file(filepath,marklist=['# EBot_probe, ETop_probe, EBot_dm, ETop_dm, EBot_eph, ETop_eph']*6,locationlist=np.range(6))
-    return EBot_probe_au, ETop_probe_au, EBot_dm_au, ETop_dm_au, EBot_eph_au, ETop_eph_au
+    EBot_probe_au, ETop_probe_au, EBot_dm_au, ETop_dm_au, EBot_eph_au, ETop_eph_au=read_text_from_file(filepath,marklist=['# EBot_probe, ETop_probe, EBot_dm, ETop_dm, EBot_eph, ETop_eph']*6,locationlist=range(6))
+    filepath= check_and_get_path(path+'/ldbd_data/ldbd_erange_brange.dat')
+    with open(filepath) as f:
+        line=f.readline().split()
+        assert len(line)==2, "The first line of ldbd_erange_brange.dat is not correctly setted."
+        EvMax_au,EcMin_au=line
+    return [float(i) for i in [EBot_probe_au, ETop_probe_au, EBot_dm_au, ETop_dm_au, EBot_eph_au, ETop_eph_au ,EvMax_au, EcMin_au]]
 
 class config_base(object): 
     def __init__(self,funcname_in,param_path='./DMDana.ini',putlog=True):
@@ -96,6 +101,8 @@ class config_base(object):
         self.ETop_dm_au=None 
         self.EBot_eph_au=None 
         self.ETop_eph_au=None
+        self.EvMax_au=None
+        self.EcMin_au=None
         self.mu_au=None
         self.temperature_au=None
         self.Input=self.config[self.funcname]
@@ -164,7 +171,7 @@ class config_occup(config_base):
         if glob.glob('occupations_t0.out')==[]:
             raise ValueError("Did not found occupations_t0.out")
         self.mu_au,self.temperature_au=get_mu_temperature(self.DMDparam_value,path=self.folders[0])
-        self.EBot_probe_au,self.ETop_probe_au,self.EBot_dm_au,self.ETop_dm_au,self.EBot_eph_au,self.ETop_eph_au=get_erange(path=self.folders[0])
+        self.EBot_probe_au,self.ETop_probe_au,self.EBot_dm_au,self.ETop_dm_au,self.EBot_eph_au,self.ETop_eph_au,self.EvMax_au,self.EcMin_au=get_erange(path=self.folders[0])
         self.occup_selected_files = glob.glob('occupations_t0.out')+sorted(glob.glob('occupations-*out'))
         with open(self.occup_selected_files[1]) as f:
             firstline_this_file=f.readline()

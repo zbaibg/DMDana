@@ -8,16 +8,18 @@ import numpy as np
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 from constant import *
+from config import config_occup
 from global_variable import config
+config: config_occup
 from scipy.optimize import curve_fit
 import logging
 #Read input
 occup_time_plot_lowE=config.Input.getfloat('occup_time_plot_lowE')
 occup_time_plot_highE=config.Input.getfloat('occup_time_plot_highE')
-occup_time_plot_lowE_conduction=config.Input.getfloat('occup_time_plot_lowE_conduction')
-occup_time_plot_highE_conduction=config.Input.getfloat('occup_time_plot_highE_conduction')
-occup_time_plot_lowE_valence=config.Input.getfloat('occup_time_plot_lowE_valence')
-occup_time_plot_highE_valence=config.Input.getfloat('occup_time_plot_highE_valence')
+occup_time_plot_lowE_conduction=config.EcMin_au*Hatree_to_eV
+occup_time_plot_highE_conduction=config.ETop_dm_au*Hatree_to_eV
+occup_time_plot_lowE_valence=config.EBot_dm_au*Hatree_to_eV
+occup_time_plot_highE_valence=config.EvMax_au*Hatree_to_eV
 occup_time_plot_set_Erange=config.Input.getboolean('occup_time_plot_set_Erange')
 plot_occupation_number_min=config.Input.getfloat('plot_occupation_number_min')
 plot_occupation_number_max=config.Input.getfloat('plot_occupation_number_max')
