@@ -1,6 +1,7 @@
 ## Installation
 
-1. download this. run ```cd DMDana```,  ```pip install .```
+1. Download this. Run ```cd DMDana```,  ```pip install .```
+. If you want skip rerun pip install for code upgrade in the future (upgrade through ```git pull```), you can use "editable install mode" by ```pip install -e .```.
 2. Update your python to versions ```>3.2``` and run ```sh {download-path}/install_dependency.sh``` to install python dependencies it needs.
 3. Optional: to support CLI auto-completion run ```activate-global-python-argcomplete --user```, and restart your shell. (After restarting, if it does not work properly, consider manually running ```source ~/.bash_completion``` and add this command to your ```~/.bashrc```)
 ## Usage
