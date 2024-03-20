@@ -6,11 +6,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 import itertools
 import pandas as pd
-from constant import *
-from config import config_current
-from global_variable import config
+from ..lib.constant import *
+from .config import config_current
+from .global_variable import config
 config: config_current
-from common import fft_of_j
+from ..lib.fft import fft_of_j
 #Read input
 Cutoff_list= [int(i) for i in config.Input['Cutoff_list'].split(',')]#it counts the number of pieces in jx(yz)_elec_tot.out
 Window_type_list=[i.strip() for i in config.Input['Window_type_list'].split(',')]  # Rectangular, Flattop, Hann, Hamming 

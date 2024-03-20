@@ -1,19 +1,18 @@
 ## Installation
 
-1. download this.
-2. Add ```export PATH="{download-path}:$PATH"``` in your ```~/.bashrc```, where ```{download-path}``` is the path where you download DMDana. Then restart your shell.
-3. Update your python to versions ```>3.2``` and run ```sh {download-path}/install_dependency.sh``` to install python dependencies it needs.
-4. Optional: to support CLI auto-completion run ```activate-global-python-argcomplete --user```, and restart your shell. (After restarting, if it does not work properly, consider manually running ```source ~/.bash_completion```)
+1. download this. run ```cd DMDana```,  ```pip install .```
+2. Update your python to versions ```>3.2``` and run ```sh {download-path}/install_dependency.sh``` to install python dependencies it needs.
+3. Optional: to support CLI auto-completion run ```activate-global-python-argcomplete --user```, and restart your shell. (After restarting, if it does not work properly, consider manually running ```source ~/.bash_completion``` and add this command to your ```~/.bashrc```)
 ## Usage
 1. run ```cd {DMD-folder}```, where ```{DMD-folder}``` is your DMD folder path
-2. run ```DMDana init``` to create ```DMDana.ini``` in this folder, ```DMDana.ini``` is the configuration file of DMDana.
+2. run ```python -m DMDana.do init``` to create ```DMDana.ini``` in this folder, ```DMDana.ini``` is the configuration file of DMDana.
 3. modify ```DMDana.ini``` in your DMD folder to change DMDana parameters
-4. run ```DMDana {command}``` to analyze the results, where ```{command}``` is the command you want to use. Different commands supported are listed in the "Command Supported" section.
+4. run ```python -m DMDana.do {command}``` to analyze the results, where ```{command}``` is the command you want to use. Different commands supported are listed in the "Command Supported" section.
 
-Hint: DMDana support CLI auto-completion, try press ```TAB``` button after you type ```DMDana``` in your shell.
+Hint: DMDana support CLI auto-completion, try press ```TAB``` button after you type ```python -m DMDana.do``` in your shell.
 
 ## Help and documents
-1. run ```DMDana -h``` to see the help information about CLI input
+1. run ```python -m DMDana.do -h``` to see the help information about CLI input
 2. see DMDana.ini to see its comments on different parameters of DMDana.
 
 ## Command Supported

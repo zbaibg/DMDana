@@ -7,9 +7,9 @@ Be sure that your occupation filelists include complete number of files and also
 import numpy as np
 import matplotlib as mpl
 import matplotlib.pyplot as plt
-from constant import *
-from config import config_occup
-from global_variable import config
+from ..lib.constant import *
+from .config import config_occup
+from .global_variable import config
 config: config_occup
 from scipy.optimize import curve_fit
 import logging

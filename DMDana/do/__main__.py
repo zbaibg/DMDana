@@ -28,8 +28,9 @@ if __name__ == "__main__":
     #init command: initialize the DMDana.ini file if it does not exist.
     if args.command == "init":
         import sys,shutil,os
+        from .config import libpath
         if(not os.path.isfile('DMDana.ini')):
-            shutil.copyfile(sys.path[0]+'/DMDana_default.ini','./DMDana.ini')
+            shutil.copyfile(libpath+'/DMDana_default.ini','./DMDana.ini')
         else:
             print("DMDana.ini already exists.")
         exit()
@@ -45,9 +46,9 @@ if __name__ == "__main__":
         os.system('rm -f DMDana.ini')
         exit()  
     #other commands    
-    from config import autoconfig
+    from .config import autoconfig
     import logging
-    import global_variable    
+    from . import global_variable    
     funcname=args.command
     logging.basicConfig(
         level=logging.INFO,
@@ -58,19 +59,19 @@ if __name__ == "__main__":
     config=autoconfig(funcname.replace('_','-'))
     global_variable.config=config
     if funcname == "FFT_DC_convergence_test":
-        import FFT_DC_convergence_test
+        from . import FFT_DC_convergence_test
         FFT_DC_convergence_test.do()
     elif funcname == "FFT_spectrum_plot":
-        import FFT_spectrum_plot
+        from . import FFT_spectrum_plot
         FFT_spectrum_plot.do()
     elif funcname == "current_plot":
-        import current_plot
+        from . import current_plot
         current_plot.do(config)
     elif funcname == "occup_deriv":
-        import occup_deriv
+        from . import occup_deriv
         occup_deriv.do()
     elif funcname == "occup_time":
-        import occup_time
+        from . import occup_time
         occup_time.do()
 
             
