@@ -98,8 +98,9 @@ class plot_occup:
         if occup_time_plot_set_Erange:
             #data=data[data[:,0].argsort()]
             data=data[np.logical_and(data[:,0]>occup_time_plot_lowE/Hatree_to_eV,data[:,0]<occup_time_plot_highE/Hatree_to_eV)]
-        if fit_Boltzmann and occup_time_plot_lowE>=0 and self.Substract_initial_occupation_this==False:
-            self.Boltzmann_fit_and_plot(data,time_this_file_fs)
+        if fit_Boltzmann and not self.Substract_initial_occupation_this:
+            if occup_time_plot_lowE>=0:
+                self.Boltzmann_fit_and_plot(data,time_this_file_fs)
         self.figtemp=self.plot_data_function(data,time_this_file_fs)            
         self.occupation_max_for_alldata=max(self.occupation_max_for_alldata,np.max(data[:,1]))
         self.occupation_min_for_alldata=min(self.occupation_min_for_alldata,np.min(data[:,1]))
