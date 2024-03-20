@@ -65,17 +65,25 @@ def get_DMD_param(path='.'):
     return DMDparam_value
 
 def get_mu_temperature(DMDparam_value,path='.'):
+    # read ldbd_size.dat
     filepath = check_and_get_path(path+'/ldbd_data/ldbd_size.dat')
     mu_au_text,temperature_au_text=read_text_from_file(filepath,marklist=["mu","# T"],locationlist=[2,0],stop_at_first_find=True)
     assert mu_au_text != None,"mu not found in ldbd_size.dat"
     assert temperature_au_text != None, "temperature not found in ldbd_size.dat"
     mu_au=float(mu_au_text)
     temperature_au=float(temperature_au_text)
+    # read parameter "mu" in paramm.in
     if 'mu' in DMDparam_value:
         mu_au=float(DMDparam_value['mu'])/Hatree_to_eV
-    if 'carrier_density' in DMDparam_value and float(DMDparam_value['carrier_density'])!=0:
-        assert os.path.isfile('out'), "out file not found(for determine mu from non-zero carrier_density)"
-        mu_au_text=read_text_from_file('out',marklist=["for given electron density"],locationlist=[5],defaultlist=[mu_au],stop_at_first_find=True)
+    # read parameter "carrier_density" in paramm.in
+    for _ in [0]:
+        if 'carrier_density' not in DMDparam_value: 
+            break
+        if float(DMDparam_value['carrier_density'])==0:
+            break
+        assert os.path.isfile('out') or os.path.isfile('DMD.out'), "out or DMD.out file not found(for determine mu from non-zero carrier_density)"
+        output_file_name='out' if os.path.isfile('out') else 'DMD.out'
+        mu_au_text=read_text_from_file(output_file_name,marklist=["for given electron density"],locationlist=[5],defaultlist=[mu_au],stop_at_first_find=True)
         mu_au=float(mu_au_text) if mu_au_text!=None else mu_au
     return mu_au,temperature_au
 
@@ -148,17 +156,14 @@ class config_current(config_base):
         
     # read data in the i_th folder provided by "folders" parameter in DMDana.ini
     def loadcurrent_ith(self,i):
-        if i>=len(self.folders) or i<-len(self.folders):
-            raise ValueError("i is out of range.")
+        assert i>=-len(self.folders) and i<len(self.folders), "i is out of range."
         folder=self.folders[i]
         #self.config.read('DMDana.ini')
         #self.Input=self.config[self.funcname]
         self.only_jtot=self.Input.getboolean('only_jtot')
-        if self.only_jtot==None:
-            raise ValueError('only_jtot is not correct setted.')
+        assert self.only_jtot!=None, 'only_jtot is not correct setted.'
         self.jx_data,self.jy_data,self.jz_data=get_current_data(folder)
-        if not (len(self.jx_data)==len(self.jy_data)==len(self.jz_data)):
-            raise ValueError('The line number in jx_data jy_data jz_data are not the same. Please deal with your data.' )
+        assert len(self.jx_data)==len(self.jy_data)==len(self.jz_data), 'The line number in jx_data jy_data jz_data are not the same. Please deal with your data.'
 
 class config_occup(config_base):
     def __init__(self, funcname_in,param_path='./DMDana.ini',putlog=True):
@@ -173,8 +178,7 @@ class config_occup(config_base):
         #self.config.read('DMDana.ini')
         #self.Input=self.config[self.funcname]
         # Read all the occupations file names at once
-        if glob.glob('occupations_t0.out')==[]:
-            raise ValueError("Did not found occupations_t0.out")
+        assert glob.glob('occupations_t0.out')!=[], "Did not found occupations_t0.out"
         self.mu_au,self.temperature_au=get_mu_temperature(self.DMDparam_value,path=self.folders[0])
         self.EBot_probe_au,self.ETop_probe_au,self.EBot_dm_au,self.ETop_dm_au,self.EBot_eph_au,self.ETop_eph_au,self.EvMax_au,self.EcMin_au=get_erange(path=self.folders[0])
         self.occup_selected_files = glob.glob('occupations_t0.out')+sorted(glob.glob('occupations-*out'))
@@ -198,8 +202,7 @@ class config_occup(config_base):
             self.occup_maxmium_file_number_plotted_exclude_t0=len(self.occup_selected_files)-1
         else:
             self.occup_maxmium_file_number_plotted_exclude_t0=int(round(self.occup_t_tot/self.occup_timestep_for_selected_file_fs))
-            if self.occup_maxmium_file_number_plotted_exclude_t0>len(self.occup_selected_files)-1:
-                raise ValueError('occup_t_tot is larger than maximum time of data we have.')
+            assert self.occup_maxmium_file_number_plotted_exclude_t0<=len(self.occup_selected_files)-1 ,'occup_t_tot is larger than maximum time of data we have.'
             self.occup_selected_files=self.occup_selected_files[:self.occup_maxmium_file_number_plotted_exclude_t0+2]
             # keep the first few items of the filelists in need to avoid needless calculation cost.
             # If len(occup_selected_files)-1 > occup_maxmium_file_number_plotted_exclude_t0,
