@@ -14,6 +14,24 @@ def check_and_get_path( filepath):
     assert os.path.isfile(filepath),"%s does not exist."%filepath
     return filepath
 
+'''Usage
+To get mu and temperature from ldbd_size.dat, in which the content is like:
+9.50043414701698e-04 # T
+0.00000000000000e+00  0.00000000000000e+00  0.00000000000000e+00 # muMin, muMax mu
+just use: 
+mu,temperature=read_text_from_file('ldbd_data/ldbd_size.dat',["mu","# T"],[2,0])
+Remember to manually cenvert the string to the data type you want.
+'''
+def read_text_from_file(filepath,marklist,locationlist):
+    assert len(marklist)==len(locationlist),"marklist and locationlist should have the same length."
+    resultlist=[None]*len(marklist)
+    with open(filepath) as f:
+        for line in f:
+            for i in range(len(marklist)):
+                if marklist[i] in line:
+                    resultlist[i]=line.split()[locationlist[i]]
+    return resultlist
+
 def get_current_data(folder):
     jxpath=folder+"/jx_elec_tot.out"
     jypath=folder+"/jy_elec_tot.out"
@@ -41,24 +59,6 @@ def get_DMD_param(path='.'):
                 DMDparam_value[list_for_this_line[0].strip()]=list_for_this_line[1].strip()
     return DMDparam_value
 
-'''Usage
-To get mu and temperature from ldbd_size.dat, in which the content is like:
-9.50043414701698e-04 # T
-0.00000000000000e+00  0.00000000000000e+00  0.00000000000000e+00 # muMin, muMax mu
-just use: 
-mu,temperature=read_text_from_file('ldbd_data/ldbd_size.dat',["mu","# T"],[2,0])
-Remember to manually cenvert the string to the data type you want.
-'''
-def read_text_from_file(filepath,marklist,locationlist):
-    assert len(marklist)==len(locationlist),"marklist and locationlist should have the same length."
-    resultlist=[None]*len(marklist)
-    with open(filepath) as f:
-        for line in f:
-            for i in range(len(marklist)):
-                if marklist[i] in line:
-                    resultlist[i]=line.split()[locationlist[i]]
-    return resultlist
-
 def get_mu_temperature(DMDparam_value,path='.'):
     filepath = check_and_get_path(path+'/ldbd_data/ldbd_size.dat')
     mu_au_text,temperature_au_text=read_text_from_file(filepath,marklist=["mu","# T"],locationlist=[2,0])
@@ -74,6 +74,11 @@ def get_mu_temperature(DMDparam_value,path='.'):
         mu_au=float(mu_au_text) if mu_au_text!=None else mu_au
     return mu_au,temperature_au
 
+def get_erange(path='.'):
+    filepath = check_and_get_path(path+'/ldbd_data/ldbd_size.dat')
+    EBot_probe_au, ETop_probe_au, EBot_dm_au, ETop_dm_au, EBot_eph_au, ETop_eph_au=read_text_from_file(filepath,marklist=['# EBot_probe, ETop_probe, EBot_dm, ETop_dm, EBot_eph, ETop_eph']*6,locationlist=np.range(6))
+    return EBot_probe_au, ETop_probe_au, EBot_dm_au, ETop_dm_au, EBot_eph_au, ETop_eph_au
+
 class config_base(object): 
     def __init__(self,funcname_in,param_path='./DMDana.ini',putlog=True):
         self.libpath='/'.join(__file__.split('/')[0:-1])
@@ -85,15 +90,20 @@ class config_base(object):
         else:
             raise ValueError('%s not exist. Please run "DMDana init" to initialize it.'%param_path)
         self.funcname=funcname_in
-
+        self.EBot_probe_au=None
+        self.ETop_probe_au=None 
+        self.EBot_dm_au=None 
+        self.ETop_dm_au=None 
+        self.EBot_eph_au=None 
+        self.ETop_eph_au=None
         self.mu_au=None
         self.temperature_au=None
         self.Input=self.config[self.funcname]
         if putlog==True:
             self.initiallog(self.funcname)
-        self.jfolders=[i.strip() for i in self.Input['folders'].split(',')] 
-        self.folder_number=len(self.jfolders)
-        self.DMDparam_value=get_DMD_param(self.jfolders[0])# Use the param.in in the first folder
+        self.folders=[i.strip() for i in self.Input['folders'].split(',')] 
+        self.folder_number=len(self.folders)
+        self.DMDparam_value=get_DMD_param(self.folders[0])# Use the param.in in the first folder
 
     def initiallog(self,funcname):#this should be done after setting global variable "funcname" 
         repo = git.Repo(sys.path[0],search_parent_directories=True)
@@ -126,9 +136,9 @@ class config_current(config_base):
         
     # read data in the i_th folder provided by "folders" parameter in DMDana.ini
     def loadcurrent_ith(self,i):
-        if i>=len(self.jfolders) or i<-len(self.jfolders):
+        if i>=len(self.folders) or i<-len(self.folders):
             raise ValueError("i is out of range.")
-        folder=self.jfolders[i]
+        folder=self.folders[i]
         #self.config.read('DMDana.ini')
         #self.Input=self.config[self.funcname]
         self.only_jtot=self.Input.getboolean('only_jtot')
@@ -153,7 +163,8 @@ class config_occup(config_base):
         # Read all the occupations file names at once
         if glob.glob('occupations_t0.out')==[]:
             raise ValueError("Did not found occupations_t0.out")
-        self.mu_au,self.temperature_au=get_mu_temperature(self.DMDparam_value,path='.')
+        self.mu_au,self.temperature_au=get_mu_temperature(self.DMDparam_value,path=self.folders[0])
+        self.EBot_probe_au,self.ETop_probe_au,self.EBot_dm_au,self.ETop_dm_au,self.EBot_eph_au,self.ETop_eph_au=get_erange(path=self.folders[0])
         self.occup_selected_files = glob.glob('occupations_t0.out')+sorted(glob.glob('occupations-*out'))
         with open(self.occup_selected_files[1]) as f:
             firstline_this_file=f.readline()
