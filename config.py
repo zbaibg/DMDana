@@ -22,13 +22,19 @@ just use:
 mu,temperature=read_text_from_file('ldbd_data/ldbd_size.dat',["mu","# T"],[2,0])
 Remember to manually cenvert the string to the data type you want.
 '''
-def read_text_from_file(filepath,marklist,locationlist):
+def read_text_from_file(filepath,marklist,locationlist,stop_at_first_find):
     assert len(marklist)==len(locationlist),"marklist and locationlist should have the same length."
     resultlist=[None]*len(marklist)
     with open(filepath) as f:
         for line in f:
             for i in range(len(marklist)):
-                if marklist[i] in line:
+                if marklist[i] not in line:
+                    continue
+                if stop_at_first_find and None not in resultlist:
+                    return resultlist
+                if stop_at_first_find:
+                    resultlist[i]=line.split()[locationlist[i]] if resultlist[i]==None else resultlist[i]
+                else:
                     resultlist[i]=line.split()[locationlist[i]]
     return resultlist
 
@@ -51,17 +57,16 @@ def get_DMD_param(path='.'):
                 continue
             elif line[0]=='#':
                 continue
-            else:
-                line=line.split('#')[0]
-                assert '=' in line, "param.in is not correctly setted."
-                list_for_this_line=line.split('=')
-                assert len(list_for_this_line)==2,"param.in is not correctly setted."
-                DMDparam_value[list_for_this_line[0].strip()]=list_for_this_line[1].strip()
+            line=line.split('#')[0]
+            assert '=' in line, "param.in is not correctly setted."
+            list_for_this_line=line.split('=')
+            assert len(list_for_this_line)==2,"param.in is not correctly setted."
+            DMDparam_value[list_for_this_line[0].strip()]=list_for_this_line[1].strip()
     return DMDparam_value
 
 def get_mu_temperature(DMDparam_value,path='.'):
     filepath = check_and_get_path(path+'/ldbd_data/ldbd_size.dat')
-    mu_au_text,temperature_au_text=read_text_from_file(filepath,marklist=["mu","# T"],locationlist=[2,0])
+    mu_au_text,temperature_au_text=read_text_from_file(filepath,marklist=["mu","# T"],locationlist=[2,0],stop_at_first_find=True)
     assert mu_au_text != None,"mu not found in ldbd_size.dat"
     assert temperature_au_text != None, "temperature not found in ldbd_size.dat"
     mu_au=float(mu_au_text)
@@ -70,13 +75,13 @@ def get_mu_temperature(DMDparam_value,path='.'):
         mu_au=float(DMDparam_value['mu'])/Hatree_to_eV
     if 'carrier_density' in DMDparam_value and float(DMDparam_value['carrier_density'])!=0:
         assert os.path.isfile('out'), "out file not found(for determine mu from non-zero carrier_density)"
-        mu_au_text=read_text_from_file('out',marklist=["for given electron density"],locationlist=[5],defaultlist=[mu_au])
+        mu_au_text=read_text_from_file('out',marklist=["for given electron density"],locationlist=[5],defaultlist=[mu_au],stop_at_first_find=True)
         mu_au=float(mu_au_text) if mu_au_text!=None else mu_au
     return mu_au,temperature_au
 
 def get_erange(path='.'):
     filepath = check_and_get_path(path+'/ldbd_data/ldbd_size.dat')
-    EBot_probe_au, ETop_probe_au, EBot_dm_au, ETop_dm_au, EBot_eph_au, ETop_eph_au=read_text_from_file(filepath,marklist=['# EBot_probe, ETop_probe, EBot_dm, ETop_dm, EBot_eph, ETop_eph']*6,locationlist=range(6))
+    EBot_probe_au, ETop_probe_au, EBot_dm_au, ETop_dm_au, EBot_eph_au, ETop_eph_au=read_text_from_file(filepath,marklist=['# EBot_probe, ETop_probe, EBot_dm, ETop_dm, EBot_eph, ETop_eph']*6,locationlist=range(6),stop_at_first_find=True)
     filepath= check_and_get_path(path+'/ldbd_data/ldbd_erange_brange.dat')
     with open(filepath) as f:
         line=f.readline().split()
