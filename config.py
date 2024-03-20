@@ -10,18 +10,69 @@ import logging
 """_summary_
 1. Import common options from configuration files.
 """
-class data_reader(object):
-    def __init__(self):
-        self.jx_data=None
-        self.jy_data=None
-        self.jz_data=None
-    def read_current_file(self,folder):
-        jxpath=folder+"/jx_elec_tot.out"
-        jypath=folder+"/jy_elec_tot.out"
-        jzpath=folder+"/jz_elec_tot.out"
-        self.jx_data=np.loadtxt(jxpath,skiprows=1)
-        self.jy_data=np.loadtxt(jypath,skiprows=1)
-        self.jz_data=np.loadtxt(jzpath,skiprows=1)
+def check_and_get_path( filepath):
+    assert os.path.isfile(filepath),"%s does not exist."%filepath
+    return filepath
+
+def get_current_data(folder):
+    jxpath=folder+"/jx_elec_tot.out"
+    jypath=folder+"/jy_elec_tot.out"
+    jzpath=folder+"/jz_elec_tot.out"
+    jx_data=np.loadtxt(jxpath,skiprows=1)
+    jy_data=np.loadtxt(jypath,skiprows=1)
+    jz_data=np.loadtxt(jzpath,skiprows=1)
+    return jx_data,jy_data,jz_data
+
+def get_DMD_param(path='.'):
+    DMDparam_value=dict()
+    filepath = check_and_get_path(path+'/param.in')
+    with open(filepath) as f:
+        for line in f:
+            line=line.strip()
+            if line=='':
+                continue
+            elif line[0]=='#':
+                continue
+            else:
+                line=line.split('#')[0]
+                assert '=' in line, "param.in is not correctly setted."
+                list_for_this_line=line.split('=')
+                assert len(list_for_this_line)==2,"param.in is not correctly setted."
+                DMDparam_value[list_for_this_line[0].strip()]=list_for_this_line[1].strip()
+    return DMDparam_value
+
+'''Usage
+To get mu and temperature from ldbd_size.dat, in which the content is like:
+9.50043414701698e-04 # T
+0.00000000000000e+00  0.00000000000000e+00  0.00000000000000e+00 # muMin, muMax mu
+just use: 
+mu,temperature=read_text_from_file('ldbd_data/ldbd_size.dat',["mu","# T"],[2,0])
+Remember to manually cenvert the string to the data type you want.
+'''
+def read_text_from_file(filepath,marklist,locationlist):
+    assert len(marklist)==len(locationlist),"marklist and locationlist should have the same length."
+    resultlist=[None]*len(marklist)
+    with open(filepath) as f:
+        for line in f:
+            for i in range(len(marklist)):
+                if marklist[i] in line:
+                    resultlist[i]=line.split()[locationlist[i]]
+    return resultlist
+
+def get_mu_temperature(DMDparam_value,path='.'):
+    filepath = check_and_get_path(path+'/ldbd_data/ldbd_size.dat')
+    mu_au_text,temperature_au_text=read_text_from_file(filepath,marklist=["mu","# T"],locationlist=[2,0])
+    assert mu_au_text != None,"mu not found in ldbd_size.dat"
+    assert temperature_au_text != None, "temperature not found in ldbd_size.dat"
+    mu_au=float(mu_au_text)
+    temperature_au=float(temperature_au_text)
+    if 'mu' in DMDparam_value:
+        mu_au=float(DMDparam_value['mu'])/Hatree_to_eV
+    if 'carrier_density' in DMDparam_value and float(DMDparam_value['carrier_density'])!=0:
+        assert os.path.isfile('out'), "out file not found(for determine mu from non-zero carrier_density)"
+        mu_au_text=read_text_from_file('out',marklist=["for given electron density"],locationlist=[5],defaultlist=[mu_au])
+        mu_au=float(mu_au_text) if mu_au_text!=None else mu_au
+    return mu_au,temperature_au
 
 class config_base(object): 
     def __init__(self,funcname_in,param_path='./DMDana.ini',putlog=True):
@@ -29,12 +80,12 @@ class config_base(object):
         self.logfile=None
         self.config = configparser.ConfigParser(inline_comment_prefixes="#")
         if (os.path.isfile(param_path)):
-            default_ini=self.check_and_get_path(self.libpath+'/DMDana_default.ini')
+            default_ini=check_and_get_path(self.libpath+'/DMDana_default.ini')
             self.config.read([default_ini,param_path])
         else:
             raise ValueError('%s not exist. Please run "DMDana init" to initialize it.'%param_path)
         self.funcname=funcname_in
-        self.DMDparam_value=dict()
+
         self.mu_au=None
         self.temperature_au=None
         self.Input=self.config[self.funcname]
@@ -42,50 +93,8 @@ class config_base(object):
             self.initiallog(self.funcname)
         self.jfolders=[i.strip() for i in self.Input['folders'].split(',')] 
         self.folder_number=len(self.jfolders)
-        self.data_reader=data_reader()
-        self.read_DMD_param(self.jfolders[0])# Use the param.in in the first folder
-    def check_and_get_path(self, filepath):
-        if(not os.path.isfile(filepath)):
-            raise ValueError("%s does not exist."%filepath)
-        else:
-            return filepath
-    def get_mu_temperature(self,path='.'):
-        filepath = self.check_and_get_path(path+'/ldbd_data/ldbd_size.dat')
-        with open (filepath) as f:
-            for line in f:
-                if "mu" in line:
-                    self.mu_au=float(line.split()[2])
-                if "# T" in line:
-                    self.temperature_au=float(line.split()[0])
-        if self.temperature_au is None:
-            raise ValueError("temperature not found in ldbd_size.dat")
-        if self.mu_au is None:
-            raise ValueError("mu not found in ldbd_size.dat")
-        if 'mu' in self.DMDparam_value:
-            self.mu_au=float(self.DMDparam_value['mu'])/Hatree_to_eV
-        if 'carrier_density' in self.DMDparam_value:
-            if float(self.DMDparam_value['carrier_density'])!=0:
-                assert os.path.isfile('out'), "out file not found(for determine mu from non-zero carrier_density)"
-                with open('out') as f:
-                    for line in f:
-                        if "for given electron density" in line:
-                            self.mu_au=float(line.split()[5])
-    def read_DMD_param(self,path='.'):
-        filepath = self.check_and_get_path(path+'/param.in')
-        with open(filepath) as f:
-            for line in f:
-                self.process_DMD_param_line(line)
-    def process_DMD_param_line(self, line):
-        list_for_this_line=line.split()
-        if list_for_this_line==[]:
-            return
-        elif list_for_this_line[0][0]=="#":
-            return
-        else:
-            if len(list_for_this_line)>=3:
-                self.DMDparam_value[list_for_this_line[0]]=list_for_this_line[2]
-            else:
-                raise ValueError("param.in is not correctly setted.")       
+        self.DMDparam_value=get_DMD_param(self.jfolders[0])# Use the param.in in the first folder
+
     def initiallog(self,funcname):#this should be done after setting global variable "funcname" 
         repo = git.Repo(sys.path[0],search_parent_directories=True)
         sha = repo.head.object.hexsha
@@ -120,20 +129,15 @@ class config_current(config_base):
         if i>=len(self.jfolders) or i<-len(self.jfolders):
             raise ValueError("i is out of range.")
         folder=self.jfolders[i]
-        self.data_reader.read_current_file(folder)
         #self.config.read('DMDana.ini')
         #self.Input=self.config[self.funcname]
         self.only_jtot=self.Input.getboolean('only_jtot')
         if self.only_jtot==None:
             raise ValueError('only_jtot is not correct setted.')
-        self.jx_data = self.data_reader.jx_data
-        self.jy_data = self.data_reader.jy_data
-        self.jz_data = self.data_reader.jz_data
+        self.jx_data,self.jy_data,self.jz_data=get_current_data(folder)
         if not (len(self.jx_data)==len(self.jy_data)==len(self.jz_data)):
             raise ValueError('The line number in jx_data jy_data jz_data are not the same. Please deal with your data.' )
 
-
-        
 class config_occup(config_base):
     def __init__(self, funcname_in,param_path='./DMDana.ini',putlog=True):
         super().__init__(funcname_in,param_path,putlog)
@@ -149,7 +153,7 @@ class config_occup(config_base):
         # Read all the occupations file names at once
         if glob.glob('occupations_t0.out')==[]:
             raise ValueError("Did not found occupations_t0.out")
-        self.get_mu_temperature(path='.')
+        self.mu_au,self.temperature_au=get_mu_temperature(self.DMDparam_value,path='.')
         self.occup_selected_files = glob.glob('occupations_t0.out')+sorted(glob.glob('occupations-*out'))
         with open(self.occup_selected_files[1]) as f:
             firstline_this_file=f.readline()
