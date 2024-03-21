@@ -46,7 +46,7 @@ if __name__ == "__main__":
         os.system('rm -f DMDana.ini')
         exit()  
     #other commands    
-    from .config import autoconfig
+    from .config import workflow
     import logging
     funcname:str=args.command
     logging.basicConfig(
@@ -55,22 +55,5 @@ if __name__ == "__main__":
         format='%(asctime)s - %(levelname)s - %(message)s',
         datefmt='%m/%d/%Y %I:%M:%S %p',
         filemode='a',)
-    config=autoconfig(funcname.replace('_','-'))
-    if funcname == "FFT_DC_convergence_test":
-        from . import FFT_DC_convergence_test
-        FFT_DC_convergence_test.do(config)
-    elif funcname == "FFT_spectrum_plot":
-        from . import FFT_spectrum_plot
-        FFT_spectrum_plot.do(config)
-    elif funcname == "current_plot":
-        from . import current_plot
-        current_plot.do(config)
-    elif funcname == "occup_deriv":
-        from . import occup_deriv
-        occup_deriv.do(config)
-    elif funcname == "occup_time":
-        from . import occup_time
-        occup_time.do(config)
-
-            
+    workflow(funcname,'./DMDana.ini')
     logging.info('Done successfully!')

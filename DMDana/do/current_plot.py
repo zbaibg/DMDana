@@ -7,18 +7,18 @@ from scipy.signal import savgol_filter
 import matplotlib.pyplot as plt
 from ..lib import constant as const
 import numpy as np
-from .config import config_current
+from .config import config_current,DMDana_ini
 from typing import Union,List
 #Read input
 class param_class(object):
-    def __init__(self,config: config_current):
-        self.config=config
-        self.jx_data0=self.config.jx_data
-        self.jy_data0=self.config.jy_data
-        self.jz_data0=self.config.jz_data
+    def __init__(self,DMDana_ini_object: DMDana_ini):#init_from_config, for single folder analysis
+        self.DMDana_ini: DMDana_ini=DMDana_ini_object
+        self.folderlist=DMDana_ini_object.folderlist
+        self.folder_number=len(self.folderlist)
+        self.loadcurrent(0)
         self.tmax=self.config.Input.getint("t_max")
         if self.tmax==-1:
-            self.tmax=np.max(self.jx_data0[:,0])/const.fs
+            self.tmax=np.max(self.jx_data[:,0])/const.fs
         self.tmin=self.config.Input.getint("t_min")
         self.total_time=self.tmax-self.tmin
         self.current_plot_output=self.config.Input.get('current_plot_output')
@@ -29,9 +29,15 @@ class param_class(object):
         self.smooth_windowlen=self.config.Input.getint('smooth_windowlen')
         self.plot_all=self.config.Input.getboolean('plot_all')
         self.smooth_times=self.config.Input.getint('smooth_times')
+    def loadcurrent(self,filenumber):
+        assert filenumber<self.folder_number and filenumber>=0
+        self.config: config_current=self.DMDana_ini.get_folder_config('current_plot',filenumber)
+        self.jx_data=self.config.jx_data
+        self.jy_data=self.config.jy_data
+        self.jz_data=self.config.jz_data
 
-def do(config: config_current):
-    param=param_class(config)
+def do(DMDana_ini_object: DMDana_ini):#multiple folder analysis
+    param=param_class(DMDana_ini_object)
     if param.plot_all:
         param.smooth_on=False
         plot_current(param).plot()
@@ -54,11 +60,11 @@ class plot_current:
             self.fig1, self.ax = plt.subplots(1,3, figsize=(10,6),dpi=200,sharex=True)
         else:
             self.fig1, self.ax = plt.subplots(3,3, figsize=(10,6),dpi=200,sharex=True)
-        for folder_i in range(self.param.config.folder_number):
-            self.param.config.loadcurrent_ith(folder_i)
-            self.jx_data=self.param.config.jx_data
-            self.jy_data=self.param.config.jy_data
-            self.jz_data=self.param.config.jz_data
+        for folder_i in range(self.param.folder_number):
+            self.param.loadcurrent(folder_i)
+            self.jx_data=self.param.jx_data
+            self.jy_data=self.param.jy_data
+            self.jz_data=self.param.jz_data
             self.timedata=self.jx_data[:,0]/const.fs
             if self.param.only_jtot:
                 self.plot_tot()

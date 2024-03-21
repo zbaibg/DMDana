@@ -1,6 +1,7 @@
 import numpy as np
 import os
 from . import constant as const
+import glob
 def check_and_get_path( filepath):
     assert os.path.isfile(filepath),"%s does not exist."%filepath
     return filepath
@@ -28,6 +29,11 @@ def read_text_from_file(filepath,marklist,locationlist,stop_at_first_find):
                 else:
                     resultlist[i]=line.split()[locationlist[i]]
     return resultlist
+
+def glob_occupation_files(folder):
+    assert glob.glob(folder+'/occupations_t0.out')!=[], "Did not found occupations_t0.out at folder %s"%folder
+    occup_files = glob.glob(folder+'/occupations_t0.out')+sorted(glob.glob(folder+'/occupations-*out'))
+    return occup_files
 
 def get_current_data(folder):
     """
@@ -80,9 +86,12 @@ def get_DMD_param(path='.'):
 def get_mu_temperature(DMDparam_value,path='.'):
     """
     get mu and temperature from ldbd_data/ldbd_size.dat, param.in, and out(DMD.out)
+    ldbd_data/ldbd_size.dat and out(DMD.out) are read from files
+    content of param.in is read from the parameter "DMDparam_value"
 
     Parameters
-    1. path: the folder containing these files
+    1. DMDparam_value: a dictionary containing the parameters in param.in
+    2. path: the folder containing these files
 
     Return
     1. mu_au

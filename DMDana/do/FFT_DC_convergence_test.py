@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import itertools
 import pandas as pd
 from ..lib import constant as const
-from .config import config_current
+from .config import config_current,DMDana_ini
 from ..lib.fft import fft_of_j
 from typing import List
 #Read input
@@ -29,7 +29,8 @@ class param_class(object):
         self.Cutoff_step=config.Input.getint('Cutoff_step')
         self.Cutoff_list= range(self.Cutoff_min,self.Cutoff_max,self.Cutoff_step)
         self.only_jtot=config.only_jtot
-def do(config: config_current):
+def do(DMDana_ini_object:DMDana_ini):
+    config=DMDana_ini_object.get_folder_config('FFT_DC_convergence_test',0)
     param=param_class(config)
     FFT_DC_convergence_test(param).do()
 class FFT_DC_convergence_test(object):

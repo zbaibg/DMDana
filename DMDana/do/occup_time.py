@@ -8,7 +8,7 @@ import numpy as np
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 from ..lib import constant as const
-from .config import config_occup
+from .config import config_occup,DMDana_ini
 from scipy.optimize import curve_fit
 import logging
 from mpl_toolkits.mplot3d.axes3d import Axes3D
@@ -201,7 +201,8 @@ class occup_time(object):
             name="delta_"+name
         self.fig.savefig(name, bbox_inches="tight")   
         
-def do(config):
+def do(DMDana_ini_object:DMDana_ini):
+    config=DMDana_ini_object.get_folder_config('occup_time',0)
     param=param_class(config)
     logging.info('temperature(K): %.3e'%(param.temperature_au/const.Kelvin))
     logging.info('mu(eV): %.3e'%(param.mu_au/const.eV))

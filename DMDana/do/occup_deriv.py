@@ -7,7 +7,7 @@ So be sure that your occupation filelists include complete number of files and a
 """
 import numpy as np
 from ..lib import constant as const
-from .config import config_occup
+from .config import config_occup,DMDana_ini
 from matplotlib.figure import Figure
 import matplotlib.pyplot as plt
 #Read input
@@ -18,7 +18,8 @@ class param_class(object):
         self.occup_maxmium_file_number_plotted_exclude_t0=config.occup_maxmium_file_number_plotted_exclude_t0
         self.occup_t_tot=config.occup_t_tot
         self.data_first=np.loadtxt('occupations_t0.out')
-def do(config : config_occup):
+def do(DMDana_ini_object:DMDana_ini):
+    config=DMDana_ini_object.get_folder_config('occup_deriv',0)
     param=param_class(config)
     plot_object=occup_deriv(param)
     plot_object.do()
