@@ -48,8 +48,7 @@ if __name__ == "__main__":
     #other commands    
     from .config import autoconfig
     import logging
-    from . import global_variable    
-    funcname=args.command
+    funcname:str=args.command
     logging.basicConfig(
         level=logging.INFO,
         filename='DMDana_'+funcname+'.log',
@@ -57,22 +56,21 @@ if __name__ == "__main__":
         datefmt='%m/%d/%Y %I:%M:%S %p',
         filemode='a',)
     config=autoconfig(funcname.replace('_','-'))
-    global_variable.config=config
     if funcname == "FFT_DC_convergence_test":
         from . import FFT_DC_convergence_test
-        FFT_DC_convergence_test.do()
+        FFT_DC_convergence_test.do(config)
     elif funcname == "FFT_spectrum_plot":
         from . import FFT_spectrum_plot
-        FFT_spectrum_plot.do()
+        FFT_spectrum_plot.do(config)
     elif funcname == "current_plot":
         from . import current_plot
         current_plot.do(config)
     elif funcname == "occup_deriv":
         from . import occup_deriv
-        occup_deriv.do()
+        occup_deriv.do(config)
     elif funcname == "occup_time":
         from . import occup_time
-        occup_time.do()
+        occup_time.do(config)
 
             
     logging.info('Done successfully!')

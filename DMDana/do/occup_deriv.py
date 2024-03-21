@@ -6,33 +6,43 @@ This program does not read time from file content for now. It only count the fil
 So be sure that your occupation filelists include complete number of files and also occupations_t0.out
 """
 import numpy as np
-import matplotlib.pyplot as plt
 from ..lib.constant import *
 from .config import config_occup
-from .global_variable import config
-config: config_occup
+from matplotlib.figure import Figure
+import matplotlib.pyplot as plt
 #Read input
-occup_selected_files=config.occup_selected_files
-occup_timestep_for_selected_file_fs=config.occup_timestep_for_selected_file_fs
-occup_maxmium_file_number_plotted_exclude_t0=config.occup_maxmium_file_number_plotted_exclude_t0
-occup_t_tot=config.occup_t_tot
-data_first=np.loadtxt('occupations_t0.out')
-def do():
-    n = len(occup_selected_files)#number of files left in "occup_selected_files"
-    data= np.full((n, len(data_first)), np.nan)# why 5646?
-    dfdt = np.full((n,len(data_first)), np.nan)
-    dfdtMax = np.full((n), np.nan)
-    tarray=np.array(range(n))*occup_timestep_for_selected_file_fs/1000#ps
-    #note that t in occupations_t0.out is actually not 0
-    #but if occup_timestep_for_selected_file_fs is much larger than t0,
-    #it is fine to take t0 as 0 as it does here. 
-    for ind in range(n):
-        data[ind,:] = np.loadtxt(occup_selected_files[ind])[:,1]
-    dfdt=np.gradient(data,occup_timestep_for_selected_file_fs,axis=0)#df/fs
-    dfdtMax = np.max(dfdt,axis=1)
-    fig4, ax4 = plt.subplots(figsize=(10, 8))
-    ax4.plot(tarray[0:occup_maxmium_file_number_plotted_exclude_t0+1], dfdtMax[0:occup_maxmium_file_number_plotted_exclude_t0+1], '--.')
-    ax4.set_yscale('log')
-    ax4.set_xlabel('t (ps)')
-    ax4.set_ylabel(r'max$[\frac{df}{dt}]$ unit:df/fs')
-    fig4.savefig('dfdt_max_Ttot%dfs_Step%dfs.png'%(occup_t_tot,occup_timestep_for_selected_file_fs))
+class param_class(object):
+    def __init__(self,config: config_occup):
+        self.occup_selected_files=config.occup_selected_files
+        self.occup_timestep_for_selected_file_fs=config.occup_timestep_for_selected_file_fs
+        self.occup_maxmium_file_number_plotted_exclude_t0=config.occup_maxmium_file_number_plotted_exclude_t0
+        self.occup_t_tot=config.occup_t_tot
+        self.data_first=np.loadtxt('occupations_t0.out')
+def do(config : config_occup):
+    param=param_class(config)
+    plot_object=occup_deriv(param)
+    plot_object.do()
+class occup_deriv(object):
+    def __init__(self,param: param_class):
+        self.param=param
+    def do(self):
+        n = len(self.param.occup_selected_files)#number of files left in "occup_selected_files"
+        data= np.full((n, len(self.param.data_first)), np.nan)# why 5646?
+        dfdt = np.full((n,len(self.param.data_first)), np.nan)
+        dfdtMax = np.full((n), np.nan)
+        tarray=np.array(range(n))*self.param.occup_timestep_for_selected_file_fs/1000#ps
+        #note that t in occupations_t0.out is actually not 0
+        #but if occup_timestep_for_selected_file_fs is much larger than t0,
+        #it is fine to take t0 as 0 as it does here. 
+        for ind in range(n):
+            data[ind,:] = np.loadtxt(self.param.occup_selected_files[ind])[:,1]
+        dfdt=np.gradient(data,self.param.occup_timestep_for_selected_file_fs,axis=0)#df/fs
+        dfdtMax = np.max(dfdt,axis=1)
+        ax: plt.Axes
+        fig: Figure
+        fig, ax = plt.subplots(figsize=(10, 8))
+        ax.plot(tarray[0:self.param.occup_maxmium_file_number_plotted_exclude_t0+1], dfdtMax[0:self.param.occup_maxmium_file_number_plotted_exclude_t0+1], '--.')
+        ax.set_yscale('log')
+        ax.set_xlabel('t (ps)')
+        ax.set_ylabel(r'max$[\frac{df}{dt}]$ unit:df/fs')
+        fig.savefig('dfdt_max_Ttot%dfs_Step%dfs.png'%(self.param.occup_t_tot,self.param.occup_timestep_for_selected_file_fs))

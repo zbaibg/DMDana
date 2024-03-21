@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 from ..lib.constant import *
 import numpy as np
 from .config import config_current
+from typing import Union,List
 #Read input
 class param_class(object):
     def __init__(self,config: config_current):
@@ -29,7 +30,7 @@ class param_class(object):
         self.plot_all=self.config.Input.getboolean('plot_all')
         self.smooth_times=self.config.Input.getint('smooth_times')
 
-def do(config):
+def do(config: config_current):
     param=param_class(config)
     if param.plot_all:
         param.smooth_on=False
@@ -40,13 +41,14 @@ def do(config):
         plot_current(param).plot()
         
 class plot_current:
-    def __init__(self,param):
+    def __init__(self,param: param_class):
         self.param=param
         self.fig1=None
         self.timedata=None
         self.datamax=0
         self.mintime_plot=self.param.tmin-0.05*self.param.total_time
         self.maxtime_plot=self.param.tmax+0.05*self.param.total_time
+        self.ax: Union[List[plt.Axes],List[List[plt.Axes]]]
     def plot(self):
         if self.param.only_jtot:
             self.fig1, self.ax = plt.subplots(1,3, figsize=(10,6),dpi=200,sharex=True)
@@ -68,7 +70,9 @@ class plot_current:
     def plot_tot_diag_offdiag(self):
         self.fig1.suptitle('Current'+self.param.light_label)
         for jtemp,jdirection,j in [(self.jx_data,'x',0),(self.jy_data,'y',1),(self.jz_data,'z',2)]:
+            j:int
             for i in range(3):
+                i:int
                 self.ax[i][j].ticklabel_format(style='sci', axis='y', scilimits=(0,0))
                 self.ax[i][j].yaxis.major.formatter._useMathText = True 
                 self.ax[i][j].set_xlim(self.mintime_plot,self.maxtime_plot)
@@ -94,6 +98,7 @@ class plot_current:
     def plot_tot(self):
         self.fig1.suptitle('Current'+self.param.light_label)
         for jtemp,jdirection,j in [(self.jx_data,'x',0),(self.jy_data,'y',1),(self.jz_data,'z',2)]:
+            j:int
             self.ax[j].ticklabel_format(style='sci', axis='y', scilimits=(0,0))
             self.ax[j].yaxis.major.formatter._useMathText = True 
             self.ax[0].set_ylabel('$j^{tot}(t)$ A/cm$^2$')
@@ -103,7 +108,7 @@ class plot_current:
             self.ax[j].set_xlim(self.mintime_plot,self.maxtime_plot)
         #for i in range(3):
         #    self.ax[j].set_ylim(-self.datamax,self.datamax)
-    def plot_func(self,ax,data):
+    def plot_func(self,ax: plt.Axes,data):
         windowlen=self.param.smooth_windowlen
         windowdata=sgl.flattop(windowlen, sym=False)
         data_used=data

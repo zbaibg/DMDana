@@ -2,8 +2,8 @@
 import pandas as pd
 import numpy as np
 from ..lib.constant import *
-from .global_variable import config
-def do():
+from .config import config_current
+def do(config: config_current):
     jx_elec_tot=pd.DataFrame()
     jy_elec_tot=pd.DataFrame()
     jz_elec_tot=pd.DataFrame()
