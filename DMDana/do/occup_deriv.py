@@ -7,19 +7,20 @@ So be sure that your occupation filelists include complete number of files and a
 """
 import numpy as np
 from ..lib import constant as const
-from .config import config_occup,DMDana_ini
+from .config import config_occup,DMDana_ini_Class
 from matplotlib.figure import Figure
 import matplotlib.pyplot as plt
 #Read input
 class param_class(object):
     def __init__(self,config: config_occup):
+        self.folder=config.folder
         self.occup_selected_files=config.occup_selected_files
         self.occup_timestep_for_selected_file_fs=config.occup_timestep_for_selected_file_fs
         self.occup_maxmium_file_number_plotted_exclude_t0=config.occup_maxmium_file_number_plotted_exclude_t0
         self.occup_t_tot=config.occup_t_tot
-        self.data_first=np.loadtxt('occupations_t0.out')
-def do(DMDana_ini_object:DMDana_ini):
-    config=DMDana_ini_object.get_folder_config('occup_deriv',0)
+        self.data_first=np.loadtxt(self.folder+'/occupations_t0.out')
+def do(DMDana_ini:DMDana_ini_Class):
+    config=DMDana_ini.get_folder_config('occup_deriv',0)
     param=param_class(config)
     plot_object=occup_deriv(param)
     plot_object.do()
@@ -47,3 +48,4 @@ class occup_deriv(object):
         ax.set_xlabel('t (ps)')
         ax.set_ylabel(r'max$[\frac{df}{dt}]$ unit:df/fs')
         fig.savefig('dfdt_max_Ttot%dfs_Step%dfs.png'%(self.param.occup_t_tot,self.param.occup_timestep_for_selected_file_fs))
+        plt.close()

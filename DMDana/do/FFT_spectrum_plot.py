@@ -8,7 +8,7 @@ import itertools
 import pandas as pd
 from ..lib import constant as const
 from matplotlib.axes import Axes
-from .config import config_current,DMDana_ini
+from .config import config_current,DMDana_ini_Class
 from ..lib.fft import fft_of_j
 from typing import List
 #Read input
@@ -29,8 +29,8 @@ class param_class(object):
         self.jy_data=config.jy_data
         self.jz_data=config.jz_data
         
-def do(DMDana_ini_object:DMDana_ini):
-    config=DMDana_ini_object.get_folder_config('FFT_spectrum_plot',0)
+def do(DMDana_ini:DMDana_ini_Class):
+    config=DMDana_ini.get_folder_config('FFT_spectrum_plot',0)
     param=param_class(config)
     plot_object=FFT_spectrum_plot(param)
     plot_object.plot()

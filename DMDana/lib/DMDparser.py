@@ -35,6 +35,12 @@ def glob_occupation_files(folder):
     occup_files = glob.glob(folder+'/occupations_t0.out')+sorted(glob.glob(folder+'/occupations-*out'))
     return occup_files
 
+def get_total_step_number(folder):
+    linenumber=0
+    with open(folder+'/jx_elec_tot.out') as f:
+        for line in f:
+            linenumber+=1
+    return linenumber-3 # not include the step at t=0
 def get_current_data(folder):
     """
     get the data of the current vs time from jx(y,z)_elec_tot.out

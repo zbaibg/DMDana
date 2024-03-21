@@ -8,7 +8,7 @@ import numpy as np
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 from ..lib import constant as const
-from .config import config_occup,DMDana_ini
+from .config import config_occup,DMDana_ini_Class
 from scipy.optimize import curve_fit
 import logging
 from mpl_toolkits.mplot3d.axes3d import Axes3D
@@ -21,6 +21,7 @@ class param_class(object):
         self.figsize=(12, 10)#Width, height in inches.
         self.dpi=100.0#The resolution of the figure in dots-per-inch.
         #Read from config
+        self.folder=config.folder
         self.occup_time_plot_lowE=config.Input.getfloat('occup_time_plot_lowE')
         self.occup_time_plot_highE=config.Input.getfloat('occup_time_plot_highE')
         self.occup_time_plot_lowE_conduction=config.EcMin_au*const.Hatree_to_eV
@@ -74,6 +75,7 @@ class occup_time(object):
         self.plot_data()
         self.post_processing()
         self.save_fig()
+        plt.close()
 
 
     def fermi(self,temperature_au,mu_au,elist):
@@ -101,7 +103,7 @@ class occup_time(object):
 
     def plot_data(self):
         #Plot the fermi function at t=0
-        data_temp=np.loadtxt('occupations_t0.out')
+        data_temp=np.loadtxt(self.param.folder+'/occupations_t0.out')
         self.data_first=np.array(data_temp)
         self.data_first[:,1]=self.fermi(self.param.temperature_au,self.param.mu_au,data_temp[:,0])
         self.plot_one_curve(time_this_file_fs=0,data=self.data_first)
@@ -201,8 +203,8 @@ class occup_time(object):
             name="delta_"+name
         self.fig.savefig(name, bbox_inches="tight")   
         
-def do(DMDana_ini_object:DMDana_ini):
-    config=DMDana_ini_object.get_folder_config('occup_time',0)
+def do(DMDana_ini:DMDana_ini_Class):
+    config=DMDana_ini.get_folder_config('occup_time',0)
     param=param_class(config)
     logging.info('temperature(K): %.3e'%(param.temperature_au/const.Kelvin))
     logging.info('mu(eV): %.3e'%(param.mu_au/const.eV))

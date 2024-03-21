@@ -13,9 +13,9 @@ from typing import Union
 libpath='/'.join(__file__.split('/')[0:-3])  # The path where DMDana is installed (not including DMDana)
 allfuncname=['FFT_DC_convergence_test','current_plot','FFT_spectrum_plot','occup_time','occup_deriv']
 class config_base(object): 
-    def __init__(self, funcname_in,DMDana_ini_config: configparser.ConfigParser,folder='.',putlog=True):
+    def __init__(self, funcname_in,DMDana_ini_configparser: configparser.ConfigParser,folder='.',putlog=True):
         self.logfile=None
-        self.DMDana_ini_config=DMDana_ini_config
+        self.DMDana_ini_configparser=DMDana_ini_configparser
         self.funcname=funcname_in
         self.EBot_probe_au=None
         self.ETop_probe_au=None 
@@ -27,7 +27,7 @@ class config_base(object):
         self.EcMin_au=None
         self.mu_au=None
         self.temperature_au=None
-        self.Input=self.DMDana_ini_config[self.funcname.replace('_','-')]# Due to historical reason, the name in DMDana.ini is with "-" instead of "_". Other parts of the code all use "_" for funcname
+        self.Input=self.DMDana_ini_configparser[self.funcname.replace('_','-')]# Due to historical reason, the name in DMDana.ini is with "-" instead of "_". Other parts of the code all use "_" for funcname
         if putlog==True:
             self.initiallog(self.funcname)
         self.folder=folder
@@ -45,14 +45,14 @@ class config_base(object):
         logging.info("Submodule: %s"%funcname)
         logging.info("Start time: %s"%datetime.datetime.now())
         logging.info("===Configuration Parameter===")
-        paramdict=dict((self.DMDana_ini_config.items(funcname.replace('_','-'))))
+        paramdict=dict((self.DMDana_ini_configparser.items(funcname.replace('_','-'))))
         for i in paramdict:
             logging.info("%-35s"%i+':\t'+paramdict[i]+'')
         logging.info("===Initialization finished===")
         
 class config_current(config_base):
-    def __init__(self, funcname_in,DMDana_ini_config,folder='.',putlog=True):
-        super().__init__(funcname_in,DMDana_ini_config,folder,putlog)
+    def __init__(self, funcname_in,DMDana_ini_configparser,folder='.',putlog=True):
+        super().__init__(funcname_in,DMDana_ini_configparser,folder,putlog)
         self.only_jtot=None
         self.jx_data=None
         self.jy_data=None
@@ -70,8 +70,8 @@ class config_current(config_base):
         self.light_label=' '+'for light of %s Polarization, %.2e a.u Amplitude, and %.2e eV Energy'%(pumpPoltype,pumpA0,pumpE)
         
 class config_occup(config_base):
-    def __init__(self, funcname_in,DMDana_ini_config,folder='.',putlog=True):
-        super().__init__(funcname_in,DMDana_ini_config,folder,putlog)
+    def __init__(self, funcname_in,DMDana_ini_configparser,folder='.',putlog=True):
+        super().__init__(funcname_in,DMDana_ini_configparser,folder,putlog)
         self.occup_timestep_for_selected_file_fs=None
         self.occup_timestep_for_selected_file_ps=None
         self.occup_t_tot=None # maximum time to plot
@@ -110,25 +110,25 @@ class config_occup(config_base):
             # if in the future, more file number (more than occup_maxmium_file_number_plotted_exclude_t0+2) 
             # is needed to do calculation. This should be modified.
         self.occup_t_tot=self.occup_maxmium_file_number_plotted_exclude_t0*self.occup_timestep_for_selected_file_fs#fs
-class DMDana_ini(object):
+class DMDana_ini_Class(object):
     def __init__(self,param_path="./DMDana.ini"):
-        self.DMDana_ini_config = configparser.ConfigParser(inline_comment_prefixes="#")
+        self.DMDana_ini_configparser = configparser.ConfigParser(inline_comment_prefixes="#")
         #self.folder_config_dict=dict()
         if (os.path.isfile(param_path)):
             default_ini=check_and_get_path(libpath+'/DMDana/do/DMDana_default.ini')
-            self.DMDana_ini_config.read([default_ini,param_path])
+            self.DMDana_ini_configparser.read([default_ini,param_path])
         else:
             raise Warning('%s not exist. Default setting would be used. You could run "DMDana init" to initialize it.'%param_path)
-        self.folderlist=self.DMDana_ini_config['DEFAULT']['folders'].split(',')
+        self.folderlist=self.DMDana_ini_configparser['DEFAULT']['folders'].split(',')
     def get_folder_name_by_number(self,folder_number):
         assert folder_number<len(self.folderlist) and folder_number>=0
         return self.folderlist[folder_number]
     def get_folder_config(self,funcname: str,folder_number: int):
             assert funcname in allfuncname,'funcname is not correct.'
             if funcname in ['FFT_DC_convergence_test','current_plot','FFT_spectrum_plot']:
-                config=config_current(funcname,self.DMDana_ini_config,self.get_folder_name_by_number(folder_number))
+                config=config_current(funcname,self.DMDana_ini_configparser,self.get_folder_name_by_number(folder_number))
             if funcname in ['occup_time','occup_deriv']:
-                config=config_occup(funcname,self.DMDana_ini_config,self.get_folder_name_by_number(folder_number))
+                config=config_occup(funcname,self.DMDana_ini_configparser,self.get_folder_name_by_number(folder_number))
             #self.folder_config_dict[folder_number]=config
             return config
 
@@ -139,20 +139,20 @@ def workflow(funcname,param_path='./DMDana.ini'):
     This tree is read by different analysis modules to do the analysis.
 
     '''
-    DMDana_ini_object=DMDana_ini(param_path)
+    DMDana_ini=DMDana_ini_Class(param_path)
     assert funcname in allfuncname, 'funcname is not correct.'
     if funcname == "FFT_DC_convergence_test":
         from . import FFT_DC_convergence_test
-        FFT_DC_convergence_test.do(DMDana_ini_object)
+        FFT_DC_convergence_test.do(DMDana_ini)
     elif funcname == "FFT_spectrum_plot":
         from . import FFT_spectrum_plot
-        FFT_spectrum_plot.do(DMDana_ini_object)
+        FFT_spectrum_plot.do(DMDana_ini)
     elif funcname == "current_plot":
         from . import current_plot
-        current_plot.do(DMDana_ini_object)
+        current_plot.do(DMDana_ini)
     elif funcname == "occup_deriv":
         from . import occup_deriv
-        occup_deriv.do(DMDana_ini_object)
+        occup_deriv.do(DMDana_ini)
     elif funcname == "occup_time":
         from . import occup_time
-        occup_time.do(DMDana_ini_object)
+        occup_time.do(DMDana_ini)

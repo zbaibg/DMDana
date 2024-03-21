@@ -7,13 +7,13 @@ from scipy.signal import savgol_filter
 import matplotlib.pyplot as plt
 from ..lib import constant as const
 import numpy as np
-from .config import config_current,DMDana_ini
+from .config import config_current,DMDana_ini_Class
 from typing import Union,List
 #Read input
 class param_class(object):
-    def __init__(self,DMDana_ini_object: DMDana_ini):#init_from_config, for single folder analysis
-        self.DMDana_ini: DMDana_ini=DMDana_ini_object
-        self.folderlist=DMDana_ini_object.folderlist
+    def __init__(self,DMDana_ini: DMDana_ini_Class):#init_from_config, for single folder analysis
+        self.DMDana_ini: DMDana_ini_Class=DMDana_ini
+        self.folderlist=DMDana_ini.folderlist
         self.folder_number=len(self.folderlist)
         self.loadcurrent(0)
         self.tmax=self.config.Input.getint("t_max")
@@ -36,8 +36,8 @@ class param_class(object):
         self.jy_data=self.config.jy_data
         self.jz_data=self.config.jz_data
 
-def do(DMDana_ini_object: DMDana_ini):#multiple folder analysis
-    param=param_class(DMDana_ini_object)
+def do(DMDana_ini: DMDana_ini_Class):#multiple folder analysis
+    param=param_class(DMDana_ini)
     if param.plot_all:
         param.smooth_on=False
         plot_current(param).plot()

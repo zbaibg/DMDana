@@ -2,9 +2,9 @@
 import pandas as pd
 import numpy as np
 from ..lib import constant as const
-from .config import config_current,DMDana_ini
-def do(DMDana_ini_object:DMDana_ini):
-    config=DMDana_ini_object.get_folder_config('FeynWann_Current',0)
+from .config import config_current,DMDana_ini_Class
+def do(DMDana_ini:DMDana_ini_Class):
+    config=DMDana_ini.get_folder_config('FeynWann_Current',0)
     jx_elec_tot=pd.DataFrame()
     jy_elec_tot=pd.DataFrame()
     jz_elec_tot=pd.DataFrame()
