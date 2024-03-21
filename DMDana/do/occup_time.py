@@ -7,7 +7,7 @@ Be sure that your occupation filelists include complete number of files and also
 import numpy as np
 import matplotlib as mpl
 import matplotlib.pyplot as plt
-from ..lib.constant import *
+from ..lib import constant as const
 from .config import config_occup
 from scipy.optimize import curve_fit
 import logging
@@ -23,10 +23,10 @@ class param_class(object):
         #Read from config
         self.occup_time_plot_lowE=config.Input.getfloat('occup_time_plot_lowE')
         self.occup_time_plot_highE=config.Input.getfloat('occup_time_plot_highE')
-        self.occup_time_plot_lowE_conduction=config.EcMin_au*Hatree_to_eV
-        self.occup_time_plot_highE_conduction=config.ETop_dm_au*Hatree_to_eV
-        self.occup_time_plot_lowE_valence=config.EBot_dm_au*Hatree_to_eV
-        self.occup_time_plot_highE_valence=config.EvMax_au*Hatree_to_eV
+        self.occup_time_plot_lowE_conduction=config.EcMin_au*const.Hatree_to_eV
+        self.occup_time_plot_highE_conduction=config.ETop_dm_au*const.Hatree_to_eV
+        self.occup_time_plot_lowE_valence=config.EBot_dm_au*const.Hatree_to_eV
+        self.occup_time_plot_highE_valence=config.EvMax_au*const.Hatree_to_eV
         self.occup_time_plot_set_Erange=config.Input.getboolean('occup_time_plot_set_Erange')
         self.plot_occupation_number_min=config.Input.getfloat('plot_occupation_number_min')
         self.plot_occupation_number_max=config.Input.getfloat('plot_occupation_number_max')
@@ -50,9 +50,9 @@ class param_class(object):
         self.EvMax_au=config.EvMax_au
         self.temperature_au=config.temperature_au
         if self.fit_Boltzmann_initial_guess_mu_auto:
-            self.fit_Boltzmann_initial_guess_mu=self.mu_au/eV
+            self.fit_Boltzmann_initial_guess_mu=self.mu_au/const.eV
         if self.fit_Boltzmann_initial_guess_T_auto:
-            self.fit_Boltzmann_initial_guess_T=self.temperature_au/Kelvin
+            self.fit_Boltzmann_initial_guess_T=self.temperature_au/const.Kelvin
 
     
 class occup_time(object):
@@ -88,7 +88,7 @@ class occup_time(object):
     def read_occup_file(self,filename):
         with open(filename) as f:
             firstline_this_file=f.readline()
-            time_this_file_fs=float(firstline_this_file.split()[12])/fs 
+            time_this_file_fs=float(firstline_this_file.split()[12])/const.fs 
             #nstep=firstline.split()[9]
         data = np.loadtxt(filename)
         return time_this_file_fs,data
@@ -118,7 +118,7 @@ class occup_time(object):
             data[:,1]=data[:,1]-self.data_first[:,1]
         if self.param.occup_time_plot_set_Erange:
             #data=data[data[:,0].argsort()]
-            data=data[np.logical_and(data[:,0]>self.param.occup_time_plot_lowE/Hatree_to_eV,data[:,0]<self.param.occup_time_plot_highE/Hatree_to_eV)]
+            data=data[np.logical_and(data[:,0]>self.param.occup_time_plot_lowE/const.Hatree_to_eV,data[:,0]<self.param.occup_time_plot_highE/const.Hatree_to_eV)]
         for _ in [None]:#Fit Bolzmman
             if not self.param.fit_Boltzmann:
                 break
@@ -134,21 +134,21 @@ class occup_time(object):
 
     def Boltzmann_fit_and_plot(self,data,time_this_file_fs):
         try:
-            popt,pcov=curve_fit(Bolzmann,data[:,0]*Hatree_to_eV,data[:,1],p0=[self.param.fit_Boltzmann_initial_guess_mu,self.param.fit_Boltzmann_initial_guess_T])
+            popt,pcov=curve_fit(Bolzmann,data[:,0]*const.Hatree_to_eV,data[:,1],p0=[self.param.fit_Boltzmann_initial_guess_mu,self.param.fit_Boltzmann_initial_guess_T])
         except:
             logging.error("Boltzmann fit failed for t(fs) %.3e"%(time_this_file_fs))
             return
         logging.info("Boltzmann Distribution t(fs) %.3e mu(eV) %.3e T(K) %.3e"%(time_this_file_fs,popt[0],popt[1]))
         data_fit=np.zeros((1000,2))
-        data_fit[:,0]=np.linspace(self.param.occup_time_plot_lowE/Hatree_to_eV,self.param.occup_time_plot_highE/Hatree_to_eV,1000)
-        data_fit[:,1]=Bolzmann(data_fit[:,0]*Hatree_to_eV,*popt)
+        data_fit[:,0]=np.linspace(self.param.occup_time_plot_lowE/const.Hatree_to_eV,self.param.occup_time_plot_highE/const.Hatree_to_eV,1000)
+        data_fit[:,1]=Bolzmann(data_fit[:,0]*const.Hatree_to_eV,*popt)
         self.plot_data_func(data_fit,time_this_file_fs,mode='scatter') 
 
     def plot_data_func(self,data: np.ndarray,time_this_file_fs,mode='scatter'):
         if self.figure_style_this=='3D':
-            plot_param={'xs':data[:,0]*Hatree_to_eV,"ys":data[:,1], "zs":time_this_file_fs/1000, "zdir":'y',"c":[time_this_file_fs/1000]*data.shape[0],"cmap":self.param.cmap, "vmin":0,"vmax":self.param.occup_t_tot/1000}
+            plot_param={'xs':data[:,0]*const.Hatree_to_eV,"ys":data[:,1], "zs":time_this_file_fs/1000, "zdir":'y',"c":[time_this_file_fs/1000]*data.shape[0],"cmap":self.param.cmap, "vmin":0,"vmax":self.param.occup_t_tot/1000}
         elif self.figure_style_this=='heatmap':
-            plot_param={"x":data[:,0]*Hatree_to_eV, "y":data[:,1], "c":[time_this_file_fs/1000]*data.shape[0],"cmap":self.param.cmap, "vmin":0,"vmax":self.param.occup_t_tot/1000}
+            plot_param={"x":data[:,0]*const.Hatree_to_eV, "y":data[:,1], "c":[time_this_file_fs/1000]*data.shape[0],"cmap":self.param.cmap, "vmin":0,"vmax":self.param.occup_t_tot/1000}
         if mode=='scatter':
             return self.ax.scatter(**plot_param)
         elif mode=='plot':
@@ -156,9 +156,9 @@ class occup_time(object):
 
     def post_processing(self):
         if self.param.occup_time_plot_set_Erange:
-            assert not self.param.occup_time_plot_lowE > self.param.ETop_dm_au*Hatree_to_eV , "Erange for plot is out of range of the data"
-            assert not self.param.occup_time_plot_highE < self.param.EBot_dm_au*Hatree_to_eV , "Erange for plot is out of range of the data"
-            assert not (self.param.occup_time_plot_lowE > self.param.EvMax_au*Hatree_to_eV and self.param.occup_time_plot_highE < self.param.EcMin_au*Hatree_to_eV) , "Erange for plot is out of range of the data"
+            assert not self.param.occup_time_plot_lowE > self.param.ETop_dm_au*const.Hatree_to_eV , "Erange for plot is out of range of the data"
+            assert not self.param.occup_time_plot_highE < self.param.EBot_dm_au*const.Hatree_to_eV , "Erange for plot is out of range of the data"
+            assert not (self.param.occup_time_plot_lowE > self.param.EvMax_au*const.Hatree_to_eV and self.param.occup_time_plot_highE < self.param.EcMin_au*const.Hatree_to_eV) , "Erange for plot is out of range of the data"
             self.ax.set_xlim(self.param.occup_time_plot_lowE, self.param.occup_time_plot_highE)
         self.ax.set_xlabel('E (eV)')
         self.fig.colorbar(self.figtemp,label='Time (ps)')   
@@ -203,8 +203,8 @@ class occup_time(object):
         
 def do(config):
     param=param_class(config)
-    logging.info('temperature(K): %.3e'%(param.temperature_au/Kelvin))
-    logging.info('mu(eV): %.3e'%(param.mu_au/eV))
+    logging.info('temperature(K): %.3e'%(param.temperature_au/const.Kelvin))
+    logging.info('mu(eV): %.3e'%(param.mu_au/const.eV))
 
     do_sub(param)
     if param.plot_conduction_valence:
@@ -230,4 +230,4 @@ def do_sub(param: param_class):
 
 #E mu in eV, T in Kelvin
 def Bolzmann(E,mu,T):
-    return np.exp(-(E-mu)*eV/(T*Kelvin))
+    return np.exp(-(E-mu)*const.eV/(T*const.Kelvin))

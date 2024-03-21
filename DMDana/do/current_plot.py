@@ -5,7 +5,7 @@ This script plots the current figures
 import scipy.signal.windows as sgl
 from scipy.signal import savgol_filter
 import matplotlib.pyplot as plt
-from ..lib.constant import *
+from ..lib import constant as const
 import numpy as np
 from .config import config_current
 from typing import Union,List
@@ -18,7 +18,7 @@ class param_class(object):
         self.jz_data0=self.config.jz_data
         self.tmax=self.config.Input.getint("t_max")
         if self.tmax==-1:
-            self.tmax=np.max(self.jx_data0[:,0])/fs
+            self.tmax=np.max(self.jx_data0[:,0])/const.fs
         self.tmin=self.config.Input.getint("t_min")
         self.total_time=self.tmax-self.tmin
         self.current_plot_output=self.config.Input.get('current_plot_output')
@@ -59,7 +59,7 @@ class plot_current:
             self.jx_data=self.param.config.jx_data
             self.jy_data=self.param.config.jy_data
             self.jz_data=self.param.config.jz_data
-            self.timedata=self.jx_data[:,0]/fs
+            self.timedata=self.jx_data[:,0]/const.fs
             if self.param.only_jtot:
                 self.plot_tot()
             else:

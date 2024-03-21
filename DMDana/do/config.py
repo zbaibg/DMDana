@@ -3,7 +3,7 @@ import glob
 import git
 import datetime
 import os
-from ..lib.constant import *
+from ..lib import constant as const
 import logging
 from ..lib.DMDparser import *
 """_summary_
@@ -100,10 +100,10 @@ class config_occup(config_base):
         self.occup_selected_files = glob.glob('occupations_t0.out')+sorted(glob.glob('occupations-*out'))
         with open(self.occup_selected_files[1]) as f:
             firstline_this_file=f.readline()
-            t1_fs=float(firstline_this_file.split()[12])/fs 
+            t1_fs=float(firstline_this_file.split()[12])/const.fs 
         with open(self.occup_selected_files[2]) as f:
             firstline_this_file=f.readline()
-            t2_fs=float(firstline_this_file.split()[12])/fs
+            t2_fs=float(firstline_this_file.split()[12])/const.fs
                      
         #occup_timestep_for_all_files=self.Input.getint('timestep_for_occupation_output') #fs
         

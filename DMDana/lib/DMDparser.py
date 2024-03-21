@@ -1,7 +1,6 @@
 import numpy as np
 import os
-from ..lib.constant import *
-
+from . import constant as const
 def check_and_get_path( filepath):
     assert os.path.isfile(filepath),"%s does not exist."%filepath
     return filepath
@@ -66,7 +65,7 @@ def get_mu_temperature(DMDparam_value,path='.'):
     temperature_au=float(temperature_au_text)
     # read parameter "mu" in paramm.in
     if 'mu' in DMDparam_value:
-        mu_au=float(DMDparam_value['mu'])/Hatree_to_eV
+        mu_au=float(DMDparam_value['mu'])/const.Hatree_to_eV
     # read parameter "carrier_density" in paramm.in
     for _ in [0]:
         if 'carrier_density' not in DMDparam_value: 

@@ -6,7 +6,7 @@ This program does not read time from file content for now. It only count the fil
 So be sure that your occupation filelists include complete number of files and also occupations_t0.out
 """
 import numpy as np
-from ..lib.constant import *
+from ..lib import constant as const
 from .config import config_occup
 from matplotlib.figure import Figure
 import matplotlib.pyplot as plt

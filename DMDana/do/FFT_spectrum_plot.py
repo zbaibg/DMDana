@@ -6,7 +6,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import itertools
 import pandas as pd
-from ..lib.constant import *
+from ..lib import constant as const
 from matplotlib.axes import Axes
 from .config import config_current
 from ..lib.fft import fft_of_j
@@ -112,7 +112,7 @@ class FFT_spectrum_plot(object):
         #Calculate information of current spectrums to output for convenience.
         database=pd.DataFrame()
         for Window_type,Cutoff in list(itertools.product(self.param.Window_type_list,self.param.Cutoff_list)):
-            paramdict=dict(Cutoff=Cutoff,FFT_integral_start_time_fs=self.param.jx_data[Cutoff,0]/fs,FFT_integral_end_time_fs=self.param.jx_data[-1,0]/fs,Window_type=Window_type)
+            paramdict=dict(Cutoff=Cutoff,FFT_integral_start_time_fs=self.param.jx_data[Cutoff,0]/const.fs,FFT_integral_end_time_fs=self.param.jx_data[-1,0]/const.fs,Window_type=Window_type)
             database_newline_index=database.shape[0]
             for jtemp,jdirection,j in [(self.param.jx_data,'x',0),(self.param.jy_data,'y',1),(self.param.jz_data,'z',2)]:
                 
@@ -127,7 +127,7 @@ class FFT_spectrum_plot(object):
                 if self.param.only_jtot:
                     resultdisc={'FFT(j'+jdirection+'_tot)(0)':np.real(jw_tot[0]),
                             'j'+jdirection+'_tot_mean': np.mean(jtemp[Cutoff:,1]),
-                            'time(fs)':jtemp[Cutoff,0]/fs}
+                            'time(fs)':jtemp[Cutoff,0]/const.fs}
                 else:
                     resultdisc={'FFT(j'+jdirection+'_tot)(0)':np.real(jw_tot[0]),
                             'FFT(j'+jdirection+'_d)(0)': np.real(jw_d[0]),

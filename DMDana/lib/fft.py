@@ -1,6 +1,6 @@
 import scipy.signal.windows as sgl
 import numpy as np
-from ..lib.constant import *
+from . import constant as const
 # funciton which performs FFT, 
 # shifts frequency bins to only plot positive frequencies, 
 # changes bins to physical units (eV), applies window to time domain data, 
@@ -8,7 +8,7 @@ from ..lib.constant import *
 def fft_of_j(j_t, cutoff,Window_type):
     dt = j_t[1,0] - j_t[0,0]
     N_jt = j_t[cutoff:,1].shape[0]
-    freq_bins = np.fft.fftfreq(N_jt, dt)*(2.0*np.pi*Hatree_to_eV)
+    freq_bins = np.fft.fftfreq(N_jt, dt)*(2.0*np.pi*const.Hatree_to_eV)
     shifted_freq_bins = freq_bins[:len(freq_bins)//2]
 
     if Window_type=='Flattop':#Rectangular, Flattop, Hann, Hamming 

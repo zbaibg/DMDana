@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 import pandas as pd
 import numpy as np
-from ..lib.constant import *
+from ..lib import constant as const
 from .config import config_current
 def do(config: config_current):
     jx_elec_tot=pd.DataFrame()
@@ -19,7 +19,7 @@ def do(config: config_current):
                 currentx.append(line.split()[2])
                 currenty.append(line.split()[3])
                 currentz.append(line.split()[4])
-    time=np.array(time,dtype=float)*fs
+    time=np.array(time,dtype=float)*const.fs
     currentx=np.array(currentx,dtype=float)/10000# turn A/m2 to A/cm2
     currenty=np.array(currenty,dtype=float)/10000# turn A/m2 to A/cm2
     currentz=np.array(currentz,dtype=float)/10000# turn A/m2 to A/cm2
