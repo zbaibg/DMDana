@@ -144,17 +144,23 @@ class occup_time(object):
         data_fit=np.zeros((1000,2))
         data_fit[:,0]=np.linspace(self.param.occup_time_plot_lowE/const.Hatree_to_eV,self.param.occup_time_plot_highE/const.Hatree_to_eV,1000)
         data_fit[:,1]=Bolzmann(data_fit[:,0]*const.Hatree_to_eV,*popt)
-        self.plot_data_func(data_fit,time_this_file_fs,mode='scatter') 
+        self.plot_data_func(data_fit,time_this_file_fs,mode='plot') 
 
     def plot_data_func(self,data: np.ndarray,time_this_file_fs,mode='scatter'):
-        if self.figure_style_this=='3D':
-            plot_param={'xs':data[:,0]*const.Hatree_to_eV,"ys":data[:,1], "zs":time_this_file_fs/1000, "zdir":'y',"c":[time_this_file_fs/1000]*data.shape[0],"cmap":self.param.cmap, "vmin":0,"vmax":self.param.occup_t_tot/1000}
-        elif self.figure_style_this=='heatmap':
-            plot_param={"x":data[:,0]*const.Hatree_to_eV, "y":data[:,1], "c":[time_this_file_fs/1000]*data.shape[0],"cmap":self.param.cmap, "vmin":0,"vmax":self.param.occup_t_tot/1000}
+        color=plt.cm.rainbow(time_this_file_fs/self.param.occup_t_tot)
         if mode=='scatter':
-            return self.ax.scatter(**plot_param)
+            if self.figure_style_this=='3D': 
+                plot_param={'xs':data[:,0]*const.Hatree_to_eV,"ys":data[:,1], "zs":time_this_file_fs/1000, "zdir":'y',"c":[time_this_file_fs/1000]*data.shape[0],"cmap":self.param.cmap, "vmin":0,"vmax":self.param.occup_t_tot/1000}
+                return self.ax.scatter(**plot_param)
+            elif self.figure_style_this=='heatmap' :
+                plot_param={"x":data[:,0]*const.Hatree_to_eV, "y":data[:,1], "c":[time_this_file_fs/1000]*data.shape[0],"cmap":self.param.cmap, "vmin":0,"vmax":self.param.occup_t_tot/1000}
+                return self.ax.scatter(**plot_param)
         elif mode=='plot':
-            pass # not implemented yet
+            if self.figure_style_this=='3D':
+                plot_param={'xs':data[:,0]*const.Hatree_to_eV,"ys":data[:,1], "zs":time_this_file_fs/1000, "zdir":'y','c':color}
+                return self.ax.plot(**plot_param)
+            elif self.figure_style_this=='heatmap':
+                return self.ax.plot(data[:,0]*const.Hatree_to_eV, data[:,1],c=color)
 
     def post_processing(self):
         if self.param.occup_time_plot_set_Erange:
