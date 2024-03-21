@@ -88,9 +88,9 @@ class config_occup(config_base):
         with open(self.occup_selected_files[2]) as f:
             firstline_this_file=f.readline()
             t2_fs=float(firstline_this_file.split()[12])/const.fs
-        occup_timestep_for_all_files=t2_fs-t1_fs #fs
+        self.occup_timestep_for_all_files=t2_fs-t1_fs #fs
         filelist_step=self.Input.getint('filelist_step') # select parts of the filelist
-        self.occup_timestep_for_selected_file_fs=occup_timestep_for_all_files*filelist_step
+        self.occup_timestep_for_selected_file_fs=self.occup_timestep_for_all_files*filelist_step
         self.occup_timestep_for_selected_file_ps=self.occup_timestep_for_selected_file_fs/1000 #ps
         # Select partial files
         self.occup_selected_files=self.occup_selected_files[::filelist_step]
