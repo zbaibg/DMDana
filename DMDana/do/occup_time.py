@@ -24,10 +24,10 @@ class param_class(object):
         self.folder=config.folder
         self.occup_time_plot_lowE=config.Input.getfloat('occup_time_plot_lowE')
         self.occup_time_plot_highE=config.Input.getfloat('occup_time_plot_highE')
-        self.occup_time_plot_lowE_conduction=config.EcMin_au*const.Hatree_to_eV
+        self.occup_time_plot_lowE_conduction=max(config.EcMin_au*const.Hatree_to_eV,0)# Sometimes DMD_Initialization determine wrong VBM and CBM, here we assume CBM is at least larger than mu (0 points), VBM is at most smaller than mu (0 point).
         self.occup_time_plot_highE_conduction=config.ETop_dm_au*const.Hatree_to_eV
         self.occup_time_plot_lowE_valence=config.EBot_dm_au*const.Hatree_to_eV
-        self.occup_time_plot_highE_valence=config.EvMax_au*const.Hatree_to_eV
+        self.occup_time_plot_highE_valence=min(config.EvMax_au*const.Hatree_to_eV,0)
         self.occup_time_plot_set_Erange=config.Input.getboolean('occup_time_plot_set_Erange')
         self.plot_occupation_number_min=config.Input.getfloat('plot_occupation_number_min')
         self.plot_occupation_number_max=config.Input.getfloat('plot_occupation_number_max')
