@@ -126,7 +126,7 @@ class occup_time(object):
                 break
             if self.Substract_initial_occupation_this:
                 break
-            if not self.param.occup_time_plot_lowE>=0:
+            if not self.param.occup_time_plot_lowE>=self.param.occup_time_plot_lowE_conduction:
                 break
             self.Boltzmann_fit_and_plot(data,time_this_file_fs)
             self.fitted=True
