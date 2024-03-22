@@ -119,9 +119,9 @@ def get_mu_temperature(DMDparam_value,path='.'):
             break
         if float(DMDparam_value['carrier_density'])==0:
             break
-        assert os.path.isfile('out') or os.path.isfile('DMD.out'), "out or DMD.out file not found(for determine mu from non-zero carrier_density)"
-        output_file_name='out' if os.path.isfile('out') else 'DMD.out'
-        mu_au_text=read_text_from_file(output_file_name,marklist=["for given electron density"],locationlist=[5],defaultlist=[mu_au],stop_at_first_find=True)
+        assert os.path.isfile(path+'/out') or os.path.isfile(path+'/DMD.out'), "out or DMD.out file not found(for determine mu from non-zero carrier_density)"
+        output_file_name=path+'/out' if os.path.isfile(path+'/out') else path+'/DMD.out'
+        mu_au_text=read_text_from_file(output_file_name,marklist=["for given electron density"],locationlist=[5],stop_at_first_find=True)[0]
         mu_au=float(mu_au_text) if mu_au_text!=None else mu_au
     return mu_au,temperature_au
 
