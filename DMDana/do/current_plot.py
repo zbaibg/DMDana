@@ -16,10 +16,10 @@ class param_class(object):
         self.folderlist=DMDana_ini.folderlist
         self.folder_number=len(self.folderlist)
         self.loadcurrent(0)
-        self.tmax=self.config.Input.getint("t_max")
+        self.tmax=self.config.Input.getfloat("t_max")
         if self.tmax==-1:
             self.tmax=np.max(self.jx_data[:,0])/const.fs
-        self.tmin=self.config.Input.getint("t_min")
+        self.tmin=self.config.Input.getfloat("t_min")
         self.total_time=self.tmax-self.tmin
         self.current_plot_output=self.config.Input.get('current_plot_output')
         self.light_label=self.config.light_label

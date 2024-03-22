@@ -13,7 +13,7 @@ from typing import Union
 libpath='/'.join(__file__.split('/')[0:-3])  # The path where DMDana is installed (not including DMDana)
 allfuncname=['FFT_DC_convergence_test','current_plot','FFT_spectrum_plot','occup_time','occup_deriv']
 class config_base(object): 
-    def __init__(self, funcname_in,DMDana_ini_configparser: configparser.ConfigParser,folder='.',putlog=True):
+    def __init__(self, funcname_in,DMDana_ini_configparser: configparser.ConfigParser,folder='.',show_init_log=True):
         self.logfile=None
         self.DMDana_ini_configparser=DMDana_ini_configparser
         self.funcname=funcname_in
@@ -28,7 +28,7 @@ class config_base(object):
         self.mu_au=None
         self.temperature_au=None
         self.Input=self.DMDana_ini_configparser[self.funcname.replace('_','-')]# Due to historical reason, the name in DMDana.ini is with "-" instead of "_". Other parts of the code all use "_" for funcname
-        if putlog==True:
+        if show_init_log==True:
             self.initiallog(self.funcname)
         self.folder=folder
         self.DMDparam_value=get_DMD_param(self.folder)# Use the param.in in the first folder
@@ -51,8 +51,8 @@ class config_base(object):
         logging.info("===Initialization finished===")
         
 class config_current(config_base):
-    def __init__(self, funcname_in,DMDana_ini_configparser,folder='.',putlog=True):
-        super().__init__(funcname_in,DMDana_ini_configparser,folder,putlog)
+    def __init__(self, funcname_in,DMDana_ini_configparser,folder='.',show_init_log=True):
+        super().__init__(funcname_in,DMDana_ini_configparser,folder,show_init_log)
         self.only_jtot=None
         self.jx_data=None
         self.jy_data=None
@@ -70,8 +70,8 @@ class config_current(config_base):
         self.light_label=' '+'for light of %s Polarization, %.2e a.u Amplitude, and %.2e eV Energy'%(pumpPoltype,pumpA0,pumpE)
         
 class config_occup(config_base):
-    def __init__(self, funcname_in,DMDana_ini_configparser,folder='.',putlog=True):
-        super().__init__(funcname_in,DMDana_ini_configparser,folder,putlog)
+    def __init__(self, funcname_in,DMDana_ini_configparser,folder='.',show_init_log=True):
+        super().__init__(funcname_in,DMDana_ini_configparser,folder,show_init_log)
         self.occup_timestep_for_selected_file_fs=None
         self.occup_timestep_for_selected_file_ps=None
         self.occup_t_tot=None # maximum time to plot
@@ -94,7 +94,7 @@ class config_occup(config_base):
         self.occup_timestep_for_selected_file_ps=self.occup_timestep_for_selected_file_fs/1000 #ps
         # Select partial files
         self.occup_selected_files=self.occup_selected_files[::filelist_step]
-        self.occup_t_tot = self.Input.getint('t_max') # fs
+        self.occup_t_tot = self.Input.getfloat('t_max') # fs
         if self.occup_t_tot<=0:
             self.occup_maxmium_file_number_plotted_exclude_t0=len(self.occup_selected_files)-1
         else:
@@ -120,15 +120,22 @@ class DMDana_ini_Class(object):
         else:
             raise Warning('%s not exist. Default setting would be used. You could run "DMDana init" to initialize it.'%param_path)
         self.folderlist=self.DMDana_ini_configparser['DEFAULT']['folders'].split(',')
+    def set(self,section: str,key: str,value):
+        '''set options in DMDana.ini configparser structure.
+        If you want to save int value, make sure explicitly convert it to int before using this function
+        Or later reading process would report an error'''
+        self.DMDana_ini_configparser[section][key]=str(value)
+    def get(self,section: str,key: str):
+        return self.DMDana_ini_configparser[section][key]
     def get_folder_name_by_number(self,folder_number):
         assert folder_number<len(self.folderlist) and folder_number>=0
         return self.folderlist[folder_number]
-    def get_folder_config(self,funcname: str,folder_number: int):
+    def get_folder_config(self,funcname: str,folder_number: int,show_init_log=True):
             assert funcname in allfuncname,'funcname is not correct.'
             if funcname in ['FFT_DC_convergence_test','current_plot','FFT_spectrum_plot']:
-                config=config_current(funcname,self.DMDana_ini_configparser,self.get_folder_name_by_number(folder_number))
+                config=config_current(funcname,self.DMDana_ini_configparser,self.get_folder_name_by_number(folder_number),show_init_log=show_init_log)
             if funcname in ['occup_time','occup_deriv']:
-                config=config_occup(funcname,self.DMDana_ini_configparser,self.get_folder_name_by_number(folder_number))
+                config=config_occup(funcname,self.DMDana_ini_configparser,self.get_folder_name_by_number(folder_number),show_init_log=show_init_log)
             #self.folder_config_dict[folder_number]=config
             return config
 

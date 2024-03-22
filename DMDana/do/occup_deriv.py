@@ -9,6 +9,7 @@ import numpy as np
 from ..lib import constant as const
 from .config import config_occup,DMDana_ini_Class
 from matplotlib.figure import Figure
+import logging
 import matplotlib.pyplot as plt
 #Read input
 class param_class(object):
@@ -37,7 +38,12 @@ class occup_deriv(object):
         #but if occup_timestep_for_selected_file_fs is much larger than t0,
         #it is fine to take t0 as 0 as it does here. 
         for ind in range(n):
-            data[ind,:] = np.loadtxt(self.param.occup_selected_files[ind])[:,1]
+            try:
+                data[ind,:] = np.loadtxt(self.param.occup_selected_files[ind])[:,1]
+            except Exception as e:
+                logging.error('cannot read file: %s'%(self.param.occup_selected_files[ind]))
+                logging.exception(e)
+
         dfdt=np.gradient(data,self.param.occup_timestep_for_selected_file_fs,axis=0)#df/fs
         dfdtMax = np.max(dfdt,axis=1)
         ax: plt.Axes
