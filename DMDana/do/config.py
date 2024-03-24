@@ -88,6 +88,13 @@ class config_occup(config_base):
         with open(self.occup_selected_files[2]) as f:
             firstline_this_file=f.readline()
             t2_fs=float(firstline_this_file.split()[12])/const.fs
+        data_first=np.loadtxt(self.occup_selected_files[0])
+        try:
+            self.occup_Emin_au=np.min(data_first[:,0])
+            self.occup_Emax_au=np.max(data_first[:,0])
+        except Exception as e:
+            logging.error('%s file is in wrong format'%self.occup_selected_files[0])
+            raise e
         self.occup_timestep_for_all_files=t2_fs-t1_fs #fs
         filelist_step=self.Input.getint('filelist_step') # select parts of the filelist
         self.occup_timestep_for_selected_file_fs=self.occup_timestep_for_all_files*filelist_step

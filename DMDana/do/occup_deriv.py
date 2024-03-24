@@ -42,7 +42,6 @@ class occup_deriv(object):
                 data[ind,:] = np.loadtxt(self.param.occup_selected_files[ind])[:,1]
             except Exception as e:
                 logging.error('cannot read file: %s'%(self.param.occup_selected_files[ind]))
-                logging.exception(e)
 
         dfdt=np.gradient(data,self.param.occup_timestep_for_selected_file_fs,axis=0)#df/fs
         dfdtMax = np.max(dfdt,axis=1)

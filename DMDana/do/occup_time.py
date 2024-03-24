@@ -24,10 +24,10 @@ class param_class(object):
         self.folder=config.folder
         self.occup_time_plot_lowE=config.Input.getfloat('occup_time_plot_lowE')
         self.occup_time_plot_highE=config.Input.getfloat('occup_time_plot_highE')
-        self.occup_time_plot_lowE_conduction=max(config.EcMin_au*const.Hatree_to_eV,0)# Sometimes DMD_Initialization determine wrong VBM and CBM, here we assume CBM is at least larger than mu (0 points), VBM is at most smaller than mu (0 point).
-        self.occup_time_plot_highE_conduction=config.ETop_dm_au*const.Hatree_to_eV
-        self.occup_time_plot_lowE_valence=config.EBot_dm_au*const.Hatree_to_eV
-        self.occup_time_plot_highE_valence=min(config.EvMax_au*const.Hatree_to_eV,0)
+        self.occup_time_plot_lowE_conduction=max(config.EcMin_au*const.Hatree_to_eV,0)-0.01# Sometimes DMD_Initialization determine wrong VBM and CBM, here we assume CBM is at least larger than mu (0 points), VBM is at most smaller than mu (0 point).
+        #self.occup_time_plot_highE_conduction=config.ETop_dm_au*const.Hatree_to_eV
+        #self.occup_time_plot_lowE_valence=config.EBot_dm_au*const.Hatree_to_eV
+        self.occup_time_plot_highE_valence=min(config.EvMax_au*const.Hatree_to_eV,0)+0.01
         self.occup_time_plot_set_Erange=config.Input.getboolean('occup_time_plot_set_Erange')
         self.plot_occupation_number_min=config.Input.getfloat('plot_occupation_number_min')
         self.plot_occupation_number_max=config.Input.getfloat('plot_occupation_number_max')
@@ -49,9 +49,14 @@ class param_class(object):
         self.ETop_dm_au=config.ETop_dm_au
         self.EcMin_au=config.EcMin_au
         self.EvMax_au=config.EvMax_au
+        self.occup_Emin_au=config.occup_Emin_au
+        self.occup_Emax_au=config.occup_Emax_au
+        if not self.occup_time_plot_set_Erange:
+            self.occup_time_plot_highE=self.occup_Emax_au*const.Hatree_to_eV
+            self.occup_time_plot_lowE=self.occup_Emin_au*const.Hatree_to_eV
         self.temperature_au=config.temperature_au
         if self.fit_Boltzmann_initial_guess_mu_auto:
-            self.fit_Boltzmann_initial_guess_mu=self.mu_au/const.eV
+            self.fit_Boltzmann_initial_guess_mu=self.EcMin_au/const.eV
         if self.fit_Boltzmann_initial_guess_T_auto:
             self.fit_Boltzmann_initial_guess_T=self.temperature_au/const.Kelvin
 
@@ -88,11 +93,18 @@ class occup_time(object):
         return occup
     
     def read_occup_file(self,filename):
-        with open(filename) as f:
-            firstline_this_file=f.readline()
-            time_this_file_fs=float(firstline_this_file.split()[12])/const.fs 
-            #nstep=firstline.split()[9]
-        data = np.loadtxt(filename)
+        try:
+            with open(filename) as f:
+                firstline_this_file=f.readline()
+                time_this_file_fs=float(firstline_this_file.split()[12])/const.fs 
+                #nstep=firstline.split()[9]
+            data = np.loadtxt(filename)
+            assert len(data)>0, 'the occupation file is empty'
+            data=data[np.logical_and(data[:,0]>self.param.occup_time_plot_lowE/const.Hatree_to_eV,data[:,0]<self.param.occup_time_plot_highE/const.Hatree_to_eV)]
+            assert len(data)>0, 'No data found in the energy range (%.3e,%.3e)'%(self.param.occup_time_plot_lowE, self.param.occup_time_plot_highE)
+        except Exception as e:
+            logging.error('cannot correctly read occupation file: %s'%filename)
+            raise e
         return time_this_file_fs,data
 
     def pre_processing(self):
@@ -118,9 +130,8 @@ class occup_time(object):
         data=np.array(data)
         if self.Substract_initial_occupation_this:
             data[:,1]=data[:,1]-self.data_first[:,1]
-        if self.param.occup_time_plot_set_Erange:
-            #data=data[data[:,0].argsort()]
-            data=data[np.logical_and(data[:,0]>self.param.occup_time_plot_lowE/const.Hatree_to_eV,data[:,0]<self.param.occup_time_plot_highE/const.Hatree_to_eV)]
+        
+        assert len(data)>0, ''
         for _ in [None]:#Fit Bolzmman
             if not self.param.fit_Boltzmann:
                 break
@@ -130,7 +141,7 @@ class occup_time(object):
                 break
             self.Boltzmann_fit_and_plot(data,time_this_file_fs)
             self.fitted=True
-        self.figtemp=self.plot_data_func(data,time_this_file_fs)            
+        self.figtemp=self.plot_data_func(data,time_this_file_fs) 
         self.occupation_max_for_alldata=max(self.occupation_max_for_alldata,np.max(data[:,1]))
         self.occupation_min_for_alldata=min(self.occupation_min_for_alldata,np.min(data[:,1]))
 
@@ -163,11 +174,10 @@ class occup_time(object):
                 return self.ax.plot(data[:,0]*const.Hatree_to_eV, data[:,1],c=color)
 
     def post_processing(self):
-        if self.param.occup_time_plot_set_Erange:
-            assert not self.param.occup_time_plot_lowE > self.param.ETop_dm_au*const.Hatree_to_eV , "Erange for plot is out of range of the data"
-            assert not self.param.occup_time_plot_highE < self.param.EBot_dm_au*const.Hatree_to_eV , "Erange for plot is out of range of the data"
-            assert not (self.param.occup_time_plot_lowE > self.param.EvMax_au*const.Hatree_to_eV and self.param.occup_time_plot_highE < self.param.EcMin_au*const.Hatree_to_eV) , "Erange for plot is out of range of the data"
-            self.ax.set_xlim(self.param.occup_time_plot_lowE, self.param.occup_time_plot_highE)
+        assert not self.param.occup_time_plot_lowE > self.param.occup_Emax_au*const.Hatree_to_eV , "Erange for plot is out of range of the data"
+        assert not self.param.occup_time_plot_highE < self.param.occup_Emin_au*const.Hatree_to_eV , "Erange for plot is out of range of the data"
+        assert not (self.param.occup_time_plot_lowE > self.param.EvMax_au*const.Hatree_to_eV and self.param.occup_time_plot_highE < self.param.EcMin_au*const.Hatree_to_eV) , "Erange for plot is out of range of the data"
+        self.ax.set_xlim(self.param.occup_time_plot_lowE, self.param.occup_time_plot_highE)
         self.ax.set_xlabel('E (eV)')
         self.fig.colorbar(self.figtemp,label='Time (ps)')   
         if self.figure_style_this=='3D':
@@ -218,11 +228,11 @@ def do(DMDana_ini:DMDana_ini_Class):
     do_sub(param)
     if param.plot_conduction_valence:
         param.occup_time_plot_set_Erange=True
-        param.occup_time_plot_highE=param.occup_time_plot_highE_conduction
+        param.occup_time_plot_highE=param.occup_Emax_au*const.Hatree_to_eV
         param.occup_time_plot_lowE=param.occup_time_plot_lowE_conduction
         do_sub(param)
         param.occup_time_plot_highE=param.occup_time_plot_highE_valence
-        param.occup_time_plot_lowE=param.occup_time_plot_lowE_valence
+        param.occup_time_plot_lowE=param.occup_Emin_au*const.Hatree_to_eV
         do_sub(param)
 
 def do_sub(param: param_class):
