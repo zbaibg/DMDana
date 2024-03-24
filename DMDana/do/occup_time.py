@@ -59,8 +59,21 @@ class param_class(object):
             self.fit_Boltzmann_initial_guess_mu=self.EcMin_au/const.eV
         if self.fit_Boltzmann_initial_guess_T_auto:
             self.fit_Boltzmann_initial_guess_T=self.temperature_au/const.Kelvin
+        self.data_first=np.loadtxt(self.folder+'/occupations_t0.out')
+        self.energylist=self.data_first[:,0]
+        self.data_fermi=np.zeros(self.data_first.shape)
+        self.data_fermi[:,0]=self.energylist
+        self.data_fermi[:,1]=fermi(self.temperature_au,self.mu_au,self.energylist)
 
-    
+def fermi(temperature_au,mu_au,elist):
+    ebyt = (elist - mu_au) / temperature_au
+    occup=np.zeros(len(elist))
+    occup[ebyt < -46]=1
+    occup[ebyt > 46]=0
+    index_middle=np.logical_and(ebyt >= -46, ebyt <= 46)
+    occup[index_middle] = 1. / (np.exp(ebyt[index_middle]) + 1)
+    return occup
+
 class occup_time(object):
     def __init__(self,param: param_class):
         self.param=param
@@ -82,16 +95,6 @@ class occup_time(object):
         self.save_fig()
         plt.close()
 
-
-    def fermi(self,temperature_au,mu_au,elist):
-        ebyt = (elist - mu_au) / temperature_au
-        occup=np.zeros(len(elist))
-        occup[ebyt < -46]=1
-        occup[ebyt > 46]=0
-        index_middle=np.logical_and(ebyt >= -46, ebyt <= 46)
-        occup[index_middle] = 1. / (np.exp(ebyt[index_middle]) + 1)
-        return occup
-    
     def read_occup_file(self,filename):
         try:
             with open(filename) as f:
@@ -100,8 +103,6 @@ class occup_time(object):
                 #nstep=firstline.split()[9]
             data = np.loadtxt(filename)
             assert len(data)>0, 'the occupation file is empty'
-            data=data[np.logical_and(data[:,0]>self.param.occup_time_plot_lowE/const.Hatree_to_eV,data[:,0]<self.param.occup_time_plot_highE/const.Hatree_to_eV)]
-            assert len(data)>0, 'No data found in the energy range (%.3e,%.3e)'%(self.param.occup_time_plot_lowE, self.param.occup_time_plot_highE)
         except Exception as e:
             logging.error('cannot correctly read occupation file: %s'%filename)
             raise e
@@ -115,10 +116,7 @@ class occup_time(object):
 
     def plot_data(self):
         #Plot the fermi function at t=0
-        data_temp=np.loadtxt(self.param.folder+'/occupations_t0.out')
-        self.data_first=np.array(data_temp)
-        self.data_first[:,1]=self.fermi(self.param.temperature_au,self.param.mu_au,data_temp[:,0])
-        self.plot_one_curve(time_this_file_fs=0,data=self.data_first)
+        self.plot_one_curve(time_this_file_fs=0,data=self.param.data_fermi)
         #Plot all the other files
         for file in self.param.occup_selected_files:
             time_this_file_fs,data=self.read_occup_file(file)
@@ -126,12 +124,11 @@ class occup_time(object):
                 break            
             self.plot_one_curve(time_this_file_fs,data)
 
-    def plot_one_curve(self,time_this_file_fs,data):
-        data=np.array(data)
+    def plot_one_curve(self,time_this_file_fs,data):    
         if self.Substract_initial_occupation_this:
-            data[:,1]=data[:,1]-self.data_first[:,1]
-        
-        assert len(data)>0, ''
+            data[:,1]=data[:,1]-self.param.data_fermi[:,1]
+        data=data[np.logical_and(data[:,0]>self.param.occup_time_plot_lowE/const.Hatree_to_eV,data[:,0]<self.param.occup_time_plot_highE/const.Hatree_to_eV)]
+        assert len(data)>0, 'No data found in the energy range (%.3e,%.3e)'%(self.param.occup_time_plot_lowE, self.param.occup_time_plot_highE)   
         for _ in [None]:#Fit Bolzmman
             if not self.param.fit_Boltzmann:
                 break
