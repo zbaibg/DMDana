@@ -2,6 +2,7 @@ import numpy as np
 import os
 from . import constant as const
 import glob
+from typing import List
 def check_and_get_path( filepath):
     assert os.path.isfile(filepath),"%s does not exist."%filepath
     return filepath
@@ -13,8 +14,9 @@ To get mu and temperature from ldbd_size.dat, in which the content is like:
 just use: 
 mu,temperature=read_text_from_file('ldbd_data/ldbd_size.dat',["mu","# T"],[2,0])
 Remember to manually cenvert the string to the data type you want.
+dtypelist could either be a type or a list of types
 '''
-def read_text_from_file(filepath,marklist,locationlist,stop_at_first_find):
+def read_text_from_file(filepath,marklist,locationlist,stop_at_first_find,dtypelist=str) -> List:
     assert len(marklist)==len(locationlist),"marklist and locationlist should have the same length."
     resultlist=[None]*len(marklist)
     with open(filepath) as f:
@@ -28,6 +30,12 @@ def read_text_from_file(filepath,marklist,locationlist,stop_at_first_find):
                     resultlist[i]=line.split()[locationlist[i]] if resultlist[i]==None else resultlist[i]
                 else:
                     resultlist[i]=line.split()[locationlist[i]]
+    assert type(dtypelist)==type or type(dtypelist)==list, "dtypelist should be a type or a list of types."
+    if type(dtypelist)==type:
+        resultlist=[dtypelist(i) if i!=None else None for i in resultlist]
+    elif type(dtypelist)==list:
+        assert len(dtypelist)==len(resultlist), "dtypelist and resultlist should have the same length."
+        resultlist=[dtypelist[i](resultlist[i]) if resultlist[i]!=None else None for i in range(len(resultlist))]
     return resultlist
 
 def glob_occupation_files(folder):
