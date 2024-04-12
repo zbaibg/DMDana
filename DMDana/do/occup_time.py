@@ -116,7 +116,7 @@ class occup_time(object):
 
     def plot_data(self):
         #Plot the fermi function at t=0
-        self.plot_one_curve(time_this_file_fs=0,data=self.param.data_fermi)
+        self.plot_one_curve(time_this_file_fs=0,data_tmp=self.param.data_fermi)
         #Plot all the other files
         for file in self.param.occup_selected_files:
             time_this_file_fs,data=self.read_occup_file(file)
@@ -125,10 +125,11 @@ class occup_time(object):
             self.plot_one_curve(time_this_file_fs,data)
 
     def plot_one_curve(self,time_this_file_fs,data):    
+        data_tmp=data.copy()
         if self.Substract_initial_occupation_this:
-            data[:,1]=data[:,1]-self.param.data_fermi[:,1]
-        data=data[np.logical_and(data[:,0]>self.param.occup_time_plot_lowE/const.Hatree_to_eV,data[:,0]<self.param.occup_time_plot_highE/const.Hatree_to_eV)]
-        assert len(data)>0, 'No data found in the energy range (%.3e,%.3e)'%(self.param.occup_time_plot_lowE, self.param.occup_time_plot_highE)   
+            data_tmp[:,1]=data_tmp[:,1]-self.param.data_fermi[:,1]
+        data_tmp=data_tmp[np.logical_and(data_tmp[:,0]>self.param.occup_time_plot_lowE/const.Hatree_to_eV,data_tmp[:,0]<self.param.occup_time_plot_highE/const.Hatree_to_eV)]
+        assert len(data_tmp)>0, 'No data found in the energy range (%.3e,%.3e)'%(self.param.occup_time_plot_lowE, self.param.occup_time_plot_highE)   
         for _ in [None]:#Fit Bolzmman
             if not self.param.fit_Boltzmann:
                 break
@@ -136,11 +137,11 @@ class occup_time(object):
                 break
             if not self.param.occup_time_plot_lowE>=self.param.occup_time_plot_lowE_conduction:
                 break
-            self.Boltzmann_fit_and_plot(data,time_this_file_fs)
+            self.Boltzmann_fit_and_plot(data_tmp,time_this_file_fs)
             self.fitted=True
-        self.figtemp=self.plot_data_func(data,time_this_file_fs) 
-        self.occupation_max_for_alldata=max(self.occupation_max_for_alldata,np.max(data[:,1]))
-        self.occupation_min_for_alldata=min(self.occupation_min_for_alldata,np.min(data[:,1]))
+        self.figtemp=self.plot_data_func(data_tmp,time_this_file_fs) 
+        self.occupation_max_for_alldata=max(self.occupation_max_for_alldata,np.max(data_tmp[:,1]))
+        self.occupation_min_for_alldata=min(self.occupation_min_for_alldata,np.min(data_tmp[:,1]))
 
     def Boltzmann_fit_and_plot(self,data,time_this_file_fs):
         try:
