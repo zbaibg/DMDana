@@ -23,19 +23,23 @@ dtypelist could either be a type or a list of types
 '''
 def read_text_from_file(filepath,marklist,locationlist,stop_at_first_find,dtypelist=str) -> List:
     assert len(marklist)==len(locationlist),"marklist and locationlist should have the same length."
-    resultlist=[None]*len(marklist)
-    with open(filepath) as f:
-        for line in f:
-            for i in range(len(marklist)):
-                if marklist[i] not in line:
-                    continue
-                if stop_at_first_find and None not in resultlist:
-                    return resultlist
-                if stop_at_first_find:
-                    resultlist[i]=line.split()[locationlist[i]] if resultlist[i]==None else resultlist[i]
-                else:
-                    resultlist[i]=line.split()[locationlist[i]]
     assert type(dtypelist)==type or type(dtypelist)==list, "dtypelist should be a type or a list of types."
+
+    def loop(filepath,marklist,stop_at_first_find,locationlist):
+        resultlist=[None]*len(marklist)
+        with open(filepath) as f:
+            for line in f:
+                for i in range(len(marklist)):
+                    if stop_at_first_find and None not in resultlist:
+                        return resultlist
+                    if marklist[i] not in line:
+                        continue
+                    if stop_at_first_find:
+                        resultlist[i]=line.split()[locationlist[i]] if resultlist[i]==None else resultlist[i]
+                    else:
+                        resultlist[i]=line.split()[locationlist[i]]
+        return resultlist
+    resultlist=loop(filepath,marklist,stop_at_first_find,locationlist)
     if type(dtypelist)==type:
         resultlist=[dtypelist(i) if i!=None else None for i in resultlist]
     elif type(dtypelist)==list:
@@ -45,7 +49,7 @@ def read_text_from_file(filepath,marklist,locationlist,stop_at_first_find,dtypel
 
 def glob_occupation_files(folder):
     assert glob.glob(folder+'/occupations_t0.out')!=[], "Did not found occupations_t0.out at folder %s"%folder
-    occup_files = glob.glob(folder+'/occupations_t0.out')+sorted(glob.glob(folder+'/occupations-*out'))
+    occup_files = glob.glob(folder+'/occupations_t0.out')+sorted(glob.glob(folder+'/occupations-[1-9][1-9][1-9][1-9][1-9].out'))
     return occup_files
 
 def get_total_step_number(folder):
