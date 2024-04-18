@@ -48,12 +48,13 @@ def read_text_from_file(filepath,marklist,locationlist,stop_at_first_find,dtypel
     return resultlist
 
 def glob_occupation_files(folder):
-    assert glob.glob(folder+'/occupations_t0.out')!=[], "Did not found occupations_t0.out at folder %s"%folder
+    #assert glob.glob(folder+'/occupations_t0.out')!=[], "Did not found occupations_t0.out at folder %s"%folder
     occup_files = glob.glob(folder+'/occupations_t0.out')+sorted(glob.glob(folder+'/occupations-[0-9][0-9][0-9][0-9][0-9].out'))
     return occup_files
 
 def get_total_step_number(folder):
     linenumber=0
+    assert os.path.isfile(folder+'/jx_elec_tot.out'), "jx_elec_tot.out not found in %s"%folder
     with open(folder+'/jx_elec_tot.out') as f:
         for line in f:
             linenumber+=1
@@ -175,8 +176,8 @@ class default_class(BaseModel):
     folders:str
 class current_plot_class(default_class):
     current_plot_output:str
-    t_min:int
-    t_max:int
+    t_min:float
+    t_max:float
     smooth_on:bool
     smooth_method:str
     smooth_times:int
@@ -208,14 +209,14 @@ class occup_time_class(default_class):
     occup_time_plot_highE:float
     plot_conduction_valence:bool
     plot_occupation_number_setlimit:bool
-    plot_occupation_number_min:int
-    plot_occupation_number_max:int
+    plot_occupation_number_min:float
+    plot_occupation_number_max:float
     output_all_figure_types:bool
     figure_style:str
     fit_Boltzmann:bool
-    fit_Boltzmann_initial_guess_mu:int
+    fit_Boltzmann_initial_guess_mu:float
     fit_Boltzmann_initial_guess_mu_auto:bool
-    fit_Boltzmann_initial_guess_T:int
+    fit_Boltzmann_initial_guess_T:float
     fit_Boltzmann_initial_guess_T_auto:bool
     Substract_initial_occupation:bool
 class occup_deriv_class(default_class):
@@ -237,7 +238,7 @@ class analyze_class:
         self._configfile_path:str=None
         self._DMDana_ini=None
         self._configparser=None
-        self.use_local_config()
+        #self.use_local_config()
     @property
     def configfile_path(self):
         return self._configfile_path
@@ -280,6 +281,7 @@ class analyze_class:
 class occupation_file_class:
     #Fields
     path:str
+    
     data_fs:np.ndarray=field(init=False,repr=False)
     nstep:int=field(init=False)
     time_fs:float=field(init=False)
@@ -302,18 +304,69 @@ class occupations_class:
     #Class and methods
     def file(self,i):
         return occupation_file_class(self.list[i])
-from typing import Type
+@dataclass
+class energy_class(object):
+    #Field
+    DMD_folder:str
+    EBot_probe_eV:float=field(init=False)
+    ETop_probe_eV:float=field(init=False)
+    EBot_dm_eV:float=field(init=False)
+    ETop_dm_eV:float=field(init=False)
+    EBot_eph_eV:float=field(init=False)
+    ETop_eph_eV:float=field(init=False)
+    EvMax_eV:float=field(init=False)
+    EcMin_eV:float=field(init=False)
+    def __post_init__(self):
+        self.EBot_probe_eV, self.ETop_probe_eV, self.EBot_dm_eV, self.ETop_dm_eV,\
+        self.EBot_eph_eV, self.ETop_eph_eV ,self.EvMax_eV, self.EcMin_eV=\
+        np.array(get_erange(self.DMD_folder))/const.eV
+        
+@dataclass
+class lindblad_init:
+    #Fields
+    DMD_folder:str
+    lindblad_folder:str=field(init=False)
+    ldbd_data_folder:str=field(init=False)
+    Full_k_mesh:List[int]=field(init=False)
+    DFT_k_fold:List[int]=field(init=False)
+    k_number:int=field(init=False)
+    energy:energy_class=field(init=False)
+    
+    #Initialization
+    def __post_init__(self):
+        self.get_DMD_init_folder()
+        self.energy=energy_class(DMD_folder=self.DMD_folder)
+        self.get_kpoint_number()
+    def get_DMD_init_folder(self):
+        original_path=os.getcwd()
+        os.chdir(self.DMD_folder+'/ldbd_data')
+        self.ldbd_data_folder=os.getcwd()
+        self.lindblad_folder=os.path.dirname(self.ldbd_data_folder)
+        os.chdir(original_path)
+    def get_kpoint_number(self):
+        self.Full_k_mesh=read_text_from_file(self.lindblad_folder+'/lindbladInit.out',marklist=['Effective interpolated k-mesh dimensions']*3,locationlist=[5,6,7],stop_at_first_find=True,dtypelist=int)
+        self.DFT_k_fold=read_text_from_file(self.lindblad_folder+'/lindbladInit.out',marklist=['kfold =']*3,locationlist=[3,4,5],stop_at_first_find=True,dtypelist=int)
+        self.k_number=read_text_from_file(self.lindblad_folder+'/lindbladInit.out',marklist=['k-points with active states from'],locationlist=[1],stop_at_first_find=True,dtypelist=int)[0]
+
 @dataclass
 class DMD(object):
     #Fields
     folder:str
-    param:object=field(init=False,repr=False)
+    param:param_class=field(init=False,repr=False)
     occupations:occupations_class=field(init=False,repr=False)
     analyze:analyze_class=field(init=False,repr=True)
+    lindblad_init:lindblad_init=field(init=False,repr=False)
+    total_time_fs:float=field(init=False,repr=False)
+    total_step_num:int=field(init=False,repr=False)
     #Initialization
     def __post_init__(self):
         param_dist=DMDparser.get_DMD_param(self.folder)
         self.param=param_class(**param_dist)
         self.occupations=occupations_class(folder=self.folder)
         self.analyze=analyze_class(folder=self.folder)
-
+        self.lindblad_init=lindblad_init(DMD_folder=self.folder)
+        self.total_time_fs=None
+        self.total_step_num=None
+    def get_total_step_num_and_time(self):
+        self.total_step_num=get_total_step_number(self.folder)
+        self.total_time_fs=self.total_step_num*self.param.tstep_laser
