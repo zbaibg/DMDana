@@ -49,7 +49,7 @@ def read_text_from_file(filepath,marklist,locationlist,stop_at_first_find,dtypel
 
 def glob_occupation_files(folder):
     assert glob.glob(folder+'/occupations_t0.out')!=[], "Did not found occupations_t0.out at folder %s"%folder
-    occup_files = glob.glob(folder+'/occupations_t0.out')+sorted(glob.glob(folder+'/occupations-[1-9][1-9][1-9][1-9][1-9].out'))
+    occup_files = glob.glob(folder+'/occupations_t0.out')+sorted(glob.glob(folder+'/occupations-[0-9][0-9][0-9][0-9][0-9].out'))
     return occup_files
 
 def get_total_step_number(folder):
