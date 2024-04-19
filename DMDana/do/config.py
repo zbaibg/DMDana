@@ -82,6 +82,7 @@ class config_occup(config_base):
         self.mu_au,self.temperature_au=get_mu_temperature(self.DMDparam_value,path=self.folder)
         self.EBot_probe_au,self.ETop_probe_au,self.EBot_dm_au,self.ETop_dm_au,self.EBot_eph_au,self.ETop_eph_au,self.EvMax_au,self.EcMin_au=get_erange(path=self.folder)
         self.occup_selected_files = glob_occupation_files(self.folder)
+        assert len(self.occup_selected_files)>=3, 'The number of occupation files is less than 3. Please check your data.'
         with open(self.occup_selected_files[1]) as f:
             firstline_this_file=f.readline()
             t1_fs=float(firstline_this_file.split()[12])/const.fs 
@@ -117,34 +118,8 @@ class config_occup(config_base):
             # if in the future, more file number (more than occup_maxmium_file_number_plotted_exclude_t0+2) 
             # is needed to do calculation. This should be modified.
         self.occup_t_tot=self.occup_maxmium_file_number_plotted_exclude_t0*self.occup_timestep_for_selected_file_fs#fs
-class DMDana_ini_Class(object):
-    def __init__(self,param_path="./DMDana.ini"):
-        self.DMDana_ini_configparser = configparser.ConfigParser(inline_comment_prefixes="#")
-        #self.folder_config_dict=dict()
-        if (os.path.isfile(param_path)):
-            default_ini=check_and_get_path(libpath+'/DMDana/do/DMDana_default.ini')
-            self.DMDana_ini_configparser.read([default_ini,param_path])
-        else:
-            raise Warning('%s not exist. Default setting would be used. You could run "DMDana init" to initialize it.'%param_path)
-        self.folderlist=self.DMDana_ini_configparser['DEFAULT']['folders'].split(',')
-    def set(self,section: str,key: str,value):
-        '''set options in DMDana.ini configparser structure.
-        If you want to save int value, make sure explicitly convert it to int before using this function
-        Or later reading process would report an error'''
-        self.DMDana_ini_configparser[section][key]=str(value)
-    def get(self,section: str,key: str):
-        return self.DMDana_ini_configparser[section][key]
-    def get_folder_name_by_number(self,folder_number):
-        assert folder_number<len(self.folderlist) and folder_number>=0
-        return self.folderlist[folder_number]
-    def get_folder_config(self,funcname: str,folder_number: int,show_init_log=True):
-            assert funcname in allfuncname,'funcname is not correct.'
-            if funcname in ['FFT_DC_convergence_test','current_plot','FFT_spectrum_plot']:
-                config=config_current(funcname,self.DMDana_ini_configparser,self.get_folder_name_by_number(folder_number),show_init_log=show_init_log)
-            if funcname in ['occup_time','occup_deriv']:
-                config=config_occup(funcname,self.DMDana_ini_configparser,self.get_folder_name_by_number(folder_number),show_init_log=show_init_log)
-            #self.folder_config_dict[folder_number]=config
-            return config
+        
+DMDana_ini_Class=Extented_Support# For compatibility with old version, use a new class to replace the old one
 
 def workflow(funcname,param_path='./DMDana.ini'):
     '''
