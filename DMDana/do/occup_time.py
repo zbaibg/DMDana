@@ -4,15 +4,19 @@ This plots the occupation functions with time, namely f(E,t)  of different style
  
 Be sure that your occupation filelists include complete number of files and also occupations_t0.out
 """
-import numpy as np
+import logging
+from typing import Union
+
 import matplotlib as mpl
 import matplotlib.pyplot as plt
-from ..lib import constant as const
-from .config import config_occup,DMDana_ini_Class
-from scipy.optimize import curve_fit
-import logging
+import numpy as np
 from mpl_toolkits.mplot3d.axes3d import Axes3D
-from typing import Union
+from scipy.optimize import curve_fit
+
+from ..lib import constant as const
+from .config import DMDana_ini_Class, config_occup
+
+
 #Read input
 class param_class(object):
     def __init__(self,config: config_occup):
@@ -59,7 +63,7 @@ class param_class(object):
             self.fit_Boltzmann_initial_guess_mu=self.EcMin_au/const.eV
         if self.fit_Boltzmann_initial_guess_T_auto:
             self.fit_Boltzmann_initial_guess_T=self.temperature_au/const.Kelvin
-        self.data_first=np.loadtxt(self.folder+'/occupations_t0.out')
+        self.data_first=np.loadtxt(self.occup_selected_files[0])
         self.energylist=self.data_first[:,0]
         self.data_fermi=np.zeros(self.data_first.shape)
         self.data_fermi[:,0]=self.energylist
@@ -120,7 +124,7 @@ class occup_time(object):
         #Plot all the other files
         for file in self.param.occup_selected_files:
             time_this_file_fs,data=self.read_occup_file(file)
-            if time_this_file_fs>self.param.occup_t_tot:
+            if time_this_file_fs>self.param.occup_t_tot+self.param.occup_timestep_for_selected_file_ps*1000/2:
                 break            
             self.plot_one_curve(time_this_file_fs,data)
 
