@@ -423,12 +423,25 @@ class lindblad_init_class:
     DFT_k_fold:List[int]=field(init=False)
     k_number:int=field(init=False)
     energy:energy_class=field(init=False)
+    "nb nv bBot_dm bTop_dm bBot_eph(_elec) bTop_eph(_elec) nb_wannier bBot_probe band_dft_skipped"
+    nb:int=field(init=False)
+    nv:int=field(init=False)
+    bBot_dm:int=field(init=False)
+    bTop_dm:int=field(init=False)
+    #bBot_eph_elec:int=field(init=False)
+    #bTop_eph_elec:int=field(init=False)
+    #nb_wannier:int=field(init=False)
+    #bBot_probe:int=field(init=False)
+    #band_dft_skipped:int=field(init=False)
     
     #Initialization
     def __post_init__(self):
         self.get_DMD_init_folder()
         self.energy=energy_class(DMD_folder=self.DMD_folder)
         self.get_kpoint_number()
+        self.nb, self.nv, self.bBot_dm, self.bTop_dm=\
+        read_text_from_file(self.ldbd_data_folder+'/ldbd_size.dat',marklist=['nb nv']*4,locationlist=[0,1,2,3],stop_at_first_find=True,dtypelist=int)
+
     def get_DMD_init_folder(self):
         original_path=os.getcwd()
         os.chdir(self.DMD_folder+'/ldbd_data')
