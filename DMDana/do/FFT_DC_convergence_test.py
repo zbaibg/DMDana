@@ -2,14 +2,18 @@
 """_summary_
 This plots the change of the Direct Current component calculated by different FFT-time-range and FFT-window-functions. This aims to check FFT convergence. It could also output the analysis results to files.
 """
-import numpy as np
-import matplotlib.pyplot as plt
 import itertools
-import pandas as pd
-from ..lib import constant as const
-from .config import config_current,DMDana_ini_Class
-from ..lib.fft import fft_of_j
 from typing import List
+
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+
+from ..lib import constant as const
+from ..lib.fft import fft_of_j
+from .config import DMDana_ini_Class, config_current
+
+
 #Read input
 class param_class(object):
     def __init__(self,config: config_current):

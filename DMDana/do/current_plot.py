@@ -2,13 +2,17 @@
 """_summary_
 This script plots the current figures
 """
+from typing import List, Union
+
+import matplotlib.pyplot as plt
+import numpy as np
 import scipy.signal.windows as sgl
 from scipy.signal import savgol_filter
-import matplotlib.pyplot as plt
+
 from ..lib import constant as const
-import numpy as np
-from .config import config_current,DMDana_ini_Class
-from typing import Union,List
+from .config import DMDana_ini_Class, config_current
+
+
 #Read input
 class param_class(object):
     def __init__(self,DMDana_ini: DMDana_ini_Class):#init_from_config, for single folder analysis

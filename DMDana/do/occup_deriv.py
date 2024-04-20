@@ -5,12 +5,16 @@ This script plots the E-axis maximum for the time derivative of the occupation f
 This program does not read time from file content for now. It only count the file numbers to get time. 
 So be sure that your occupation filelists include complete number of files and also occupations_t0.out
 """
-import numpy as np
-from ..lib import constant as const
-from .config import config_occup,DMDana_ini_Class
-from matplotlib.figure import Figure
 import logging
+
 import matplotlib.pyplot as plt
+import numpy as np
+from matplotlib.figure import Figure
+
+from ..lib import constant as const
+from .config import DMDana_ini_Class, config_occup
+
+
 #Read input
 class param_class(object):
     def __init__(self,config: config_occup):

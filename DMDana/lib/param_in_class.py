@@ -1,4 +1,6 @@
-from  pydantic import BaseModel
+from pydantic import BaseModel
+
+
 class param_class(BaseModel):
     DEBUG:float=None
     restart:float=None

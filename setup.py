@@ -1,5 +1,6 @@
-from setuptools import setup, find_packages
 import git
+from setuptools import find_packages, setup
+
 repo = git.Repo('.',search_parent_directories=True)
 sha = repo.head.object.hexsha
 with open('./DMDana/githash.log','w') as file:

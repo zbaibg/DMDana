@@ -5,6 +5,7 @@ Main executable file for DMDana
 Please run activate-global-python-argcomplete --user in the terminal to enable the auto-completion of the command line arguments.
 """
 import argparse
+
 import argcomplete
 
 if __name__ == "__main__":
@@ -27,7 +28,10 @@ if __name__ == "__main__":
 
     #init command: initialize the DMDana.ini file if it does not exist.
     if args.command == "init":
-        import sys,shutil,os
+        import os
+        import shutil
+        import sys
+
         from .config import libpath
         if(not os.path.isfile('DMDana.ini')):
             shutil.copyfile(libpath+'/DMDana/do/DMDana_default.ini','./DMDana.ini')
@@ -46,8 +50,9 @@ if __name__ == "__main__":
         os.system('rm -f DMDana.ini')
         exit()  
     #other commands    
-    from .config import workflow
     import logging
+
+    from .config import workflow
     funcname:str=args.command
     logging.basicConfig(
         level=logging.INFO,

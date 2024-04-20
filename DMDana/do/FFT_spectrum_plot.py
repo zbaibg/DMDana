@@ -2,15 +2,19 @@
 """_summary_
 This plots FFT spectra of the DMD currents. It could also output the DC components of the current FFT-setting to files
 """
-import numpy as np
-import matplotlib.pyplot as plt
 import itertools
-import pandas as pd
-from ..lib import constant as const
-from matplotlib.axes import Axes
-from .config import config_current,DMDana_ini_Class
-from ..lib.fft import fft_of_j
 from typing import List
+
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+from matplotlib.axes import Axes
+
+from ..lib import constant as const
+from ..lib.fft import fft_of_j
+from .config import DMDana_ini_Class, config_current
+
+
 #Read input
 class param_class(object):
     def __init__(self,config: config_current):

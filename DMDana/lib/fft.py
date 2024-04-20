@@ -1,6 +1,9 @@
-import scipy.signal.windows as sgl
 import numpy as np
+import scipy.signal.windows as sgl
+
 from . import constant as const
+
+
 # funciton which performs FFT, 
 # shifts frequency bins to only plot positive frequencies, 
 # changes bins to physical units (eV), applies window to time domain data, 
