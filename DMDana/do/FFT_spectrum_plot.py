@@ -54,6 +54,7 @@ class FFT_spectrum_plot(object):
                     output_prefix=output_prefix+'%d'%(paramdict[name])+';'
                 else:
                     output_prefix=output_prefix+str(paramdict[name])+';'
+            output_prefix+="log_y%s"%(str(self.param.Log_y_scale))
             if not self.param.only_jtot:
                 self.plot_tot_diag_offdiag(Cutoff,Window_type,output_prefix)
             else:
