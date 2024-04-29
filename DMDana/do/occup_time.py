@@ -68,7 +68,7 @@ class param_class(object):
         self.data_fermi=np.zeros(self.data_first.shape)
         self.data_fermi[:,0]=self.energylist
         self.data_fermi[:,1]=fermi(self.temperature_au,self.mu_au,self.energylist)
-
+        self.showlegend=config.Input.getboolean('showlegend')
 def fermi(temperature_au,mu_au,elist):
     ebyt = (elist - mu_au) / temperature_au
     occup=np.zeros(len(elist))
@@ -164,16 +164,16 @@ class occup_time(object):
         if mode=='scatter':
             if self.figure_style_this=='3D': 
                 plot_param={'xs':data[:,0]*const.Hatree_to_eV,"ys":data[:,1], "zs":time_this_file_fs/1000, "zdir":'y',"c":[time_this_file_fs/1000]*data.shape[0],"cmap":self.param.cmap, "vmin":0,"vmax":self.param.occup_t_tot/1000}
-                return self.ax.scatter(**plot_param)
+                return self.ax.scatter(**plot_param,label='%.3e fs'%time_this_file_fs)
             elif self.figure_style_this=='heatmap' :
                 plot_param={"x":data[:,0]*const.Hatree_to_eV, "y":data[:,1], "c":[time_this_file_fs/1000]*data.shape[0],"cmap":self.param.cmap, "vmin":0,"vmax":self.param.occup_t_tot/1000}
-                return self.ax.scatter(**plot_param)
+                return self.ax.scatter(**plot_param,label='%.3e fs'%time_this_file_fs)
         elif mode=='plot':
             if self.figure_style_this=='3D':
                 plot_param={'xs':data[:,0]*const.Hatree_to_eV,"ys":data[:,1], "zs":time_this_file_fs/1000, "zdir":'y','c':color}
-                return self.ax.plot(**plot_param)
+                return self.ax.plot(**plot_param,label='%.3e fs'%time_this_file_fs)
             elif self.figure_style_this=='heatmap':
-                return self.ax.plot(data[:,0]*const.Hatree_to_eV, data[:,1],c=color)
+                return self.ax.plot(data[:,0]*const.Hatree_to_eV, data[:,1],c=color,label='%.3e fs'%time_this_file_fs)
 
     def post_processing(self):
         assert not self.param.occup_time_plot_lowE > self.param.occup_Emax_au*const.Hatree_to_eV , "Erange for plot is out of range of the data"
@@ -186,6 +186,8 @@ class occup_time(object):
              self.post_processing_3D_special()
         elif self.figure_style_this=='heatmap':
             self.post_processing_heatmap_special()
+        if self.param.showlegend:
+            self.ax.legend()
 
     def post_processing_3D_special(self):
         self.ax.set_ylim(0, self.param.occup_t_tot/1000)
