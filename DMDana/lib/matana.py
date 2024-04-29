@@ -1,9 +1,11 @@
 from copy import deepcopy
-import numpy as np
-import numpy as np
+
 import matplotlib.pyplot as plt
+import numpy as np
 import numpy.linalg as LA
-from DMDana.lib.constant import *
+
+from .constant import *
+
 
 class Plot_mat(object):
     def __init__(self,kveclist,dpi=100,figsize=(8,6),title='',ylabel=''):

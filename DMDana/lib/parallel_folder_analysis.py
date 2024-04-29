@@ -1,9 +1,12 @@
-import os
 import logging
-import pandas as pd
-from DMDana.lib.DMDparser import DMD
+import os
 from multiprocessing import Pool
-from typing import List, Dict, Callable
+from typing import Callable, Dict, List
+
+import pandas as pd
+
+from .DMDparser import DMD
+
 
 def check_and_create_folder(path: str) -> str:
     """Create a folder if it doesn't exist and return the folder path."""

@@ -1,9 +1,11 @@
-from parallel_folder_analysis import FolderAnalysis,parallel_folder_analysis
-from DMDana.lib.constant import *
-from DMDana.lib.DMDparser import read_text_from_file
-from DMDana.do.occup_time import fermi
-import DMDana.lib.DMDparser as DMDparser
 from dataclasses import dataclass, field
+
+from ..do.occup_time import fermi
+from . import DMDparser
+from .constant import *
+from .DMDparser import read_text_from_file
+from .parallel_folder_analysis import FolderAnalysis, parallel_folder_analysis
+
 
 def parse_param_in(fa:FolderAnalysis,func_logger):
     fa.df.loc[fa.index,'Light_pumpE']=fa.DMD_instance.param.pumpE
