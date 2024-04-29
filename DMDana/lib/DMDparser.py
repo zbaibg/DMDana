@@ -151,7 +151,8 @@ def get_mu_temperature(DMDparam_value,path='.'):
         assert os.path.isfile(path+'/out') or os.path.isfile(path+'/DMD.out'), "out or DMD.out file not found(for determine mu from non-zero carrier_density)"
         output_file_name=path+'/out' if os.path.isfile(path+'/out') else path+'/DMD.out'
         mu_au_text=read_text_from_file(output_file_name,marklist=["for given electron density"],locationlist=[5],stop_at_first_find=True)[0]
-        mu_au=float(mu_au_text) if mu_au_text!=None else mu_au
+        assert mu_au_text != None, "carrier_density is not zero, but mu could not be found in out or DMD.out."
+        mu_au=float(mu_au_text) 
     return mu_au,temperature_au
 
 def get_erange(path='.'):
@@ -191,11 +192,11 @@ class default_class(BaseModel):
         type_key=type(getattr(self,key))
         setattr(self,key,type_key(value_str))
     def getint(self,key):
-        return int(self[key])
+        return int(getattr(self,key))
     def getfloat(self,key):
-        return float(self[key])
+        return float(getattr(self,key))
     def getboolean(self,key):
-        return bool(self[key])
+        return bool(getattr(self,key))
     get=__getitem__
 class current_plot_class(default_class):
     current_plot_output:str
@@ -242,6 +243,7 @@ class occup_time_class(default_class):
     fit_Boltzmann_initial_guess_T:float
     fit_Boltzmann_initial_guess_T_auto:bool
     Substract_initial_occupation:bool
+    showlegend:bool
 class occup_deriv_class(default_class):
     t_max:int
     filelist_step:int
@@ -428,6 +430,8 @@ class lindblad_init_class:
     nv:int=field(init=False)
     bBot_dm:int=field(init=False)
     bTop_dm:int=field(init=False)
+    DM_Lower_E_eV:float=field(init=False)
+    DM_Upper_E_eV:float=field(init=False)
     #bBot_eph_elec:int=field(init=False)
     #bTop_eph_elec:int=field(init=False)
     #nb_wannier:int=field(init=False)
@@ -441,7 +445,7 @@ class lindblad_init_class:
         self.get_kpoint_number()
         self.nb, self.nv, self.bBot_dm, self.bTop_dm=\
         read_text_from_file(self.ldbd_data_folder+'/ldbd_size.dat',marklist=['nb nv']*4,locationlist=[0,1,2,3],stop_at_first_find=True,dtypelist=int)
-
+        self.DM_Lower_E_eV,self.DM_Upper_E_eV=read_text_from_file(self.lindblad_folder+'/lindbladInit.out',marklist=['Active energy range for density matrix']*2,locationlist=[6,8],stop_at_first_find=True,dtypelist=float)
     def get_DMD_init_folder(self):
         original_path=os.getcwd()
         os.chdir(self.DMD_folder+'/ldbd_data')
