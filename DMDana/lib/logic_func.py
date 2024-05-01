@@ -101,7 +101,14 @@ def FFT_spectrum_plot_linear(fa:FolderAnalysis,func_logger):
 
 def init_analyze(fa:FolderAnalysis,func_logger):
     #fa.DMD_instance.start_analyze()
-    fa.DMD_instance.analyze.configfile_path=fa.current_folder+'/DMDana.ini'        
+    fa.DMD_instance.analyze.configfile_path=fa.current_folder+'/DMDana.ini'       
+    if fa.DMD_instance.lindblad_init.nv>fa.DMD_instance.lindblad_init.bBot_dm:
+        fa.DMD_instance.analyze.configsetting.section_current_plot.elec_or_hole='total'
+        fa.DMD_instance.analyze.configsetting.section_FFT_spectrum_plot.elec_or_hole='total'
+    else:
+        fa.DMD_instance.analyze.configsetting.section_current_plot.elec_or_hole='elec'  
+        fa.DMD_instance.analyze.configsetting.section_FFT_spectrum_plot.elec_or_hole='elec'
+    fa.df.loc[fa.index,'current_analyze_elec_or_hole']=fa.DMD_instance.analyze.configsetting.section_current_plot.elec_or_hole
 
 #Read FFT-spectrum-plot-summary.csv to extact the DC current of 3 directions\
 

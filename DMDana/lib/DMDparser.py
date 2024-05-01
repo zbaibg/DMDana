@@ -68,27 +68,55 @@ def get_total_step_number(folder):
         for line in f:
             linenumber+=1
     return linenumber-3 # not include the step at t=0
-def get_current_data(folder):
-    """
-    get the data of the current vs time from jx(y,z)_elec_tot.out
 
-    Parameters
-    1. path: the folder containing jx(y,z)_elec_tot.out
-
-    Return
-    the data of the current vs time for each direction.
-    The first column is time(au), the second column is current(A/cm^2).
-    1. jx_data
-    2. jy_data
-    3. jz_data
+def get_current_data(folder, elec_or_hole):
     """
-    jxpath=folder+"/jx_elec_tot.out"
-    jypath=folder+"/jy_elec_tot.out"
-    jzpath=folder+"/jz_elec_tot.out"
-    jx_data=np.loadtxt(jxpath,skiprows=1)
-    jy_data=np.loadtxt(jypath,skiprows=1)
-    jz_data=np.loadtxt(jzpath,skiprows=1)
-    return jx_data,jy_data,jz_data
+    Loads current data from specified files based on particle type (electron, hole, or total).
+
+    Args:
+    folder (str): Directory path where the data files are stored.
+    elec_or_hole (str): Type of particles - 'elec' for electrons, 'hole' for holes, or 'total' for combined data.
+
+    Returns:
+    tuple: Three numpy.ndarrays corresponding to the 'x', 'y', and 'z' components of the data.
+    """
+
+    def load_data(folder, particle_type, component):
+        """
+        Helper function to load data from a file based on folder path, particle type, and component.
+
+        Args:
+        folder (str): Directory path where the data files are stored.
+        particle_type (str): 'elec' or 'hole' indicating the type of particle.
+        component (str): 'x', 'y', or 'z' indicating the data component.
+
+        Returns:
+        numpy.ndarray: Array of data loaded from the specified file.
+        """
+        path = f"{folder}/j{component}_{particle_type}_tot.out"
+        assert os.path.isfile(path), f"File not found: {path}"
+        return np.loadtxt(path, skiprows=1)
+
+    # Ensure the input type is one of the allowed options
+    assert elec_or_hole in ['elec', 'hole', 'total'], "Invalid type specified"
+
+    if elec_or_hole == 'total':
+        # Load and sum data for both electrons and holes when 'total' is requested
+        data_elec = {comp: load_data(folder, 'elec', comp) for comp in ['x', 'y', 'z']}
+        data_hole = {comp: load_data(folder, 'hole', comp) for comp in ['x', 'y', 'z']}
+
+        data = {}
+        for comp in ['x', 'y', 'z']:
+            # Combine electron and hole data by summing the second column of arrays
+            data_comp = data_elec[comp].copy()
+            data_comp[:, 1:] += data_hole[comp][:, 1:]
+            data[comp] = data_comp
+    else:
+        # Load data for a single particle type (electron or hole)
+        data = {comp: load_data(folder, elec_or_hole, comp) for comp in ['x', 'y', 'z']}
+
+    return data['x'], data['y'], data['z']
+
 
 def get_DMD_param(path='.'):
     """
@@ -207,6 +235,8 @@ class current_plot_class(default_class):
     smooth_times:int
     smooth_windowlen:int
     plot_all:bool
+    elec_or_hole:str
+    
 class FFT_DC_convergence_test_class(default_class):
     Cutoff_step:int
     Cutoff_min:int
@@ -217,6 +247,8 @@ class FFT_DC_convergence_test_class(default_class):
     Database_output_filename_csv:str
     Database_output_filename_xlsx:str
     Figure_output_filename:str
+    elec_or_hole:str
+    
 class FFT_spectrum_plot_class(default_class):
     Cutoff_list:int
     Window_type_list:str
@@ -225,6 +257,8 @@ class FFT_spectrum_plot_class(default_class):
     Summary_output_xlsx:bool
     Summary_output_filename_csv:str
     Summary_output_filename_xlsx:str
+    elec_or_hole:str
+    
 class occup_time_class(default_class):
     t_max:int
     filelist_step:int
@@ -540,13 +574,15 @@ class config_current(config_base):
         self.jy_data_path=None
         self.jz_data_path=None
         self.only_jtot=self.Input.getboolean('only_jtot')
+        self.elec_or_hole=self.Input.get('elec_or_hole')
         assert self.only_jtot!=None, 'only_jtot is not correct setted.'
-        self.jx_data,self.jy_data,self.jz_data=get_current_data(self.folder)
+        self.jx_data,self.jy_data,self.jz_data=get_current_data(self.folder,self.elec_or_hole)
         assert len(self.jx_data)==len(self.jy_data)==len(self.jz_data), 'The line number in jx_data jy_data jz_data are not the same. Please deal with your data.'
         pumpPoltype=self.DMDparam_value['pumpPoltype']
         pumpA0=float(self.DMDparam_value['pumpA0'])
         pumpE=float(self.DMDparam_value['pumpE'])
-        self.light_label=' '+'for light of %s Polarization, %.2e a.u Amplitude, and %.2e eV Energy'%(pumpPoltype,pumpA0,pumpE)
+        bandlabel={'elec':'conduction bands','hole':'valence bands','total':'all bands'}[self.elec_or_hole]
+        self.light_label=' '+'for light of %s Polarization, %.2e a.u Amplitude, and %.2e eV Energy for %s'%(pumpPoltype,pumpA0,pumpE,bandlabel)
         
 class config_occup(config_base):
     def __init__(self, funcname_in,DMDana_ini_configparser,folder='.',show_init_log=True):

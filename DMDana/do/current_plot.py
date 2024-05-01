@@ -33,6 +33,7 @@ class param_class(object):
         self.smooth_windowlen=self.config.Input.getint('smooth_windowlen')
         self.plot_all=self.config.Input.getboolean('plot_all')
         self.smooth_times=self.config.Input.getint('smooth_times')
+        self.elec_or_hole=self.config.elec_or_hole
     def loadcurrent(self,filenumber):
         assert filenumber<self.folder_number and filenumber>=0
         self.config: config_current=self.DMDana_ini.get_folder_config('current_plot',filenumber)
@@ -104,7 +105,7 @@ class plot_current:
             smooth_str='on_%s_smoothtimes_%d'%(self.param.smooth_method,self.param.smooth_times)
             if self.param.smooth_method=='flattop':
                 smooth_str+='_windowlen_%d'%self.param.smooth_windowlen
-        self.fig1.savefig("j_smooth_%s.png"%smooth_str)
+        self.fig1.savefig("j_smooth_%s_%s.png"%(smooth_str,self.param.elec_or_hole))
     def plot_tot(self):
         self.fig1.suptitle('Current'+self.param.light_label)
         for jtemp,jdirection,j in [(self.jx_data,'x',0),(self.jy_data,'y',1),(self.jz_data,'z',2)]:
