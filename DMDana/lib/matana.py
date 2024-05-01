@@ -1,11 +1,115 @@
 from copy import deepcopy
-
 import matplotlib.pyplot as plt
 import numpy as np
 import numpy.linalg as LA
-
 from .constant import *
+from DMDana.lib import DMDparser
+class JDFTx_MatrixAnalyzer:
+    def __init__(self, folder, kmesh_num, nb_dft):
+        self.folder = folder
+        self.kmesh_num = kmesh_num  # (knx, kny, knz)
+        self.nb_dft = nb_dft
+        self.load_data()
+        self.vmat_minus_k = get_mat_of_minus_k(self.vmat_dft, self.kmesh_num, self.kveclist)
 
+    def load_data(self):
+        vmat_path = f'{self.folder}/totalE.momenta'
+        kvec_path = f'{self.folder}/totalE.kPts'
+        self.vmat_dft = mat_init(vmat_path, (np.prod(self.kmesh_num), 3, self.nb_dft, self.nb_dft), complex)
+        self.kveclist = np.loadtxt(kvec_path, usecols=(2, 3, 4))
+        self.kveclist = shift_kvec(self.kveclist)
+        assert validate_kveclist(self.kveclist, self.kmesh_num)
+
+class DMD_MatrixAnalyzer:
+    def __init__(self, DMDfolder):
+        self.DMDfolder = DMDfolder
+        self.kmesh = np.zeros(3, dtype=int)
+        self.load_basic_data()
+
+    def load_basic_data(self):
+        paths = {
+            'vmat': f'{self.DMDfolder}/ldbd_data/ldbd_vmat.bin',
+            'denmat': f'{self.DMDfolder}/restart/denmat_restart.bin',
+            'Emat': f'{self.DMDfolder}/ldbd_data/ldbd_ek.bin',
+            'size_data': f'{self.DMDfolder}/ldbd_data/ldbd_size.dat',
+            'kvec': f'{self.DMDfolder}/ldbd_data/ldbd_kvec.bin'
+        }
+        self.nb, self.bBot_dm, self.bTop_dm, self.nk, self.kmesh[0], self.kmesh[1], self.kmesh[2] = DMDparser.read_text_from_file(
+            paths['size_data'],
+            ["# nb nv bBot_dm"] * 3 + ["# nk_full"] * 4,
+            [0, 2, 3, 1, 2, 3, 4],
+            True,
+            [int] * 7)
+        self.nb_dm = self.bTop_dm - self.bBot_dm
+        self.kstep = 1 / self.kmesh
+        self.denmat = mat_init(paths['denmat'], (self.nk, self.nb_dm, self.nb_dm), complex)
+        self.vmat = mat_init(paths['vmat'], (self.nk, 3, self.nb_dm, self.nb), complex)[:, :, :, self.bBot_dm:self.bTop_dm]
+        self.Emat = mat_init(paths['Emat'], (self.nk, self.nb), float)[:, self.bBot_dm:self.bTop_dm]
+        self.kveclist = mat_init(paths['kvec'], (self.nk, 3), float)
+        self.kveclist = shift_kvec(self.kveclist)
+        assert validate_kveclist(self.kveclist, self.kmesh)
+        assert checkhermitian(self.denmat), 'denmat is not hermitian'
+        assert checkhermitian(self.vmat), 'vmat is not hermitian'
+
+def checkhermitian(mat):
+    """Checks if the last two axes of the matrix are hermitian"""
+    axessequence = np.arange(mat.ndim)
+    axessequence[-2:] = axessequence[-2:][::-1]
+    return np.isclose(np.transpose(mat, axes=axessequence).conj(), mat, atol=1e-13, rtol=0).all()
+    
+def shift_kvec(kveclist):
+    """Shifts k-vectors to the range [-0.5, 0.5)"""
+    kveclist = (kveclist + 0.5) % 1 - 0.5
+    return kveclist
+
+def get_mat_of_minus_k(mat, kmesh_num, kveclist):
+    """Returns a matrix of -k corresponding to given k-points"""
+    kveclist = shift_kvec(kveclist)
+    kmeshlist = np.array(np.round(kveclist * kmesh_num), dtype=int)
+    kmesh_to_knum = np.full(kmesh_num, None)
+    knum = len(kmeshlist)
+    for knum_tmp, (i1, i2, i3) in enumerate(kmeshlist):
+        kmesh_to_knum[i1, i2, i3] = knum_tmp
+
+    mat_minus_k = np.full(mat.shape, None)
+    for knum_tmp in range(knum):
+        minusknum_tmp = kmesh_to_knum[-kmeshlist[knum_tmp, 0], -kmeshlist[knum_tmp, 1], -kmeshlist[knum_tmp, 2]]
+        mat_minus_k[minusknum_tmp] = mat[knum_tmp]
+    assert (mat_minus_k != None).all(), 'mat_minus_k is calculated correctly, maybe some kpoints of the DMD k-list do not have minus-kpoints in the list'
+    return mat_minus_k
+
+def plot_hist(data, title, ylabel, xlabel, logbin, density, scale, dpi):
+    """Plots histogram"""
+    plt.figure(dpi=dpi)
+    hist, bins = np.histogram(data, bins=logbin, density=density)
+    plt.plot(bins[1:] * 0.5, hist)
+    plt.xscale(scale)
+    plt.yscale(scale)
+    plt.xticks(logbin)
+    plt.title(title)
+    plt.ylabel(ylabel)
+    plt.xlabel(xlabel)
+    plt.show()
+        
+def mat_init(path, shape, dtype):
+    """Initializes matrix from a binary file"""
+    mat_raw = np.fromfile(path, dtype=dtype)
+    assert len(mat_raw) == np.prod(shape), f'{path} size does not match expected size'
+    mat = mat_raw.reshape(shape, order='C')
+    return mat
+
+def validate_kveclist(kveclist, kmesh_num):
+    """
+    Checks if all k-points in kveclist are on the specified kmesh and contains their opposites.
+    """
+    # Create kmesh points
+    kmesh_points = np.mgrid[0:kmesh_num[0], 0:kmesh_num[1], 0:kmesh_num[2]].reshape(3, -1).T / np.array(kmesh_num) - 0.5
+    
+    # Check if all points in kveclist are in kmesh_points
+    k_in_mesh = np.array([np.any(np.all(np.isclose(kvec, kmesh_points, rtol=1.e-5, atol=0), axis=1)) for kvec in kveclist])
+    k_in_mesh_opposite = np.array([np.any(np.all(np.isclose(shift_kvec(-kvec), kveclist, rtol=1.e-5, atol=0), axis=1)) for kvec in kveclist])
+
+    return np.all(k_in_mesh) and np.all(k_in_mesh_opposite)
 
 class Plot_mat(object):
     def __init__(self,kveclist,dpi=100,figsize=(8,6),title='',ylabel=''):
@@ -21,6 +125,12 @@ class Plot_mat(object):
         self.fig.suptitle(self.title)
         self.fig.supylabel(self.ylabel)
         pass
+    def show(self):
+        self.fig.show()
+    def savefig(self,path):
+        self.fig.savefig(path)
+    def close(self):
+        plt.close(self.fig)
 
 class Plot_mat2D(Plot_mat):
     def __init__(self,kveclist,y_of_b_d_kmi:np.ndarray,color_of_b_d_kmi:np.ndarray,kpaths_pi_kpi,labelpath_pi_kpi,distance_tolerance_to_klines,seperate=True,title='',ylabel='',x_gap_between_kpaths=0.1,vmin=None,vmax=None,dpi=150,figsize=(8,6)):
