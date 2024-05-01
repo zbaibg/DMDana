@@ -1,4 +1,6 @@
-from ..lib.DMDparser import DMDana_ini_Class,config_base,config_current,config_occup,allfuncname,libpath
+from ..lib.DMDparser import (DMDana_ini_Class, allfuncname, config_base,
+                             config_current, config_occup, libpath)
+
 # import these to here for compatibility with old code of other files which need these
 
 def workflow(funcname,param_path='./DMDana.ini'):

@@ -1,8 +1,9 @@
 #!python
+import glob
+import logging
 import os
 import shutil
-import logging
-import glob
+
 
 def setup_logging():
     """Set up the logging configuration."""
