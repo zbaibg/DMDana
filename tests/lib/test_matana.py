@@ -2,18 +2,19 @@ import os
 import shutil
 import unittest
 from unittest.mock import patch
+
 import numpy as np
-from DMDana.lib.matana import (
-    DMD_MatrixAnalyzer, JDFTx_MatrixAnalyzer, Plot_mat2D, Plot_mat3D, mat_init, 
-    checkhermitian, shift_kvec, get_mat_of_minus_k, validate_kveclist
-)
+
 import DMDana.lib.constant as const
+from DMDana.lib.matana import (DMD_MatrixAnalyzer, JDFTx_MatrixAnalyzer,
+                               Plot_mat2D, Plot_mat3D, checkhermitian,
+                               get_mat_of_minus_k, mat_init, shift_kvec,
+                               validate_kveclist)
 
 if __name__ == '__main__':
     # Set up dataset directory path.
     dataset_dir = os.path.join(os.path.dirname(__file__), '..', 'dataset', 'data')
     assert os.path.exists(dataset_dir), "Data directory not found"
-    unittest.main()
 else:
     # Import dataset directory if not main.
     from ..dataset import dataset_dir
@@ -137,13 +138,33 @@ class PlotFunctionsTests(unittest.TestCase):
         color_of_b_d_kmi = np.random.random((4, 3, np.prod(kmesh_num)))
         kpaths = [np.array([[0, 0, 0], [0.5, 0.5, 0.5]])]
         labels = [["Start", "End"]]
+        title='Test 2D Plot'
+        ylabel='Y-axis'
 
-        plot = Plot_mat2D(kveclist, y_of_b_d_kmi, color_of_b_d_kmi, kpaths, labels, 0.05)
+        plot = Plot_mat2D(kveclist, y_of_b_d_kmi, color_of_b_d_kmi, kpaths, labels, 0.05, title=title, ylabel=ylabel)
         plot.savefig(file_path)
         plot.close()
 
         self.assertTrue(os.path.exists(file_path))
 
+    def test_plot_mat2d_creation_as_whole(self):
+        """Test creation of a 2D plot as a whole figure."""
+        file_path = os.path.join(self.output_dir, 'plot_mat2d_whole.png')
+        kmesh_num = [10, 10, 10]
+        kveclist = generate_kveclist(kmesh_num)
+        y_of_b_d_kmi = np.random.random((4, 3, np.prod(kmesh_num)))
+        color_of_b_d_kmi = np.random.random((4, 3, np.prod(kmesh_num)))
+        kpaths = [np.array([[0, 0, 0], [0.5, 0.5, 0.5]])]
+        labels = [["Start", "End"]]
+        title='Test 2D Plot'
+        ylabel='Y-axis'
+
+        plot = Plot_mat2D(kveclist, y_of_b_d_kmi, color_of_b_d_kmi, kpaths, labels, 0.05, separate=False, title=title, ylabel=ylabel)
+        plot.savefig(file_path)
+        plot.close()
+
+        self.assertTrue(os.path.exists(file_path))
+    
     def test_plot_mat3d_creation(self):
         """Test creation of a 3D plot."""
         file_path = os.path.join(self.output_dir, 'plot_mat3d.png')
@@ -155,7 +176,7 @@ class PlotFunctionsTests(unittest.TestCase):
         plot.close()
 
         self.assertTrue(os.path.exists(file_path))
-
+    
 class RealDataPlotTests(unittest.TestCase):
     """Test plotting from real data for 2D and 3D graphs."""
 
@@ -185,3 +206,6 @@ class RealDataPlotTests(unittest.TestCase):
         plot_path = os.path.join(self.output_dir, 'real_data_3d_plot.png')
         plot.savefig(plot_path)
         self.assertTrue(os.path.exists(plot_path))
+
+if __name__ == '__main__':
+    unittest.main()
