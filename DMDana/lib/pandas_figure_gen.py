@@ -56,7 +56,7 @@ def plot_multi_y_axis(data: pd.DataFrame, x_col: str, y_cols: List[str], title: 
         ax.get_legend().remove()
         axes.append(ax)
     plt.title(title)
-    ax1.set_xticklabels([f"{idx}: {system}" for idx, system in zip(data.index, data[x_col])], rotation=45)
+    ax1.set_xticklabels([f"{idx}: {system}" for idx, system in zip(data.index, data[x_col])], rotation=90)
     ax1.grid()
     if sameaxis:
         ax.set_ylabel('')
