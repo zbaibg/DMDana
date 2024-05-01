@@ -1,0 +1,27 @@
+/scratch/groups/ping_group/zbai29/GaAs_SOC_20231130 ../data/GaAs_DFT
+totalE.out
+common.in
+totalE.in
+scf.in
+scf.out
+
+/scratch/groups/ping_group/zbai29/GaAs_SOC_20231130/ld-dmd-current/t300/small_dataset ../data/GaAs_DFT/init_NkMult2
+*
+
+/scratch/groups/ping_group/zbai29/GaAs_DFT_nosym ../data/GaAs_DFT_nosym
+As_nr.oncvpsp.upf
+As_nv5_nocorecorr.upf
+common.in
+Ga_nr.oncvpsp.upf
+Ga_nv3_nocorecorr.upf
+jdftx.sh
+scf.in
+scf.out
+slurm-429554.out
+totalE.BerryCurvature
+totalE.eigenvals
+totalE.eigStats
+totalE.kPts
+totalE.momenta
+totalE.R
+totalE.sym

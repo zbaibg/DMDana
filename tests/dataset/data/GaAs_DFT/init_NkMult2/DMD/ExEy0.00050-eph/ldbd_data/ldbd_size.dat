@@ -1,0 +1,10 @@
+There are scatterings only for conduction electrons
+10 6 2 8 6 8 16 0 2 # nb nv bBot_dm bTop_dm bBot_eph_elec bTop_eph_elec nb_wannier bBot_probe band_dft_skipped
+ 1.10592000000000e+05 15 48 48 48 # nk_full nk kmesh
+120 # nkpair_elec
+0 6 0 -1# modeStart modeStp modeSkipStart modeSkipStop
+ 9.50043414701698e-04 # T
+ 5.25515330209184e-02  5.25515330209184e-02  5.25515330209184e-02 # muMin, muMax mu (given carrier density)
+0.000183747 1000 # degauss
+-7.9806405e-02  1.3511937e-01 -3.8888731e-03  5.9201837e-02  2.6275759e-02  5.9201837e-02 # EBot_probe, ETop_probe, EBot_dm, ETop_dm, EBot_eph, ETop_eph
+ 1.3808210e-03 # omegaMax

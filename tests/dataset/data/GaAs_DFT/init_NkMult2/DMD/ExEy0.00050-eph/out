@@ -1,0 +1,1361 @@
+Input file not specified at runtime.
+Attempting to read simulation parameters from default input file: param.in
+
+==================================================
+==================================================
+reading input parameters
+==================================================
+==================================================
+
+**************************************************
+Code control parameters:
+**************************************************
+DEBUG = 0
+restart = 0
+code = jdftx
+material_model = none
+compute_tau_only = 0
+
+**************************************************
+Master equation control parameters:
+**************************************************
+alg_scatt_enable = 1
+alg_eph_enable = 1
+modeStart = 0
+modeEnd = -1
+scale_scatt = 1
+scale_eph = 1
+scale_ei = 1
+scale_ee = 1
+alg_only_eimp = 0
+alg_only_ee = 0
+alg_only_intravalley = 0
+alg_only_intervalley = 0
+alg_eph_sepr_eh = 1
+alg_eph_need_elec = 1
+alg_eph_need_hole = 0
+alg_semiclassical = 0
+alg_summode = 1
+alg_ddmdteq = 0
+alg_expt = 1
+alg_expt_elight = 1
+alg_scatt = lindblad
+alg_picture = interaction
+alg_linearize = 0
+alg_linearize_dPee = 0
+need_imsig = 1
+
+model intermal magnetic field parameters:
+alg_modelH0hasBS = 1
+alg_read_Bso = 0
+
+sparse parameters:
+alg_Pin_is_sparse = 0
+alg_sparseP = 0
+alg_thr_sparseP = 1e-40
+
+Phenomenological relaxation parameters:
+alg_phenom_relax = 1
+tau_phenom = 4547.55
+bStart_tau = 0
+bEnd_tau = 4
+
+Phenomenological recombination parameters:
+alg_phenom_recomb = 0
+
+Smearing parameters:
+temperature =  9.5004341e-04
+mu = 0.0525515
+degauss = 0.000183747 ndegauss = 1000
+degauss = 0.000183747
+ndegauss = 1000
+
+**************************************************
+System and external condition parameters:
+**************************************************
+dim = 3
+scissor = 0
+mu = 0.0514491
+carrier_density = 2.96369e-09
+carrier_density_means_excess_density = 0
+
+magnetic field parameters:
+Bx = 0
+By = 0
+Bz = 0
+gfac_normal_dist = 0
+gfac_k_resolved = 1
+gfac_mean = 2
+gfac_sigma = 0
+gfac_cap = 0
+scale_Ez = 0
+
+**************************************************
+Screening and model e-i and e-e parameters:
+**************************************************
+
+screening parameters:
+scrMode = none
+scrFormula = RPA
+update_screening = 1
+dynamic_screening = static
+ppamodel = gn
+eppa_screening = 0
+meff_screening = 1
+omegamax_screening = 0
+nomega_screening = 1
+dynamic_screening_ee_two_freqs = 0
+fderavitive_technique_static_screening = 1
+smearing_screening = 0
+epsilon_background = 1
+
+electron-impurity parameters:
+impurity_density = 0
+freq_update_eimp_model = 10
+
+electron-electron parameters:
+eeMode = none
+ee_antisymmetry = 0
+degauss_ee = 0.000183747
+freq_update_ee_model = 10
+
+**************************************************
+Spin generation and measurement parameters:
+**************************************************
+
+pump and probe parameters:
+laserMode = constant
+pumpMode = coherent
+laserAlg = coherent
+pumpA0 = 0.0005
+laserA = 0.0005
+pumpE = 0.055124
+laserE = 0.055124
+pumpTau = 413.414
+pump_tcenter = 4134.14
+pumpPoltype = ExEy
+laserPoltype = ExEy
+ExEyPolAngle = 45
+[ 0.707107 0.707107 0 ] + 1j*[ 0 0 0 ]
+probePoltype1 = NONE
+
+magnetic field perturbation parameters:
+Bxpert = 0
+Bypert = 0
+Bzpert = 0
+needL = 0
+
+Time control parameters:
+t0 = 0
+tend = 4134.14
+tstep = 41.3414
+tstep_pump = 41.3414
+tstep_laser = 41.3414
+time period of laser = 113.982783
+
+WARNING: tstep_laser is large! Consider decreasing it.
+
+Other measurement parameters:
+print_tot_band = 0
+alg_set_scv_zero = 1
+freq_measure = 1
+freq_measure_ene = 10
+freq_compute_tau = 10
+de_measure = 1.83747e-05
+degauss_measure = 7.34986e-05
+occup_write_interval = 1
+valley1 = 1 1 1
+invalid valley position. all values must be within (-1,1)
+number of valleys: 0
+type_q_ana = wrap_around_valley
+rotate_spin_axes = 0
+sdir_z = 0 0 1
+sdir_x = 1 0 0
+sdir_y: 0 1 0
+
+ODE parameters:
+alg_ode_method = rkf45
+ode_hstart = 0.0413414
+ode_hmin = 0
+ode_hmax = 41.3414
+ode_hmax_laser = 41.3414
+ode_epsabs = 1e-08
+
+other parameters:
+degthr = 1e-06
+band_skipped = 0
+
+
+
+==================================================
+==================================================
+lattice
+==================================================
+==================================================
+read ldbd_R.dat:
+dim = 3
+cell_size = 304.795 a.u.
+R
+0 5.34145 5.34145
+5.34145 0 5.34145
+5.34145 5.34145 0
+Gvec
+-0.588154 0.588154 0.588154
+0.588154 -0.588154 0.588154
+0.588154 0.588154 -0.588154
+
+==================================================
+==================================================
+electron
+==================================================
+==================================================
+
+read ldbd_size.dat:
+nb= 10 nv= 6 bStart_dm= 2 bEnd_dm= 8 bStart_eph = 6 bEnd_eph = 8 nb_wannier = 16 bskipped_wannier = 0 bskipped_dft = 2
+nk_full =  1.10592000000000e+05 nk = 15 kmesh=(48,48,48)
+
+read ldbd_kvec(_morek).bin:
+
+Print k path:
+
+read ldbd_ek(_morek).bin:
+ek:ik= 0: -0.0124072 -0.0124072 3.51529e-08 3.51529e-08 3.51529e-08 3.5153e-08 0.0525515 0.0525515 0.176119 0.17612
+ik= 1: -0.0141035 -0.0140996 -0.00298582 -0.002982 -0.000265201 -0.000261408 0.0562382 0.0562384 0.176245 0.176247
+ik= 2: -0.0141034 -0.0140995 -0.00298585 -0.00298204 -0.000265196 -0.000261419 0.0562382 0.0562384 0.176245 0.176247
+ik= 3: -0.0141019 -0.0140997 -0.00298549 -0.00298346 -0.00026486 -0.00026142 0.0562382 0.0562382 0.176245 0.176247
+ik= 4: -0.0141029 -0.0141008 -0.00298467 -0.00298242 -0.000264662 -0.000261448 0.0562382 0.0562382 0.176246 0.176247
+ik= 5: -0.0145524 -0.0145478 -0.0035506 -0.00354607 -0.000861482 -0.000858991 0.0574471 0.0574472 0.176023 0.176026
+ik= 6: -0.0145534 -0.0145491 -0.00354993 -0.00354431 -0.000861529 -0.000859241 0.0574471 0.0574473 0.176024 0.176025
+ik= 7: -0.0141029 -0.0141008 -0.00298465 -0.00298239 -0.000264673 -0.000261451 0.0562382 0.0562383 0.176246 0.176247
+ik= 8: -0.0141019 -0.0140997 -0.00298553 -0.00298348 -0.00026486 -0.000261413 0.0562382 0.0562382 0.176245 0.176247
+ik= 9: -0.0145534 -0.0145492 -0.00354992 -0.00354429 -0.000861466 -0.000859205 0.0574471 0.0574473 0.176024 0.176025
+fk:ik= 0: 1 1 1 1 1 1 0.238588 0.238588 0 0
+ik= 1: 1 1 1 1 1 1 0.00642559 0.00642452 0 0
+ik= 2: 1 1 1 1 1 1 0.0064256 0.00642457 0 0
+ik= 3: 1 1 1 1 1 1 0.00642594 0.00642559 0 0
+ik= 4: 1 1 1 1 1 1 0.00642593 0.00642557 0 0
+ik= 5: 1 1 1 1 1 1 0.0018085 0.00180825 0 0
+ik= 6: 1 1 1 1 1 1 0.00180855 0.00180804 0 0
+ik= 7: 1 1 1 1 1 1 0.00642598 0.00642553 0 0
+ik= 8: 1 1 1 1 1 1 0.00642597 0.00642554 0 0
+ik= 9: 1 1 1 1 1 1 0.00180856 0.00180803 0 0
+
+read ldbd_smat.bin:
+ik= 0:
+ (-0.275908,2.97115e-15) (0.211593,-0.107525) (-0.110078,0.00137083) (0.146464,0.0111916) (0,0) (0,0)
+ (0.211593,0.107525) (0.252713,-2.67993e-15) (-0.082094,-0.210536) (-0.150644,-0.011065) (0,0) (0,0)
+ (-0.110078,-0.00137083) (-0.082094,0.210536) (0.115823,-1.26366e-15) (-0.0872712,0.158931) (0,0) (0,0)
+ (0.146464,-0.0111916) (-0.150644,0.011065) (-0.0872712,-0.158931) (-0.092628,9.54423e-16) (0,0) (0,0)
+ (0,0) (0,0) (0,0) (0,0) (-0.443364,4.69646e-15) (0.231142,-0.00123099)
+ (0,0) (0,0) (0,0) (0,0) (0.231142,0.00123099) (0.443364,-4.64664e-15)
+ik= 1:
+ (0.0124951,-1.77918e-16) (0.000750932,0.205681) (-0.261271,0.117797) (0.0169174,0.00716533) (0,0) (0,0)
+ (0.000750932,-0.205681) (-0.0125023,1.39971e-16) (0.0176187,-0.00526551) (0.247203,0.145657) (0,0) (0,0)
+ (-0.261271,-0.117797) (0.0176187,0.00526551) (-0.0138459,2.94212e-16) (-0.165186,-0.236255) (0,0) (0,0)
+ (0.0169174,-0.00716533) (0.247203,-0.145657) (-0.165186,0.236255) (0.0138708,-3.06409e-16) (0,0) (0,0)
+ (0,0) (0,0) (0,0) (0,0) (0.458359,-6.32784e-15) (0.192988,0.0430516)
+ (0,0) (0,0) (0,0) (0,0) (0.192988,-0.0430516) (-0.458359,6.24099e-15)
+ik= 2:
+ (0.0131479,4.19654e-17) (0.00176784,-0.20563) (0.260759,0.119004) (0.0162734,-0.00735939) (0,0) (0,0)
+ (0.00176784,0.20563) (-0.0131525,-7.37257e-17) (-0.0169771,-0.00559384) (0.247126,-0.145853) (0,0) (0,0)
+ (0.260759,-0.119004) (-0.0169771,0.00559384) (-0.0136535,4.39508e-17) (0.165118,-0.236317) (0,0) (0,0)
+ (0.0162734,0.00735939) (0.247126,0.145853) (0.165118,0.236317) (0.0136761,-4.68917e-18) (0,0) (0,0)
+ (0,0) (0,0) (0,0) (0,0) (0.472383,8.50475e-16) (0.161385,-0.000358081)
+ (0,0) (0,0) (0,0) (0,0) (0.161385,0.000358081) (-0.472383,-6.61038e-16)
+ik= 3:
+ (0.128073,-1.15272e-15) (0.114132,0.114398) (-0.0899614,-0.0332041) (-0.157813,-0.219972) (0,0) (0,0)
+ (0.114132,-0.114398) (-0.127801,1.19913e-15) (-0.238973,0.127538) (0.0954073,0.0101335) (0,0) (0,0)
+ (-0.0899614,0.0332041) (-0.238973,-0.127538) (0.00402,-1.12757e-17) (0.175417,-0.229213) (0,0) (0,0)
+ (-0.157813,0.219972) (0.0954073,-0.0101335) (0.175417,0.229213) (-0.00424092,5.29091e-17) (0,0) (0,0)
+ (0,0) (0,0) (0,0) (0,0) (-0.42312,3.40981e-15) (0.259464,0.0532806)
+ (0,0) (0,0) (0,0) (0,0) (0.259464,-0.0532806) (0.42312,-3.28792e-15)
+ik= 4:
+ (-0.116601,1.34224e-16) (-0.120857,0.119332) (0.0796113,0.0168717) (-0.239228,0.136564) (0,0) (0,0)
+ (-0.120857,-0.119332) (0.116379,-2.13805e-16) (0.174752,0.213141) (0.0804555,0.0126075) (0,0) (0,0)
+ (0.0796113,-0.0168717) (0.174752,-0.213141) (0.00393282,-4.33681e-17) (0.175737,0.229106) (0,0) (0,0)
+ (-0.239228,-0.136564) (0.0804555,-0.0126075) (0.175737,-0.229106) (-0.00375868,1.73472e-17) (0,0) (0,0)
+ (0,0) (0,0) (0,0) (0,0) (-0.417492,1.17545e-15) (0.231416,0.146076)
+ (0,0) (0,0) (0,0) (0,0) (0.231416,-0.146076) (0.417492,-1.15262e-15)
+ik= 5:
+ (0.0814828,-1.56342e-15) (-0.239775,0.00930753) (0.201459,-0.0237891) (0.0482684,-0.282332) (0,0) (0,0)
+ (-0.239775,-0.00930753) (-0.081367,1.6224e-15) (0.0513314,0.281769) (-0.202429,-0.0216544) (0,0) (0,0)
+ (0.201459,0.0237891) (0.0513314,-0.281769) (9.38214e-05,6.80879e-17) (-0.000121059,-0.000328477) (0,0) (0,0)
+ (0.0482684,0.282332) (-0.202429,0.0216544) (-0.000121059,0.000328477) (-0.00016776,5.89806e-17) (0,0) (0,0)
+ (0,0) (0,0) (0,0) (0,0) (-0.244733,4.34483e-15) (-0.434847,0.0167286)
+ (0,0) (0,0) (0,0) (0,0) (-0.434847,-0.0167286) (0.244733,-4.35383e-15)
+ik= 6:
+ (-0.0780651,-4.996e-16) (-0.240397,-0.0148386) (0.25926,0.199708) (0.0327375,-0.122783) (0,0) (0,0)
+ (-0.240397,0.0148386) (0.0777893,4.9483e-16) (-0.0981357,0.0800181) (-0.289419,-0.154181) (0,0) (0,0)
+ (0.25926,-0.199708) (-0.0981357,-0.0800181) (0.000254278,-1.84314e-17) (5.66513e-05,0.000121405) (0,0) (0,0)
+ (0.0327375,0.122783) (-0.289419,0.154181) (5.66513e-05,-0.000121405) (-3.22982e-05,-4.33681e-18) (0,0) (0,0)
+ (0,0) (0,0) (0,0) (0,0) (-0.330632,-2.21904e-15) (-0.373783,-0.0153176)
+ (0,0) (0,0) (0,0) (0,0) (-0.373783,0.0153176) (0.330632,2.26718e-15)
+ik= 7:
+ (-0.116934,1.00614e-15) (-0.130606,-0.108203) (0.0798319,-0.0157787) (-0.247688,-0.120553) (0,0) (0,0)
+ (-0.130606,0.108203) (0.116713,-9.28077e-16) (0.195617,-0.19418) (0.0807175,-0.0107639) (0,0) (0,0)
+ (0.0798319,0.0157787) (0.195617,0.19418) (0.00306286,-5.20417e-18) (0.15676,-0.242493) (0,0) (0,0)
+ (-0.247688,0.120553) (0.0807175,0.0107639) (0.15676,0.242493) (-0.00288923,-3.03577e-17) (0,0) (0,0)
+ (0,0) (0,0) (0,0) (0,0) (-0.405205,3.36653e-15) (0.233155,-0.175038)
+ (0,0) (0,0) (0,0) (0,0) (0.233155,0.175038) (0.405205,-3.28247e-15)
+ik= 8:
+ (0.126436,-3.85976e-16) (-0.125096,0.104323) (0.0895489,-0.0309135) (0.180536,-0.202281) (0,0) (0,0)
+ (-0.125096,-0.104323) (-0.126163,3.21791e-16) (-0.247093,-0.111969) (0.094441,-0.00809024) (0,0) (0,0)
+ (0.0895489,0.0309135) (-0.247093,0.111969) (0.00368243,5.63785e-17) (0.156431,0.242579) (0,0) (0,0)
+ (0.180536,0.202281) (0.094441,0.00809024) (0.156431,-0.242579) (-0.00390416,1.34441e-16) (0,0) (0,0)
+ (0,0) (0,0) (0,0) (0,0) (-0.412579,5.59344e-16) (0.255436,-0.117143)
+ (0,0) (0,0) (0,0) (0,0) (0.255436,0.117143) (0.412579,-6.00644e-16)
+ik= 9:
+ (-0.0779964,1.56689e-15) (-0.240837,-0.00481856) (-0.265194,0.192113) (-0.0335986,-0.121987) (0,0) (0,0)
+ (-0.240837,0.00481856) (0.0777246,-1.5786e-15) (0.0988027,0.0783077) (0.281242,-0.16904) (0,0) (0,0)
+ (-0.265194,-0.192113) (0.0988027,-0.0783077) (0.00025951,5.73001e-17) (5.37036e-05,-0.000119082) (0,0) (0,0)
+ (-0.0335986,0.121987) (0.281242,0.16904) (5.37036e-05,0.000119082) (-4.08647e-05,-8.3348e-17) (0,0) (0,0)
+ (0,0) (0,0) (0,0) (0,0) (-0.298567,5.5258e-15) (0.399729,0.0184393)
+ (0,0) (0,0) (0,0) (0,0) (0.399729,-0.0184393) (0.298567,-5.56564e-15)
+
+
+read ldbd_vmat.bin:
+
+read ldbd_Umat.bin:
+ldbd_Umat.bin does not save full U matrix but a part
+
+Electronic states energy range:
+emax = 0.0574475 ecmin = 0.0525515 k_ecmin = 0 
+evmax = 3.5153e-08 emin = -0.00355061
+niter = 42  mu =  4.9564885e-02  (for given electron density, error = 2.91572e-13):
+f:ik= 0: 1 1 1 1 1 1 0.0413409 0.0413409 0 0
+ik= 1: 1 1 1 1 1 1 0.000889231 0.000889082 0 0
+ik= 2: 1 1 1 1 1 1 0.000889232 0.000889089 0 0
+ik= 3: 1 1 1 1 1 1 0.00088928 0.00088923 0 0
+ik= 4: 1 1 1 1 1 1 0.000889278 0.000889227 0 0
+ik= 5: 1 1 1 1 1 1 0.000249279 0.000249243 0 0
+ik= 6: 1 1 1 1 1 1 0.000249285 0.000249215 0 0
+ik= 7: 1 1 1 1 1 1 0.000889284 0.000889222 0 0
+ik= 8: 1 1 1 1 1 1 0.000889283 0.000889223 0 0
+ik= 9: 1 1 1 1 1 1 0.000249286 0.000249214 0 0
+f_dm:ik= 0: 1 1 1 1 0.0413409 0.0413409
+ik= 1: 1 1 1 1 0.000889231 0.000889082
+ik= 2: 1 1 1 1 0.000889232 0.000889089
+ik= 3: 1 1 1 1 0.00088928 0.00088923
+ik= 4: 1 1 1 1 0.000889278 0.000889227
+ik= 5: 1 1 1 1 0.000249279 0.000249243
+ik= 6: 1 1 1 1 0.000249285 0.000249215
+ik= 7: 1 1 1 1 0.000889284 0.000889222
+ik= 8: 1 1 1 1 0.000889283 0.000889223
+ik= 9: 1 1 1 1 0.000249286 0.000249214
+ne = 2.96369e-09 nei = 0 ne+nei = 2.96369e-09
+nh = 0 nhi = 0 nh+nhi = 0
+
+
+**************************************************
+electron: Analysis spin mixing, spin axis, spin-flip angle, etc.:
+**************************************************
+ebot_dm = -1.0582162e-01 eV etop_dm =  1.6109640e+00 eV
+omega_max =  3.7574052e+01 meV
+b2 (thermal averaged; method for Kramers degenerate system):
+ 0.000149671 0.000149671 0.000149678
+Saxis_avg: -0.311537 0.201247 0.852914
+sin2_half_theta_avg = 0.0633113
+effective scattering dos (inaccurate) =  2.1626495e+00
+
+
+**************************************************
+electron: Analyse internal magnetic fields
+**************************************************
+
+Define B from DeltaE = 2 B S^exp
+Bext: -8.89604e-10 -7.7053e-10 -1.61171e-09 (a.u.)
+Bext: -0.000209103 -0.000181114 -0.000378836 (Tesla)
+Bin sigma: 0.00512597 0.00494827 0.010411 (Tesla)
+Bin sigma^2: 4.75581e-16 4.4318e-16 1.96182e-15 (a.u.)
+Bin sigma^2: 8.1282e-07 7.57442e-07 3.35296e-06 (ps^-2)
+
+Define B from DeltaE = 2 B S^exp assuming |S^exp| = 0.5
+Bext_SHalf: -8.89369e-10 -7.70415e-10 -1.60906e-09 (a.u.)
+Bext_SHalf: -0.000209048 -0.000181087 -0.000378212 (Tesla)
+Bin_SHalf sigma: 0.00511792 0.00494021 0.010391 (Tesla)
+Bin_SHalf sigma^2: 4.74089e-16 4.41738e-16 1.95428e-15 (a.u.)
+Bin_SHalf sigma^2: 8.1027e-07 7.54978e-07 3.34008e-06 (ps^-2)
+|Bin_SHalf| sigma: 0.00490832 0.00472271 0.0098404 (Tesla)
+|Bin_SHalf| sigma^2: 4.36052e-16 4.03697e-16 1.75266e-15 (a.u.)
+|Bin_SHalf| sigma^2: 7.4526e-07 6.89962e-07 2.99549e-06 (ps^-2)
+
+Analyse energy splitting
+DE mean: 1.85624e-08 (a.u.)
+DE mean: 0.00436313 (Tesla)
+DE sigma: 0.0118218 (Tesla)
+DE sigma^2: 2.52952e-15 (a.u.)
+DE sigma^2: 4.32322e-06 (ps^-2)
+
+Done
+
+
+compute magnectic-field-perturbed density matrix
+
+==================================================
+==================================================
+phonon
+==================================================
+==================================================
+modeStart = 0 modeStop = 6 modeSkipStart = 0 modeSkipStop = -1 from initialization
+number of phonon modes = 6
+modeStart = 0 modeEnd = 6 (relative to modes from initialization)
+omega_max =  3.7574052e+01 meV
+qmin =  2.1223162e-02 qmax =  4.9012794e-02
+
+==================================================
+==================================================
+electron-light
+==================================================
+==================================================
+
+==================================================
+==================================================
+electron scattering: e-ph, e-i, e-e
+==================================================
+==================================================
+
+read ldbd_size.dat to get band range:
+bStart = 4 bEnd = 6
+estart_eph = 0.0525515 eend_eph = 0.0592018
+
+read ldbd_size.dat to get nkpair_glob:
+nkpair_glob = 120
+
+read ldbd_kpair_k1st(2nd)(_hole).bin:
+
+read ldbd_P1(2)_(lindblad/conventional)(_hole).bin:
+
+**************************************************
+Compute carrier relaxation and transport properties for eph scattering:
+Please ensure the system is treated as a semiconductor, otherwise calculated mobility is meaningless:
+**************************************************
+read ldbd_data/ldbd_vvec.bin
+imsig_avg = 1.44157e-05 Ha = 0.392271 meV
+carrier lifetime (rate avg.) = 838.976 fs
+carrier lifetime (time avg.) = 2.81461e+36 fs
+imsigp_avg = 1.07474e-05 Ha = 0.29245 meV
+momentum lifetime (rate avg.) = 1125.34 fs
+momentum lifetime (time avg.) = 2.81461e+36 fs
+Compute conductivity for bands [0, 2]:
+Conductivity tensor ((nOhm m)^-1):
+   9.447e+11  -1.448e+11   2.745e+11
+  -1.448e+11   8.345e+10  -6.381e+11
+   2.745e+11  -6.381e+11   5.879e+12
+Resistivity tnesor (nOhm m):
+   3.618e+04   2.932e+05   3.013e+04
+   2.932e+05   2.376e+06   2.442e+05
+   3.013e+04   2.442e+05   2.510e+04
+Compute mobility of electrons:
+Mobility tensor (cm2/V/s):
+   2.948e+21  -4.519e+20   8.567e+20
+  -4.519e+20   2.604e+20  -1.991e+21
+   8.567e+20  -1.991e+21   1.835e+22
+Diffusion tensor (cm2/s):
+   8.267e+19  -1.267e+19   2.402e+19
+  -1.267e+19   7.302e+18  -5.584e+19
+   2.402e+19  -5.584e+19   5.145e+20
+Diffusion tensor (smaller dmu, cm2/s):
+   8.078e+19  -1.238e+19   2.348e+19
+  -1.238e+19   7.136e+18  -5.456e+19
+   2.348e+19  -5.456e+19   5.027e+20
+Diffusion tensor (Einstein, cm2/s):
+   7.622e+19  -1.168e+19   2.215e+19
+  -1.168e+19   6.732e+18  -5.148e+19
+   2.215e+19  -5.148e+19   4.743e+20
+
+
+Iterative solution of linearized Boltzmann transport equation:
+iter = 1  error =  6.7e+23 ( 6.6180e+23)
+iter = 2  error =  6.6e+23 ( 5.9877e+23)
+iter = 3  error =  6.7e+23 ( 1.1661e+24)
+iter = 4  error =  6.6e+23 ( 1.1965e+24)
+iter = 5  error =  6.7e+23 ( 1.7500e+24)
+iter = 10  error =  6.6e+23 ( 2.9840e+24)
+iter = 20  error =  6.5e+23 ( 5.9434e+24)
+iter = 30  error =  6.5e+23 ( 8.8785e+24)
+iter = 40  error =  6.4e+23 ( 1.1789e+25)
+iter = 50  error =  6.4e+23 ( 1.4676e+25)
+iter = 60  error =  6.3e+23 ( 1.7540e+25)
+iter = 70  error =  6.2e+23 ( 2.0379e+25)
+iter = 80  error =  6.2e+23 ( 2.3196e+25)
+iter = 90  error =  6.1e+23 ( 2.5989e+25)
+iter = 100  error =  6.1e+23 ( 2.8759e+25)
+iter = 200  error =  5.6e+23 ( 5.5238e+25)
+iter = 300  error =  5.2e+23 ( 7.9618e+25)
+iter = 400  error =  4.8e+23 ( 1.0206e+26)
+iter = 500  error =  4.4e+23 ( 1.2273e+26)
+iter = 600  error =  4.0e+23 ( 1.4176e+26)
+iter = 700  error =  3.7e+23 ( 1.5928e+26)
+iter = 800  error =  3.4e+23 ( 1.7541e+26)
+iter = 900  error =  3.1e+23 ( 1.9026e+26)
+iter = 1000  error =  2.9e+23 ( 2.0394e+26)
+
+Converged results (iter 1000):
+Conductivity tensor ((nOhm m)^-1):
+   4.141e+14   1.499e+13  -6.430e+14
+   1.498e+13   6.107e+11  -2.393e+13
+  -6.430e+14  -2.394e+13   1.005e+15
+Resistivity tnesor (nOhm m):
+  -2.817e+00  -2.283e+01  -2.346e+00
+  -2.283e+01  -1.850e+02  -1.901e+01
+  -2.346e+00  -1.901e+01  -1.954e+00
+Compute mobility of electrons:
+Mobility tensor (cm2/V/s):
+   1.292e+24   4.677e+22  -2.007e+24
+   4.675e+22   1.906e+21  -7.468e+22
+  -2.007e+24  -7.470e+22   3.136e+24
+Diffusion tensor (cm2/s):
+   3.624e+22   1.311e+21  -5.627e+22
+   1.311e+21   5.344e+19  -2.094e+21
+  -5.627e+22  -2.095e+21   8.794e+22
+Diffusion tensor (smaller dmu, cm2/s):
+   3.541e+22   1.282e+21  -5.498e+22
+   1.281e+21   5.222e+19  -2.046e+21
+  -5.498e+22  -2.047e+21   8.593e+22
+Diffusion tensor (Einstein, cm2/s):
+   3.341e+22   1.209e+21  -5.188e+22
+   1.209e+21   4.927e+19  -1.931e+21
+  -5.187e+22  -1.931e+21   8.108e+22
+
+
+thr=  1.000e-20 ns_tot_glob= 1680 (1920 = 120*16)
+
+thr=  1.000e-40 ns_tot_glob= 1824 (1920 = 120*16)
+
+thr=  1.000e-20 ns_tot_glob= 1680 (1920 = 120*16)
+
+thr=  1.000e-40 ns_tot_glob= 1824 (1920 = 120*16)
+
+==================================================
+==================================================
+k-diagonal single-particle density matrix
+==================================================
+==================================================
+no initial density matrix inbalance
+
+==================================================
+==================================================
+initialize phenom_relax for bStart = 0 and bEnd = 4
+==================================================
+==================================================
+
+==================================================
+==================================================
+observable
+==================================================
+==================================================
+
+initial fn density  2.00000000000584e+16
+
+initial fn density  0.00000000000000e+00
+
+initial sx density  4.56362652536949e+09
+
+initial sx density -8.59633469700337e+11
+
+initial sy density  3.96252821797424e+09
+
+initial sy density -9.03877778760356e+11
+
+initial sz density  8.07338396511508e+09
+
+initial sz density  3.02679985871994e+12
+
+initial jx density  1.18492187002923e-01
+
+initial jx density -1.53362386974421e+03
+
+initial jy density -1.46636488314470e-01
+
+initial jy density  1.62099070212051e+03
+
+initial jz density  1.46119174555730e-02
+
+initial jz density  4.66877905807741e+01
+
+initial s-t2-wu density  9.99699961533150e+15
+
+initial s-t2-wu density  2.74687939209196e+18
+
+initial s-t2star density  1.00850307678993e+10
+
+initial s-t2star density  3.27375657707058e+12
+
+initial s-t2-mani density  1.71746979139303e+14
+
+initial s-t2-mani density  9.06233885981805e+17
+
+initial entropy_bloch density  9.73655098409262e+16
+
+initial entropy_bloch density  0.00000000000000e+00
+
+initial entropy_vN density  1.27701760271392e+17
+
+initial entropy_vN density                  -nan
+
+==================================================
+==================================================
+start density matrix evolution (rkf45 method from GSL)
+==================================================
+==================================================
+isHole = 0 mu0 =  4.9564885e-02 mu =  4.9564885e-02:
+Carriers per cell * nk = 0.0998998 excess = 1.38778e-17
+isHole = 1 mu0 =  4.9564885e-02 mu =  4.9564885e-02:
+Carriers per cell * nk = 0 excess = 0
+
+e: ik= 0: 3.51529e-08 3.51529e-08 3.51529e-08 3.5153e-08 0.0525515 0.0525515
+ik= 1: -0.00298582 -0.002982 -0.000265201 -0.000261408 0.0562382 0.0562384
+ik= 2: -0.00298585 -0.00298204 -0.000265196 -0.000261419 0.0562382 0.0562384
+ik= 3: -0.00298549 -0.00298346 -0.00026486 -0.00026142 0.0562382 0.0562382
+ik= 4: -0.00298467 -0.00298242 -0.000264662 -0.000261448 0.0562382 0.0562382
+ik= 5: -0.0035506 -0.00354607 -0.000861482 -0.000858991 0.0574471 0.0574472
+ik= 6: -0.00354993 -0.00354431 -0.000861529 -0.000859241 0.0574471 0.0574473
+ik= 7: -0.00298465 -0.00298239 -0.000264673 -0.000261451 0.0562382 0.0562383
+ik= 8: -0.00298553 -0.00298348 -0.00026486 -0.000261413 0.0562382 0.0562382
+ik= 9: -0.00354992 -0.00354429 -0.000861466 -0.000859205 0.0574471 0.0574473
+f: ik= 0: 1 1 1 1 0.0413409 0.0413409
+ik= 1: 1 1 1 1 0.000889231 0.000889082
+ik= 2: 1 1 1 1 0.000889232 0.000889089
+ik= 3: 1 1 1 1 0.00088928 0.00088923
+ik= 4: 1 1 1 1 0.000889278 0.000889227
+ik= 5: 1 1 1 1 0.000249279 0.000249243
+ik= 6: 1 1 1 1 0.000249285 0.000249215
+ik= 7: 1 1 1 1 0.000889284 0.000889222
+ik= 8: 1 1 1 1 0.000889283 0.000889223
+ik= 9: 1 1 1 1 0.000249286 0.000249214
+isHole = 0 mu0 =  4.9564885e-02 mu =  4.9564885e-02:
+Carriers per cell * nk = 0.0998998 excess = 1.38778e-17
+isHole = 1 mu0 =  4.9564885e-02 mu =  4.9564885e-02:
+Carriers per cell * nk = 0 excess = 0
+
+e: ik= 0: 3.51529e-08 3.51529e-08 3.51529e-08 3.5153e-08 0.0525515 0.0525515
+ik= 1: -0.00298582 -0.002982 -0.000265201 -0.000261408 0.0562382 0.0562384
+ik= 2: -0.00298585 -0.00298204 -0.000265196 -0.000261419 0.0562382 0.0562384
+ik= 3: -0.00298549 -0.00298346 -0.00026486 -0.00026142 0.0562382 0.0562382
+ik= 4: -0.00298467 -0.00298242 -0.000264662 -0.000261448 0.0562382 0.0562382
+ik= 5: -0.0035506 -0.00354607 -0.000861482 -0.000858991 0.0574471 0.0574472
+ik= 6: -0.00354993 -0.00354431 -0.000861529 -0.000859241 0.0574471 0.0574473
+ik= 7: -0.00298465 -0.00298239 -0.000264673 -0.000261451 0.0562382 0.0562383
+ik= 8: -0.00298553 -0.00298348 -0.00026486 -0.000261413 0.0562382 0.0562382
+ik= 9: -0.00354992 -0.00354429 -0.000861466 -0.000859205 0.0574471 0.0574473
+f: ik= 0: 1 1 1 1 0.0413409 0.0413409
+ik= 1: 1 1 1 1 0.000889231 0.000889082
+ik= 2: 1 1 1 1 0.000889232 0.000889089
+ik= 3: 1 1 1 1 0.00088928 0.00088923
+ik= 4: 1 1 1 1 0.000889278 0.000889227
+ik= 5: 1 1 1 1 0.000249279 0.000249243
+ik= 6: 1 1 1 1 0.000249285 0.000249215
+ik= 7: 1 1 1 1 0.000889284 0.000889222
+ik= 8: 1 1 1 1 0.000889283 0.000889223
+ik= 9: 1 1 1 1 0.000249286 0.000249214
+t= 0.0185 fs
+t= 0.0866301 fs
+t= 0.212883 fs
+t= 0.35697 fs
+t= 0.505013 fs
+t= 0.654171 fs
+t= 0.804441 fs
+t= 0.940065 fs
+Current step: 1
+ncalls= 61 at ti= 1 fs
+t= 1.45414 fs
+t= 1.60552 fs
+t= 1.7569 fs
+t= 1.90828 fs
+t= 2 fs
+Current step: 2
+ncalls= 42 at ti= 2 fs
+t= 2.45414 fs
+t= 2.60552 fs
+t= 2.7569 fs
+t= 2.90828 fs
+t= 3 fs
+Current step: 3
+ncalls= 42 at ti= 3 fs
+t= 3.45414 fs
+t= 3.60552 fs
+t= 3.7569 fs
+t= 3.90828 fs
+t= 4 fs
+Current step: 4
+ncalls= 42 at ti= 4 fs
+t= 4.45414 fs
+t= 4.60552 fs
+t= 4.7569 fs
+t= 4.90828 fs
+t= 5 fs
+Current step: 5
+ncalls= 42 at ti= 5 fs
+t= 5.45414 fs
+t= 5.60552 fs
+t= 5.7569 fs
+t= 5.90828 fs
+t= 6 fs
+Current step: 6
+ncalls= 42 at ti= 6 fs
+t= 6.45414 fs
+t= 6.60552 fs
+t= 6.7569 fs
+t= 6.90828 fs
+t= 7 fs
+Current step: 7
+ncalls= 42 at ti= 7 fs
+t= 7.45414 fs
+t= 7.60552 fs
+t= 7.7569 fs
+t= 7.90828 fs
+t= 8 fs
+Current step: 8
+ncalls= 42 at ti= 8 fs
+t= 8.45414 fs
+t= 8.60552 fs
+t= 8.7569 fs
+t= 8.90828 fs
+t= 9 fs
+Current step: 9
+ncalls= 42 at ti= 9 fs
+t= 9.45414 fs
+t= 9.60552 fs
+t= 9.7569 fs
+t= 9.90828 fs
+t= 10 fs
+Current step: 10
+ncalls= 42 at ti= 10 fs
+t= 10.4541 fs
+t= 10.6055 fs
+t= 10.7569 fs
+t= 10.9083 fs
+t= 11 fs
+Current step: 11
+ncalls= 42 at ti= 11 fs
+t= 11.4541 fs
+t= 11.6055 fs
+t= 11.7569 fs
+t= 11.9083 fs
+t= 12 fs
+Current step: 12
+ncalls= 42 at ti= 12 fs
+t= 12.4541 fs
+t= 12.6055 fs
+t= 12.7569 fs
+t= 12.9083 fs
+t= 13 fs
+Current step: 13
+ncalls= 42 at ti= 13 fs
+t= 13.4541 fs
+t= 13.6055 fs
+t= 13.7569 fs
+t= 13.9083 fs
+t= 14 fs
+Current step: 14
+ncalls= 42 at ti= 14 fs
+t= 14.4541 fs
+t= 14.6055 fs
+t= 14.7569 fs
+t= 14.9083 fs
+t= 15 fs
+Current step: 15
+ncalls= 42 at ti= 15 fs
+t= 15.4541 fs
+t= 15.6055 fs
+t= 15.7569 fs
+t= 15.9083 fs
+t= 16 fs
+Current step: 16
+ncalls= 42 at ti= 16 fs
+t= 16.4541 fs
+t= 16.6055 fs
+t= 16.7569 fs
+t= 16.9083 fs
+t= 17 fs
+Current step: 17
+ncalls= 42 at ti= 17 fs
+t= 17.4541 fs
+t= 17.6055 fs
+t= 17.7569 fs
+t= 17.9083 fs
+t= 18 fs
+Current step: 18
+ncalls= 42 at ti= 18 fs
+t= 18.4541 fs
+t= 18.6055 fs
+t= 18.7569 fs
+t= 18.9083 fs
+t= 19 fs
+Current step: 19
+ncalls= 42 at ti= 19 fs
+t= 19.4541 fs
+t= 19.6055 fs
+t= 19.7569 fs
+t= 19.9083 fs
+t= 20 fs
+Current step: 20
+ncalls= 42 at ti= 20 fs
+t= 20.4541 fs
+t= 20.6055 fs
+t= 20.7569 fs
+t= 20.9083 fs
+t= 21 fs
+Current step: 21
+ncalls= 42 at ti= 21 fs
+t= 21.4541 fs
+t= 21.6055 fs
+t= 21.7569 fs
+t= 21.9083 fs
+t= 22 fs
+Current step: 22
+ncalls= 42 at ti= 22 fs
+t= 22.4541 fs
+t= 22.6055 fs
+t= 22.7569 fs
+t= 22.9083 fs
+t= 23 fs
+Current step: 23
+ncalls= 42 at ti= 23 fs
+t= 23.4541 fs
+t= 23.6055 fs
+t= 23.7569 fs
+t= 23.9083 fs
+t= 24 fs
+Current step: 24
+ncalls= 42 at ti= 24 fs
+t= 24.4541 fs
+t= 24.6055 fs
+t= 24.7569 fs
+t= 24.9083 fs
+t= 25 fs
+Current step: 25
+ncalls= 42 at ti= 25 fs
+t= 25.4541 fs
+t= 25.6055 fs
+t= 25.7569 fs
+t= 25.9083 fs
+t= 26 fs
+Current step: 26
+ncalls= 42 at ti= 26 fs
+t= 26.4541 fs
+t= 26.6055 fs
+t= 26.7569 fs
+t= 26.9083 fs
+t= 27 fs
+Current step: 27
+ncalls= 42 at ti= 27 fs
+t= 27.4541 fs
+t= 27.6055 fs
+t= 27.7569 fs
+t= 27.9083 fs
+t= 28 fs
+Current step: 28
+ncalls= 42 at ti= 28 fs
+t= 28.4541 fs
+t= 28.6055 fs
+t= 28.7569 fs
+t= 28.9083 fs
+t= 29 fs
+Current step: 29
+ncalls= 42 at ti= 29 fs
+t= 29.4541 fs
+t= 29.6055 fs
+t= 29.7569 fs
+t= 29.9083 fs
+t= 30 fs
+Current step: 30
+ncalls= 42 at ti= 30 fs
+t= 30.4541 fs
+t= 30.6055 fs
+t= 30.7569 fs
+t= 30.9083 fs
+t= 31 fs
+Current step: 31
+ncalls= 42 at ti= 31 fs
+t= 31.4541 fs
+t= 31.6055 fs
+t= 31.7569 fs
+t= 31.9083 fs
+t= 32 fs
+Current step: 32
+ncalls= 42 at ti= 32 fs
+t= 32.4541 fs
+t= 32.6055 fs
+t= 32.7569 fs
+t= 32.9083 fs
+t= 33 fs
+Current step: 33
+ncalls= 42 at ti= 33 fs
+t= 33.4541 fs
+t= 33.6055 fs
+t= 33.7569 fs
+t= 33.9083 fs
+t= 34 fs
+Current step: 34
+ncalls= 42 at ti= 34 fs
+t= 34.4541 fs
+t= 34.6055 fs
+t= 34.7569 fs
+t= 34.9083 fs
+t= 35 fs
+Current step: 35
+ncalls= 42 at ti= 35 fs
+t= 35.4541 fs
+t= 35.6055 fs
+t= 35.7569 fs
+t= 35.9083 fs
+t= 36 fs
+Current step: 36
+ncalls= 42 at ti= 36 fs
+t= 36.4541 fs
+t= 36.6055 fs
+t= 36.7569 fs
+t= 36.9083 fs
+t= 37 fs
+Current step: 37
+ncalls= 42 at ti= 37 fs
+t= 37.4541 fs
+t= 37.6055 fs
+t= 37.7569 fs
+t= 37.9083 fs
+t= 38 fs
+Current step: 38
+ncalls= 42 at ti= 38 fs
+t= 38.4541 fs
+t= 38.6055 fs
+t= 38.7569 fs
+t= 38.9083 fs
+t= 39 fs
+Current step: 39
+ncalls= 42 at ti= 39 fs
+t= 39.4541 fs
+t= 39.6055 fs
+t= 39.7569 fs
+t= 39.9083 fs
+t= 40 fs
+Current step: 40
+ncalls= 42 at ti= 40 fs
+t= 40.4541 fs
+t= 40.6055 fs
+t= 40.7569 fs
+t= 40.9083 fs
+t= 41 fs
+Current step: 41
+ncalls= 42 at ti= 41 fs
+t= 41.4541 fs
+t= 41.6055 fs
+t= 41.7569 fs
+t= 41.9083 fs
+t= 42 fs
+Current step: 42
+ncalls= 42 at ti= 42 fs
+t= 42.4541 fs
+t= 42.6055 fs
+t= 42.7569 fs
+t= 42.9083 fs
+t= 43 fs
+Current step: 43
+ncalls= 42 at ti= 43 fs
+t= 43.4541 fs
+t= 43.6055 fs
+t= 43.7569 fs
+t= 43.9083 fs
+t= 44 fs
+Current step: 44
+ncalls= 42 at ti= 44 fs
+t= 44.4541 fs
+t= 44.6055 fs
+t= 44.7569 fs
+t= 44.9083 fs
+t= 45 fs
+Current step: 45
+ncalls= 42 at ti= 45 fs
+t= 45.4541 fs
+t= 45.6055 fs
+t= 45.7569 fs
+t= 45.9083 fs
+t= 46 fs
+Current step: 46
+ncalls= 42 at ti= 46 fs
+t= 46.4541 fs
+t= 46.6055 fs
+t= 46.7569 fs
+t= 46.9083 fs
+t= 47 fs
+Current step: 47
+ncalls= 42 at ti= 47 fs
+t= 47.4541 fs
+t= 47.6055 fs
+t= 47.7569 fs
+t= 47.9083 fs
+t= 48 fs
+Current step: 48
+ncalls= 42 at ti= 48 fs
+t= 48.4541 fs
+t= 48.6055 fs
+t= 48.7569 fs
+t= 48.9083 fs
+t= 49 fs
+Current step: 49
+ncalls= 42 at ti= 49 fs
+t= 49.4541 fs
+t= 49.6055 fs
+t= 49.7569 fs
+t= 49.9083 fs
+t= 50 fs
+Current step: 50
+ncalls= 42 at ti= 50 fs
+t= 50.4541 fs
+t= 50.6055 fs
+t= 50.7569 fs
+t= 50.9083 fs
+t= 51 fs
+Current step: 51
+ncalls= 42 at ti= 51 fs
+t= 51.4541 fs
+t= 51.6055 fs
+t= 51.7569 fs
+t= 51.9083 fs
+t= 52 fs
+Current step: 52
+ncalls= 42 at ti= 52 fs
+t= 52.4541 fs
+t= 52.6055 fs
+t= 52.7569 fs
+t= 52.9083 fs
+t= 53 fs
+Current step: 53
+ncalls= 42 at ti= 53 fs
+t= 53.4541 fs
+t= 53.6055 fs
+t= 53.7569 fs
+t= 53.9083 fs
+t= 54 fs
+Current step: 54
+ncalls= 42 at ti= 54 fs
+t= 54.4541 fs
+t= 54.6055 fs
+t= 54.7569 fs
+t= 54.9083 fs
+t= 55 fs
+Current step: 55
+ncalls= 42 at ti= 55 fs
+t= 55.4541 fs
+t= 55.6055 fs
+t= 55.7569 fs
+t= 55.9083 fs
+t= 56 fs
+Current step: 56
+ncalls= 42 at ti= 56 fs
+t= 56.4541 fs
+t= 56.6055 fs
+t= 56.7569 fs
+t= 56.9083 fs
+t= 57 fs
+Current step: 57
+ncalls= 42 at ti= 57 fs
+t= 57.4541 fs
+t= 57.6055 fs
+t= 57.7569 fs
+t= 57.9083 fs
+t= 58 fs
+Current step: 58
+ncalls= 42 at ti= 58 fs
+t= 58.4541 fs
+t= 58.6055 fs
+t= 58.7569 fs
+t= 58.9083 fs
+t= 59 fs
+Current step: 59
+ncalls= 42 at ti= 59 fs
+t= 59.4541 fs
+t= 59.6055 fs
+t= 59.7569 fs
+t= 59.9083 fs
+t= 60 fs
+Current step: 60
+ncalls= 42 at ti= 60 fs
+t= 60.4541 fs
+t= 60.6055 fs
+t= 60.7569 fs
+t= 60.9083 fs
+t= 61 fs
+Current step: 61
+ncalls= 42 at ti= 61 fs
+t= 61.4541 fs
+t= 61.6055 fs
+t= 61.7569 fs
+t= 61.9083 fs
+t= 62 fs
+Current step: 62
+ncalls= 42 at ti= 62 fs
+t= 62.4541 fs
+t= 62.6055 fs
+t= 62.7569 fs
+t= 62.9083 fs
+t= 63 fs
+Current step: 63
+ncalls= 42 at ti= 63 fs
+t= 63.4541 fs
+t= 63.6055 fs
+t= 63.7569 fs
+t= 63.9083 fs
+t= 64 fs
+Current step: 64
+ncalls= 42 at ti= 64 fs
+t= 64.4541 fs
+t= 64.6055 fs
+t= 64.7569 fs
+t= 64.9083 fs
+t= 65 fs
+Current step: 65
+ncalls= 42 at ti= 65 fs
+t= 65.4541 fs
+t= 65.6055 fs
+t= 65.7569 fs
+t= 65.9083 fs
+t= 66 fs
+Current step: 66
+ncalls= 42 at ti= 66 fs
+t= 66.4541 fs
+t= 66.6055 fs
+t= 66.7569 fs
+t= 66.9083 fs
+t= 67 fs
+Current step: 67
+ncalls= 42 at ti= 67 fs
+t= 67.4541 fs
+t= 67.6055 fs
+t= 67.7569 fs
+t= 67.9083 fs
+t= 68 fs
+Current step: 68
+ncalls= 42 at ti= 68 fs
+t= 68.4541 fs
+t= 68.6055 fs
+t= 68.7569 fs
+t= 68.9083 fs
+t= 69 fs
+Current step: 69
+ncalls= 42 at ti= 69 fs
+t= 69.4541 fs
+t= 69.6055 fs
+t= 69.7569 fs
+t= 69.9083 fs
+t= 70 fs
+Current step: 70
+ncalls= 42 at ti= 70 fs
+t= 70.4541 fs
+t= 70.6055 fs
+t= 70.7569 fs
+t= 70.9083 fs
+t= 71 fs
+Current step: 71
+ncalls= 42 at ti= 71 fs
+t= 71.4541 fs
+t= 71.6055 fs
+t= 71.7569 fs
+t= 71.9083 fs
+t= 72 fs
+Current step: 72
+ncalls= 42 at ti= 72 fs
+t= 72.4541 fs
+t= 72.6055 fs
+t= 72.7569 fs
+t= 72.9083 fs
+t= 73 fs
+Current step: 73
+ncalls= 42 at ti= 73 fs
+t= 73.4541 fs
+t= 73.6055 fs
+t= 73.7569 fs
+t= 73.9083 fs
+t= 74 fs
+Current step: 74
+ncalls= 42 at ti= 74 fs
+t= 74.4541 fs
+t= 74.6055 fs
+t= 74.7569 fs
+t= 74.9083 fs
+t= 75 fs
+Current step: 75
+ncalls= 42 at ti= 75 fs
+t= 75.4541 fs
+t= 75.6055 fs
+t= 75.7569 fs
+t= 75.9083 fs
+t= 76 fs
+Current step: 76
+ncalls= 42 at ti= 76 fs
+t= 76.4541 fs
+t= 76.6055 fs
+t= 76.7569 fs
+t= 76.9083 fs
+t= 77 fs
+Current step: 77
+ncalls= 42 at ti= 77 fs
+t= 77.4541 fs
+t= 77.6055 fs
+t= 77.7569 fs
+t= 77.9083 fs
+t= 78 fs
+Current step: 78
+ncalls= 42 at ti= 78 fs
+t= 78.4541 fs
+t= 78.6055 fs
+t= 78.7569 fs
+t= 78.9083 fs
+t= 79 fs
+Current step: 79
+ncalls= 42 at ti= 79 fs
+t= 79.4541 fs
+t= 79.6055 fs
+t= 79.7569 fs
+t= 79.9083 fs
+t= 80 fs
+Current step: 80
+ncalls= 42 at ti= 80 fs
+t= 80.4541 fs
+t= 80.6055 fs
+t= 80.7569 fs
+t= 80.9083 fs
+t= 81 fs
+Current step: 81
+ncalls= 42 at ti= 81 fs
+t= 81.4541 fs
+t= 81.6055 fs
+t= 81.7569 fs
+t= 81.9083 fs
+t= 82 fs
+Current step: 82
+ncalls= 42 at ti= 82 fs
+t= 82.4541 fs
+t= 82.6055 fs
+t= 82.7569 fs
+t= 82.9083 fs
+t= 83 fs
+Current step: 83
+ncalls= 42 at ti= 83 fs
+t= 83.4541 fs
+t= 83.6055 fs
+t= 83.7569 fs
+t= 83.9083 fs
+t= 84 fs
+Current step: 84
+ncalls= 42 at ti= 84 fs
+t= 84.4541 fs
+t= 84.6055 fs
+t= 84.7569 fs
+t= 84.9083 fs
+t= 85 fs
+Current step: 85
+ncalls= 42 at ti= 85 fs
+t= 85.4541 fs
+t= 85.6055 fs
+t= 85.7569 fs
+t= 85.9083 fs
+t= 86 fs
+Current step: 86
+ncalls= 42 at ti= 86 fs
+t= 86.4541 fs
+t= 86.6055 fs
+t= 86.7569 fs
+t= 86.9083 fs
+t= 87 fs
+Current step: 87
+ncalls= 42 at ti= 87 fs
+t= 87.4541 fs
+t= 87.6055 fs
+t= 87.7569 fs
+t= 87.9083 fs
+t= 88 fs
+Current step: 88
+ncalls= 42 at ti= 88 fs
+t= 88.4541 fs
+t= 88.6055 fs
+t= 88.7569 fs
+t= 88.9083 fs
+t= 89 fs
+Current step: 89
+ncalls= 42 at ti= 89 fs
+t= 89.4541 fs
+t= 89.6055 fs
+t= 89.7569 fs
+t= 89.9083 fs
+t= 90 fs
+Current step: 90
+ncalls= 42 at ti= 90 fs
+t= 90.4541 fs
+t= 90.6055 fs
+t= 90.7569 fs
+t= 90.9083 fs
+t= 91 fs
+Current step: 91
+ncalls= 42 at ti= 91 fs
+t= 91.4541 fs
+t= 91.6055 fs
+t= 91.7569 fs
+t= 91.9083 fs
+t= 92 fs
+Current step: 92
+ncalls= 42 at ti= 92 fs
+t= 92.4541 fs
+t= 92.6055 fs
+t= 92.7569 fs
+t= 92.9083 fs
+t= 93 fs
+Current step: 93
+ncalls= 42 at ti= 93 fs
+t= 93.4541 fs
+t= 93.6055 fs
+t= 93.7569 fs
+t= 93.9083 fs
+t= 94 fs
+Current step: 94
+ncalls= 42 at ti= 94 fs
+t= 94.4541 fs
+t= 94.6055 fs
+t= 94.7569 fs
+t= 94.9083 fs
+t= 95 fs
+Current step: 95
+ncalls= 42 at ti= 95 fs
+t= 95.4541 fs
+t= 95.6055 fs
+t= 95.7569 fs
+t= 95.9083 fs
+t= 96 fs
+Current step: 96
+ncalls= 42 at ti= 96 fs
+t= 96.4541 fs
+t= 96.6055 fs
+t= 96.7569 fs
+t= 96.9083 fs
+t= 97 fs
+Current step: 97
+ncalls= 42 at ti= 97 fs
+t= 97.4541 fs
+t= 97.6055 fs
+t= 97.7569 fs
+t= 97.9083 fs
+t= 98 fs
+Current step: 98
+ncalls= 42 at ti= 98 fs
+t= 98.4541 fs
+t= 98.6055 fs
+t= 98.7569 fs
+t= 98.9083 fs
+t= 99 fs
+Current step: 99
+ncalls= 42 at ti= 99 fs
+t= 99.4541 fs
+t= 99.6055 fs
+t= 99.7569 fs
+t= 99.9083 fs
+t= 100 fs
+Current step: 100
+ncalls= 42 at ti= 100 fs
+t= 100.454 fs
+t= 100.606 fs
+t= 100.757 fs
+t= 100.908 fs
+t= 101 fs
+Current step: 101
+ncalls= 42 at ti= 101 fs
+total time: 17.7668 seconds
