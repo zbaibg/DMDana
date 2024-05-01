@@ -1,0 +1,37 @@
+2024-04-30 17:46:23,634 - INFO - Begin copying files from /scratch/groups/ping_group/zbai29/GaAs_SOC_20231130 to ../data/GaAs_DFT
+2024-04-30 17:46:23,689 - INFO - File: totalE.out file successfully copied 
+2024-04-30 17:46:23,700 - INFO - File: common.in file successfully copied 
+2024-04-30 17:46:23,711 - INFO - File: totalE.in file successfully copied 
+2024-04-30 17:46:23,722 - INFO - File: scf.in file successfully copied 
+2024-04-30 17:46:23,733 - INFO - File: scf.out file successfully copied 
+2024-04-30 17:46:23,733 - INFO - This folder finished
+
+2024-04-30 17:46:23,733 - INFO - Begin copying files from /scratch/groups/ping_group/zbai29/GaAs_SOC_20231130/ld-dmd-current/t300/small_dataset to ../data/GaAs_DFT/init_NkMult2
+2024-04-30 17:46:23,755 - INFO - File: lindbladInit.out file successfully copied 
+2024-04-30 17:46:23,778 - INFO - File: slurm-424359.out file successfully copied 
+2024-04-30 17:46:23,789 - INFO - Link: Wannier is a link '../Wannier', successfully created 
+2024-04-30 17:46:23,789 - INFO - Folder: DMD is a folder, successfully coped with its content
+2024-04-30 17:46:25,376 - INFO - File: lindbladInit.in file successfully copied 
+2024-04-30 17:46:25,376 - INFO - Folder: ldbd_data is a folder, successfully coped with its content
+2024-04-30 17:46:25,389 - INFO - File: jdftx-ld-init.sh file successfully copied 
+2024-04-30 17:46:25,389 - INFO - This folder finished
+
+2024-04-30 17:46:25,389 - INFO - Begin copying files from /scratch/groups/ping_group/zbai29/GaAs_DFT_nosym to ../data/GaAs_DFT_nosym
+2024-04-30 17:46:25,390 - INFO - File: As_nr.oncvpsp.upf file successfully copied 
+2024-04-30 17:46:25,390 - INFO - File: As_nv5_nocorecorr.upf file successfully copied 
+2024-04-30 17:46:25,390 - INFO - File: common.in file successfully copied 
+2024-04-30 17:46:25,391 - INFO - File: Ga_nr.oncvpsp.upf file successfully copied 
+2024-04-30 17:46:25,391 - INFO - File: Ga_nv3_nocorecorr.upf file successfully copied 
+2024-04-30 17:46:25,392 - INFO - File: jdftx.sh file successfully copied 
+2024-04-30 17:46:25,392 - INFO - File: scf.in file successfully copied 
+2024-04-30 17:46:25,392 - INFO - File: scf.out file successfully copied 
+2024-04-30 17:46:25,392 - INFO - File: slurm-429554.out file successfully copied 
+2024-04-30 17:46:25,394 - INFO - File: totalE.BerryCurvature file successfully copied 
+2024-04-30 17:46:25,395 - INFO - File: totalE.eigenvals file successfully copied 
+2024-04-30 17:46:25,396 - INFO - File: totalE.eigStats file successfully copied 
+2024-04-30 17:46:25,396 - INFO - File: totalE.kPts file successfully copied 
+2024-04-30 17:46:25,398 - INFO - File: totalE.momenta file successfully copied 
+2024-04-30 17:46:25,399 - INFO - File: totalE.R file successfully copied 
+2024-04-30 17:46:25,403 - INFO - File: totalE.sym file successfully copied 
+2024-04-30 17:46:25,403 - INFO - This folder finished
+
