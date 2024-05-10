@@ -6,6 +6,10 @@ from .constant import *
 from .DMDparser import read_text_from_file
 from .parallel_folder_analysis import FolderAnalysis, parallel_folder_analysis
 
+elec_or_hole_for_Semi_Conductor_currents='total'#'elec','hole','total'
+
+def debug_elec_or_hole():
+    print(elec_or_hole_for_Semi_Conductor_currents)
 
 def parse_param_in(fa:FolderAnalysis,func_logger):
     fa.df.loc[fa.index,'Light_pumpE']=fa.DMD_instance.param.pumpE
@@ -103,8 +107,8 @@ def init_analyze(fa:FolderAnalysis,func_logger):
     #fa.DMD_instance.start_analyze()
     fa.DMD_instance.analyze.configfile_path=fa.current_folder+'/DMDana.ini'       
     if fa.DMD_instance.lindblad_init.nv>fa.DMD_instance.lindblad_init.bBot_dm:
-        fa.DMD_instance.analyze.configsetting.section_current_plot.elec_or_hole='total'
-        fa.DMD_instance.analyze.configsetting.section_FFT_spectrum_plot.elec_or_hole='total'
+        fa.DMD_instance.analyze.configsetting.section_current_plot.elec_or_hole=elec_or_hole_for_Semi_Conductor_currents
+        fa.DMD_instance.analyze.configsetting.section_FFT_spectrum_plot.elec_or_hole=elec_or_hole_for_Semi_Conductor_currents
     else:
         fa.DMD_instance.analyze.configsetting.section_current_plot.elec_or_hole='elec'  
         fa.DMD_instance.analyze.configsetting.section_FFT_spectrum_plot.elec_or_hole='elec'
@@ -146,7 +150,7 @@ def read_FFT_spectrum_plot_summary(fa:FolderAnalysis,func_logger):
 
 def get_Boltzfitted(fa:FolderAnalysis,func_logger):
     find=False
-    with open('./analyze_folder_%d.log'%(fa.index)) as file:
+    with open('./analyze_occup_folder_%d.log'%(fa.index)) as file:
         for line in file:
             if 'Boltzmann Distribution t(fs)' in line:
                 mu=line.split()[13]
@@ -203,15 +207,16 @@ class logic_func():
     file_prefix:str
     func_list:list= field(default_factory=list)
 
-analyze=logic_func(file_prefix='analyze',
+analyze_current=logic_func(file_prefix='analyze_current',
                    func_list=[ init_analyze,
                         current_plot,
                         FFT_spectrum_plot_log,
-                        FFT_spectrum_plot_linear,
+                        FFT_spectrum_plot_linear])
+analyze_occup=logic_func(file_prefix='analyze_occup',
+                   func_list=[ init_analyze,
                         occup_time,
                         #occup_deriv,
                         occup_time_short_range_for_better_fit])
-
 summary=logic_func(file_prefix='summary',
                 func_list=[read_lindblad_out,
                 get_Scat_State,
