@@ -211,9 +211,9 @@ def get_erange(path='.'):
 
 
 
-class default_class(BaseModel):
+class section_default_class(BaseModel):
     only_jtot:bool
-    folders:str
+    folder:str
     def __getitem__(self,key):#For compatibility with configparser
         return str(getattr(self,key))
     def __setitem__(self,key,value_str):#For compatibility with configparser
@@ -226,7 +226,7 @@ class default_class(BaseModel):
     def getboolean(self,key):
         return bool(getattr(self,key))
     get=__getitem__
-class current_plot_class(default_class):
+class section_current_plot_class(section_default_class):
     current_plot_output:str
     t_min:float
     t_max:float
@@ -237,7 +237,7 @@ class current_plot_class(default_class):
     plot_all:bool
     elec_or_hole:str
     
-class FFT_DC_convergence_test_class(default_class):
+class section_FFT_DC_convergence_test_class(section_default_class):
     Cutoff_step:int
     Cutoff_min:int
     Cutoff_max:int
@@ -249,7 +249,7 @@ class FFT_DC_convergence_test_class(default_class):
     Figure_output_filename:str
     elec_or_hole:str
     
-class FFT_spectrum_plot_class(default_class):
+class section_FFT_spectrum_plot_class(section_default_class):
     Cutoff_list:int
     Window_type_list:str
     Log_y_scale:bool
@@ -259,7 +259,7 @@ class FFT_spectrum_plot_class(default_class):
     Summary_output_filename_xlsx:str
     elec_or_hole:str
     
-class occup_time_class(default_class):
+class section_occup_time_class(section_default_class):
     t_max:int
     filelist_step:int
     occup_time_plot_set_Erange:bool
@@ -278,25 +278,25 @@ class occup_time_class(default_class):
     fit_Boltzmann_initial_guess_T_auto:bool
     Substract_initial_occupation:bool
     showlegend:bool
-class occup_deriv_class(default_class):
+class section_occup_deriv_class(section_default_class):
     t_max:int
     filelist_step:int
     
 class DMDana_ini_config_setting_class(BaseModel):
    
-    section_DEFAULT:default_class
-    section_current_plot:current_plot_class
-    section_FFT_DC_convergence_test:FFT_DC_convergence_test_class
-    section_FFT_spectrum_plot:FFT_spectrum_plot_class
-    section_occup_time:occup_time_class
-    section_occup_deriv:occup_deriv_class    
+    section_DEFAULT:section_default_class
+    section_current_plot:section_current_plot_class
+    section_FFT_DC_convergence_test:section_FFT_DC_convergence_test_class
+    section_FFT_spectrum_plot:section_FFT_spectrum_plot_class
+    section_occup_time:section_occup_time_class
+    section_occup_deriv:section_occup_deriv_class    
     def __getitem__(self,key):
         return getattr(self,'section_'+key.replace('-','_'))
     #def __setitem__(self,key,value):
         #setattr(self,key,value)
     def items(self,key):
         return dict((key,str(val))for key,val in self[key].model_dump().items())
-    
+
 class analyze_class:
     def __init__(self,DMD_folder):
         self.DMD_folder=DMD_folder
@@ -321,20 +321,20 @@ class analyze_class:
     
     @configfile_path.setter
     def configfile_path(self,value):
+        #load DMDana.ini and overwrite the folder vallue with DMD_folder
         self._configfile_path=value
         if value==None:
             return
         assert os.path.isfile(value), "%s does not exist"%value
-        self.load_config_setting_from_file()
+        self.__load_config_setting_from_file()
         for section_key,section_data in self.configsetting:
-            section_data.folders=self.DMD_folder
-
+            section_data.folder=self.DMD_folder
         
     #Class and methods
     def __repr__(self) -> str:
         return __class__.__qualname__+'(configfile_path=%s)'%self._configfile_path
     
-    def load_config_setting_from_file(self):
+    def __load_config_setting_from_file(self):
         self.DMDana_ini_configparser0 = configparser.ConfigParser(inline_comment_prefixes="#")
         if (os.path.isfile(self.configfile_path)):
             default_ini=check_and_get_path(libpath+'/DMDana/do/DMDana_default.ini')
@@ -347,63 +347,23 @@ class analyze_class:
         # This class support both dataclass structure(For new codes) and configparser structure(For compatibility with old codes).
 
     def FFT_DC_convergence_test(self):
-        DMDdo.FFT_DC_convergence_test.do(Extented_Support(self))
+        DMDdo.FFT_DC_convergence_test.do(self)
     def FFT_spectrum_plot(self):
-        DMDdo.FFT_spectrum_plot.do(Extented_Support(self))
+        DMDdo.FFT_spectrum_plot.do(self)
     def current_plot(self):
-        DMDdo.current_plot.do(Extented_Support(self))
+        DMDdo.current_plot.do(self)
     def occup_deriv(self):
-        DMDdo.occup_deriv.do(Extented_Support(self))
+        DMDdo.occup_deriv.do(self)
     def occup_time(self):
-        DMDdo.occup_time.do(Extented_Support(self))
-    def get_config_result(self,funcname:str,show_init_log=True,folder_for_analysis_module_to_check=None):
-        #func
-        if folder_for_analysis_module_to_check==None:
-            folder_for_analysis_module_to_check=self.DMD_folder
-        assert funcname in allfuncname,'funcname is not correct.'
-        if funcname in ['FFT_DC_convergence_test','current_plot','FFT_spectrum_plot']:
-            config=config_current(funcname,self.DMDana_ini_configparser,folder_for_analysis_module_to_check,show_init_log=show_init_log)
-        if funcname in ['occup_time','occup_deriv']:
-            config=config_occup(funcname,self.DMDana_ini_configparser,folder_for_analysis_module_to_check,show_init_log=show_init_log)
-        return config
+        DMDdo.occup_time.do(self)
 
-class Extented_Support(analyze_class):
-    #This is for the interactivity with the analysis modules, which helps to support some extended features, like plot for multiple folders together.
-    def __init__(self,object:analyze_class):
-        super().__init__(object.DMD_folder)
-        self.configfile_path=str(object.configfile_path)
-        self.configsetting=object.configsetting
-
-    @property
-    def configfile_path(self):
-        return self._configfile_path
-    @configfile_path.setter
-    def configfile_path(self,val):
-        super(Extented_Support,type(self)).configfile_path.fset(self,val)
-        if val==None:
-            return
-        self.folderlist=self.configsetting.section_DEFAULT.folders.split(',')
-    def set_multiple_folders(self,folderlist):
-        self.folderlist=folderlist
-        for section_key,section_data in self.configsetting.model_fields.items():
-            section_data.folders=','.join(folderlist)
-    def get_folder_name_by_number(self,folder_number):
-        assert folder_number<len(self.folderlist) and folder_number>=0
-        return self.folderlist[folder_number]
-    def get_folder_config_result(self,funcname: str,folder_number: int,show_init_log=True):
-        folder_for_analysis_module_to_check=self.get_folder_name_by_number(folder_number)
-        return super().get_config_result(funcname,show_init_log,folder_for_analysis_module_to_check)
-    get_folder_config=get_folder_config_result# for compatibility with old codes
-    
-    
-    ## quicker set/get methods for operating the config settings.
-    #def set(self,section: str,key: str,value):
-    #    '''set options in DMDana.ini configparser structure.
-    #    If you want to save int value, make sure explicitly convert it to int before using this function
-    #    Or later reading process would report an error'''
-    #    self.DMDana_ini_configparser[section][key]=str(value)
-    #def get(self,section: str,key: str):
-    #    return self.DMDana_ini_configparser[section][key]
+def get_config_result(DMDana_ini_config_setting,funcname:str,show_init_log=True):
+    assert funcname in allfuncname,'funcname is not correct.'
+    if funcname in ['FFT_DC_convergence_test','current_plot','FFT_spectrum_plot']:
+        config=config_current(funcname,DMDana_ini_config_setting,show_init_log=show_init_log)
+    if funcname in ['occup_time','occup_deriv']:
+        config=config_occup(funcname,DMDana_ini_config_setting,show_init_log=show_init_log)
+    return config
 
 @dataclass
 class occupation_file_class:
@@ -525,10 +485,12 @@ class DMD(object):
         return self.mu_eV,self.temperature_K
     
 
+
+
 class config_base(object): 
-    def __init__(self, funcname_in,DMDana_ini_configparser: configparser.ConfigParser,folder='.',show_init_log=True):
+    def __init__(self, funcname_in: str,DMDana_ini_config_setting: DMDana_ini_config_setting_class,show_init_log=True):
         self.logfile=None
-        self.DMDana_ini_configparser=DMDana_ini_configparser
+        self.DMDana_ini_config_setting_section: section_default_class=DMDana_ini_config_setting[self.funcname.replace('_','-')]# Due to historical reason, the name in DMDana.ini is with "-" instead of "_". Other parts of the code all use "_" for funcname
         self.funcname=funcname_in
         self.EBot_probe_au=None
         self.ETop_probe_au=None 
@@ -540,10 +502,9 @@ class config_base(object):
         self.EcMin_au=None
         self.mu_au=None
         self.temperature_au=None
-        self.Input=self.DMDana_ini_configparser[self.funcname.replace('_','-')]# Due to historical reason, the name in DMDana.ini is with "-" instead of "_". Other parts of the code all use "_" for funcname
+        self.folder=self.DMDana_ini_config_setting_section.folder
         if show_init_log==True:
             self.initiallog(self.funcname)
-        self.folder=folder
         self.DMDparam_value=get_DMD_param(self.folder)# Use the param.in in the first folder
 
     def initiallog(self,funcname):#this should be done after setting global variable "funcname" 
@@ -558,14 +519,15 @@ class config_base(object):
         logging.info("Submodule: %s"%funcname)
         logging.info("Start time: %s"%datetime.datetime.now())
         logging.info("===Configuration Parameter===")
-        paramdict=dict((self.DMDana_ini_configparser.items(funcname.replace('_','-'))))
+        paramdict=dict((self.DMDana_ini_config_setting.items(funcname.replace('_','-'))))
         for i in paramdict:
             logging.info("%-35s"%i+':\t'+paramdict[i]+'')
         logging.info("===Initialization finished===")
         
+        
 class config_current(config_base):
-    def __init__(self, funcname_in,DMDana_ini_configparser,folder='.',show_init_log=True):
-        super().__init__(funcname_in,DMDana_ini_configparser,folder,show_init_log)
+    def __init__(self, funcname_in: str,DMDana_ini_config_setting: DMDana_ini_config_setting_class,show_init_log=True):
+        super().__init__(funcname_in,DMDana_ini_config_setting,show_init_log)
         self.only_jtot=None
         self.jx_data=None
         self.jy_data=None
@@ -573,8 +535,8 @@ class config_current(config_base):
         self.jx_data_path=None
         self.jy_data_path=None
         self.jz_data_path=None
-        self.only_jtot=self.Input.getboolean('only_jtot')
-        self.elec_or_hole=self.Input.get('elec_or_hole')
+        self.only_jtot=self.DMDana_ini_config_setting_section.getboolean('only_jtot')
+        self.elec_or_hole=self.DMDana_ini_config_setting_section.get('elec_or_hole')
         assert self.only_jtot!=None, 'only_jtot is not correct setted.'
         self.jx_data,self.jy_data,self.jz_data=get_current_data(self.folder,self.elec_or_hole)
         assert len(self.jx_data)==len(self.jy_data)==len(self.jz_data), 'The line number in jx_data jy_data jz_data are not the same. Please deal with your data.'
@@ -585,8 +547,8 @@ class config_current(config_base):
         self.light_label=' '+'for light of %s Polarization, %.2e a.u Amplitude, and %.2e eV Energy for %s'%(pumpPoltype,pumpA0,pumpE,bandlabel)
         
 class config_occup(config_base):
-    def __init__(self, funcname_in,DMDana_ini_configparser,folder='.',show_init_log=True):
-        super().__init__(funcname_in,DMDana_ini_configparser,folder,show_init_log)
+    def __init__(self, funcname_in: str,DMDana_ini_config_setting: DMDana_ini_config_setting_class,show_init_log=True):
+        super().__init__(funcname_in,DMDana_ini_config_setting,show_init_log)
         self.occup_timestep_for_selected_file_fs=None
         self.occup_timestep_for_selected_file_ps=None
         self.occup_t_tot=None # maximum time to plot
@@ -612,12 +574,12 @@ class config_occup(config_base):
             logging.error('%s file is in wrong format'%self.occup_selected_files[0])
             raise e
         self.occup_timestep_for_all_files=t2_fs-t1_fs #fs
-        filelist_step=self.Input.getint('filelist_step') # select parts of the filelist
+        filelist_step=self.DMDana_ini_config_setting_section.getint('filelist_step') # select parts of the filelist
         self.occup_timestep_for_selected_file_fs=self.occup_timestep_for_all_files*filelist_step
         self.occup_timestep_for_selected_file_ps=self.occup_timestep_for_selected_file_fs/1000 #ps
         # Select partial files
         self.occup_selected_files=self.occup_selected_files[::filelist_step]
-        self.occup_t_tot = self.Input.getfloat('t_max') # fs
+        self.occup_t_tot = self.DMDana_ini_config_setting_section.getfloat('t_max') # fs
         if self.occup_t_tot<=0:
             self.occup_maxmium_file_number_plotted_exclude_t0=len(self.occup_selected_files)-1
         else:
@@ -634,7 +596,6 @@ class config_occup(config_base):
             # is needed to do calculation. This should be modified.
         self.occup_t_tot=self.occup_maxmium_file_number_plotted_exclude_t0*self.occup_timestep_for_selected_file_fs#fs
         
-DMDana_ini_Class=Extented_Support# For compatibility with old version, use a new class to replace the old one
 
 class config_results_class():
     def __init__(self,analyze_object):
