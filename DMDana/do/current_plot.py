@@ -10,39 +10,35 @@ import scipy.signal.windows as sgl
 from scipy.signal import savgol_filter
 
 from ..lib import constant as const
-from .config import DMDana_ini_Class, config_current
+from .config import DMDana_ini_config_setting_class, config_current, get_config
 
 
 #Read input
 class param_class(object):
-    def __init__(self,DMDana_ini: DMDana_ini_Class):#init_from_config, for single folder analysis
-        self.DMDana_ini: DMDana_ini_Class=DMDana_ini
-        self.folderlist=DMDana_ini.folderlist
-        self.folder_number=len(self.folderlist)
-        self.loadcurrent(0)
-        self.tmax=self.config.Input.getfloat("t_max")
-        if self.tmax==-1:
-            self.tmax=np.max(self.jx_data[:,0])/const.fs
-        self.tmin=self.config.Input.getfloat("t_min")
-        self.total_time=self.tmax-self.tmin
-        self.current_plot_output=self.config.Input.get('current_plot_output')
-        self.light_label=self.config.light_label
-        self.only_jtot=self.config.only_jtot
-        self.smooth_on=self.config.Input.getboolean('smooth_on')
-        self.smooth_method=self.config.Input.get('smooth_method')
-        self.smooth_windowlen=self.config.Input.getint('smooth_windowlen')
-        self.plot_all=self.config.Input.getboolean('plot_all')
-        self.smooth_times=self.config.Input.getint('smooth_times')
-        self.elec_or_hole=self.config.elec_or_hole
-    def loadcurrent(self,filenumber):
-        assert filenumber<self.folder_number and filenumber>=0
-        self.config: config_current=self.DMDana_ini.get_folder_config('current_plot',filenumber)
+    def __init__(self,DMDana_ini_config_setting: DMDana_ini_config_setting_class):#init_from_config, for single folder analysis
+        self.config: config_current=get_config(DMDana_ini_config_setting,'current_plot',show_init_log=True)
         self.jx_data=self.config.jx_data
         self.jy_data=self.config.jy_data
         self.jz_data=self.config.jz_data
+        self.folder_number=self.config.DMDana_ini_config_setting_section.folder
+        self.tmax=self.config.DMDana_ini_config_setting_section.t_max
+        if self.tmax==-1:
+            self.tmax=np.max(self.jx_data[:,0])/const.fs
+        self.tmin=self.config.DMDana_ini_config_setting_section.t_min
+        self.total_time=self.tmax-self.tmin
+        self.current_plot_output=self.config.DMDana_ini_config_setting_section.current_plot_output
+        self.light_label=self.config.light_label
+        self.only_jtot=self.config.only_jtot
+        self.smooth_on=self.config.DMDana_ini_config_setting_section.smooth_on
+        self.smooth_method=self.config.DMDana_ini_config_setting_section.smooth_method
+        self.smooth_windowlen=self.config.DMDana_ini_config_setting_section.smooth_windowlen
+        self.plot_all=self.config.DMDana_ini_config_setting_section.plot_all
+        self.smooth_times=self.config.DMDana_ini_config_setting_section.smooth_times
+        self.elec_or_hole=self.config.elec_or_hole
 
-def do(DMDana_ini: DMDana_ini_Class):#multiple folder analysis
-    param=param_class(DMDana_ini)
+
+def do(DMDana_ini_config_setting: DMDana_ini_config_setting_class):#multiple folder analysis
+    param=param_class(DMDana_ini_config_setting)
     if param.plot_all:
         param.smooth_on=False
         plot_current(param).plot()
@@ -65,16 +61,16 @@ class plot_current:
             self.fig1, self.ax = plt.subplots(1,3, figsize=(10,6),dpi=200,sharex=True)
         else:
             self.fig1, self.ax = plt.subplots(3,3, figsize=(10,6),dpi=200,sharex=True)
-        for folder_i in range(self.param.folder_number):
-            self.param.loadcurrent(folder_i)
-            self.jx_data=self.param.jx_data
-            self.jy_data=self.param.jy_data
-            self.jz_data=self.param.jz_data
-            self.timedata=self.jx_data[:,0]/const.fs
-            if self.param.only_jtot:
-                self.plot_tot()
-            else:
-                self.plot_tot_diag_offdiag()
+
+        self.jx_data=self.param.jx_data
+        self.jy_data=self.param.jy_data
+        self.jz_data=self.param.jz_data
+        self.timedata=self.jx_data[:,0]/const.fs
+        if self.param.only_jtot:
+            self.plot_tot()
+        else:
+            self.plot_tot_diag_offdiag()
+            
         self.fig1.tight_layout()
         self.savefig()
         plt.close(self.fig1)
