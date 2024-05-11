@@ -1,133 +1,128 @@
 #! /usr/bin/env python
-"""_summary_
-This script plots the current figures
 """
-from typing import List, Union
-
+This script is used for plotting current images.
+"""
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy.signal.windows as sgl
 from scipy.signal import savgol_filter
 
 from ..lib import constant as const
-from .config import DMDana_ini_config_setting_class, config_current, get_config
+from .config import DMDana_ini_config_setting_class, config_current
 
+class CurrentPlotter:
+    def __init__(self, config: config_current):
+        self.config = config
+        self.configsetting = config.DMDana_ini_config_setting_section
+        self.fig, self.ax = None, None
+        self.timedata = None
+        total_time = self.configsetting.t_max - self.configsetting.t_min
+        self.mintime_plot = self.configsetting.t_min - 0.05 * total_time
+        self.maxtime_plot = (np.max(self.config.jx_data[:,0]) / const.fs + 0.05 * total_time
+                             if self.configsetting.t_max == -1 else
+                             self.configsetting.t_max + 0.05 * total_time)
 
-#Read input
-class param_class(object):
-    def __init__(self,DMDana_ini_config_setting: DMDana_ini_config_setting_class):#init_from_config, for single folder analysis
-        self.config: config_current=get_config(DMDana_ini_config_setting,'current_plot',show_init_log=True)
-        self.jx_data=self.config.jx_data
-        self.jy_data=self.config.jy_data
-        self.jz_data=self.config.jz_data
-        self.folder_number=self.config.DMDana_ini_config_setting_section.folder
-        self.tmax=self.config.DMDana_ini_config_setting_section.t_max
-        if self.tmax==-1:
-            self.tmax=np.max(self.jx_data[:,0])/const.fs
-        self.tmin=self.config.DMDana_ini_config_setting_section.t_min
-        self.total_time=self.tmax-self.tmin
-        self.current_plot_output=self.config.DMDana_ini_config_setting_section.current_plot_output
-        self.light_label=self.config.light_label
-        self.only_jtot=self.config.only_jtot
-        self.smooth_on=self.config.DMDana_ini_config_setting_section.smooth_on
-        self.smooth_method=self.config.DMDana_ini_config_setting_section.smooth_method
-        self.smooth_windowlen=self.config.DMDana_ini_config_setting_section.smooth_windowlen
-        self.plot_all=self.config.DMDana_ini_config_setting_section.plot_all
-        self.smooth_times=self.config.DMDana_ini_config_setting_section.smooth_times
-        self.elec_or_hole=self.config.elec_or_hole
-
-
-def do(DMDana_ini_config_setting: DMDana_ini_config_setting_class):#multiple folder analysis
-    param=param_class(DMDana_ini_config_setting)
-    if param.plot_all:
-        param.smooth_on=False
-        plot_current(param).plot()
-        param.smooth_on=True
-        plot_current(param).plot()
-    else:
-        plot_current(param).plot()
-        
-class plot_current:
-    def __init__(self,param: param_class):
-        self.param=param
-        self.fig1=None
-        self.timedata=None
-        self.datamax=0
-        self.mintime_plot=self.param.tmin-0.05*self.param.total_time
-        self.maxtime_plot=self.param.tmax+0.05*self.param.total_time
-        self.ax: Union[List[plt.Axes],List[List[plt.Axes]]]
     def plot(self):
-        if self.param.only_jtot:
-            self.fig1, self.ax = plt.subplots(1,3, figsize=(10,6),dpi=200,sharex=True)
+        self._setup_figure()
+        self.timedata = self.config.jx_data[:, 0] / const.fs
+        self._check_data()
+        
+        if self.config.only_jtot:
+            self._plot_tot()
         else:
-            self.fig1, self.ax = plt.subplots(3,3, figsize=(10,6),dpi=200,sharex=True)
-
-        self.jx_data=self.param.jx_data
-        self.jy_data=self.param.jy_data
-        self.jz_data=self.param.jz_data
-        self.timedata=self.jx_data[:,0]/const.fs
-        if self.param.only_jtot:
-            self.plot_tot()
-        else:
-            self.plot_tot_diag_offdiag()
+            self._plot_tot_diag_offdiag()
             
-        self.fig1.tight_layout()
-        self.savefig()
-        plt.close(self.fig1)
-    def plot_tot_diag_offdiag(self):
-        self.fig1.suptitle('Current'+self.param.light_label)
-        for jtemp,jdirection,j in [(self.jx_data,'x',0),(self.jy_data,'y',1),(self.jz_data,'z',2)]:
-            j:int
-            for i in range(3):
-                i:int
-                self.ax[i][j].ticklabel_format(style='sci', axis='y', scilimits=(0,0))
-                self.ax[i][j].yaxis.major.formatter._useMathText = True 
-                self.ax[i][j].set_xlim(self.mintime_plot,self.maxtime_plot)
-            self.ax[0][0].set_ylabel('$j^{tot}(t)$ A/cm$^2$')
-            self.ax[1][0].set_ylabel('$j^{diag}(t)$ A/cm$^2$')
-            self.ax[2][0].set_ylabel('$j^{off-diag}(t)$ A/cm$^2$')
-            self.ax[0][j].set_title(jdirection)
-            self.ax[-1][j].set_xlabel('t (fs)')  
-            self.plot_func(self.ax[0][j],jtemp[:,1])#, label='$j'+jdirection+'^{tot}(t)$    polarization = '+light_label)
-            self.plot_func(self.ax[1][j],jtemp[:,2])#, label=r'$j'+jdirection+'^{diag}(t)$    polarization = '+light_label)
-            self.plot_func(self.ax[2][j],jtemp[:,3])#, label=r'$j'+jdirection+'^{off-diag}(t)$    polarization = '+light_label)
-        #for i in range(3):
-        #    for j in range(3):
-        #        self.ax[i][j].set_ylim(-self.datamax,self.datamax)
-    def savefig(self):
-        if not self.param.smooth_on:
-            smooth_str='off'
+        self.fig.tight_layout()
+        self._save_fig()
+        plt.close(self.fig)
+
+    def _check_data(self):
+        # Ensure data arrays are not empty
+        assert len(self.config.jx_data) > 0, "jx_data is empty, please check the data file."
+        assert len(self.config.jy_data) > 0, "jy_data is empty, please check the data file."
+        assert len(self.config.jz_data) > 0, "jz_data is empty, please check the data file."
+
+    def _setup_figure(self):
+        # Setup figure layout based on the plotting mode
+        if self.config.only_jtot:
+            self.fig, self.ax = plt.subplots(1, 3, figsize=(10, 6), dpi=200, sharex=True)
         else:
-            smooth_str='on_%s_smoothtimes_%d'%(self.param.smooth_method,self.param.smooth_times)
-            if self.param.smooth_method=='flattop':
-                smooth_str+='_windowlen_%d'%self.param.smooth_windowlen
-        self.fig1.savefig("j_smooth_%s_%s.png"%(smooth_str,self.param.elec_or_hole))
-    def plot_tot(self):
-        self.fig1.suptitle('Current'+self.param.light_label)
-        for jtemp,jdirection,j in [(self.jx_data,'x',0),(self.jy_data,'y',1),(self.jz_data,'z',2)]:
-            j:int
-            self.ax[j].ticklabel_format(style='sci', axis='y', scilimits=(0,0))
-            self.ax[j].yaxis.major.formatter._useMathText = True 
+            self.fig, self.ax = plt.subplots(3, 3, figsize=(10, 6), dpi=200, sharex=True)
+
+    def _plot_tot_diag_offdiag(self):
+        self.fig.suptitle('Current' + self.config.light_label)
+        
+        for jdata, jdirection, j in zip([self.config.jx_data, self.config.jy_data, self.config.jz_data], 
+                                        ['x', 'y', 'z'], range(3)):
+            for i in range(3):
+                self._format_ax(self.ax[i][j])
+            self._set_labels(j)
+            self._plot_data(self.ax[0][j], jdata[:, 1])
+            self._plot_data(self.ax[1][j], jdata[:, 2]) 
+            self._plot_data(self.ax[2][j], jdata[:, 3])
+
+    def _plot_tot(self):
+        self.fig.suptitle('Current' + self.config.light_label)
+        
+        for jdata, jdirection, j in zip([self.config.jx_data, self.config.jy_data, self.config.jz_data], 
+                                        ['x', 'y', 'z'], range(3)):
+            self._format_ax(self.ax[j])
             self.ax[0].set_ylabel('$j^{tot}(t)$ A/cm$^2$')
             self.ax[j].set_title(jdirection)
-            self.ax[j].set_xlabel('t (fs)')  
-            self.plot_func(self.ax[j],jtemp[:,1])#, label='$j'+jdirection+'^{tot}(t)$    polarization = '+light_label)
-            self.ax[j].set_xlim(self.mintime_plot,self.maxtime_plot)
-        #for i in range(3):
-        #    self.ax[j].set_ylim(-self.datamax,self.datamax)
-    def plot_func(self,ax: plt.Axes,data):
-        windowlen=self.param.smooth_windowlen
-        windowdata=sgl.flattop(windowlen, sym=False)
-        data_used=data
-        timedata_used=self.timedata
-        for i in range(self.param.smooth_times):
-            if self.param.smooth_on:
-                if self.param.smooth_method=='savgol':
-                    data_used=savgol_filter(data_used, 500, 3)
-                    timedata_used=self.timedata
-                elif self.param.smooth_method=='flattop': 
-                    data_used=np.convolve(data_used,windowdata,mode='valid')/np.sum(windowdata)     
-                    timedata_used=self.timedata[len(self.timedata)//2-len(data_used)//2:len(self.timedata)//2+(len(data_used)+1)//2]
-        #self.datamax=np.max([np.max(abs(data)),self.datamax])
-        time_range_mask=np.logical_and(timedata_used>self.mintime_plot,timedata_used<self.maxtime_plot)
+            self.ax[j].set_xlabel('t (fs)')
+            self._plot_data(self.ax[j], jdata[:, 1])
+            self.ax[j].set_xlim(self.mintime_plot, self.maxtime_plot)
+
+    def _save_fig(self):
+        # Save the figure with a filename that reflects the smoothing settings
+        smooth_str = 'off' if not self.configsetting.smooth_on else f'on_{self.configsetting.smooth_method}_smoothtimes_{self.configsetting.smooth_times}'
+        if self.configsetting.smooth_method == 'flattop':
+            smooth_str += f'_windowlen_{self.configsetting.smooth_windowlen}'
+        self.fig.savefig(f"j_smooth_{smooth_str}_{self.config.elec_or_hole}.png")
+
+    def _format_ax(self, ax):
+        # Format the axis for scientific notation
+        ax.ticklabel_format(style='sci', axis='y', scilimits=(0, 0))
+        ax.yaxis.major.formatter._useMathText = True
+        ax.set_xlim(self.mintime_plot, self.maxtime_plot)
+
+    def _set_labels(self, j):
+        # Set labels for the axes
+        self.ax[0][0].set_ylabel('$j^{tot}(t)$ A/cm$^2$')
+        self.ax[1][0].set_ylabel('$j^{diag}(t)$ A/cm$^2$')
+        self.ax[2][0].set_ylabel('$j^{off-diag}(t)$ A/cm$^2$')
+        self.ax[0][j].set_title('xyz'[j])
+        self.ax[-1][j].set_xlabel('t (fs)')
+
+    def _plot_data(self, ax, data):
+        # Plot data with optional smoothing
+        data_used, timedata_used = self._smooth_data(data)
+        time_range_mask = (self.mintime_plot < timedata_used) & (timedata_used < self.maxtime_plot)
+        assert time_range_mask.any(), f"No data points in the specified time range after possible smooth. Please check the time range settings. mintime_plot:{self.mintime_plot}, maxtime_plot:{self.maxtime_plot},datanumber:{len(data_used)}"
         ax.plot(timedata_used[time_range_mask], data_used[time_range_mask])
+
+    def _smooth_data(self, data):
+        # Apply smoothing to the data if enabled
+        data_used, timedata_used = data.copy(), self.timedata.copy()
+        for _ in range(self.configsetting.smooth_times):
+            if self.configsetting.smooth_on:
+                if self.configsetting.smooth_method == 'savgol':
+                    data_used = savgol_filter(data_used, 500, 3)
+                elif self.configsetting.smooth_method == 'flattop':
+                    window = sgl.flattop(self.configsetting.smooth_windowlen, sym=False)
+                    data_used = np.convolve(data_used, window, mode='valid') / window.sum()
+                    mid = len(self.timedata) // 2
+                    timedata_used = self.timedata[mid - len(data_used) // 2: mid + (len(data_used) + 1) // 2]
+        return data_used, timedata_used
+
+def do(DMDana_ini_config_setting: DMDana_ini_config_setting_class):
+    config = config_current('current_plot', DMDana_ini_config_setting, show_init_log=True)
+    plotter = CurrentPlotter(config)
+    
+    if config.DMDana_ini_config_setting_section.plot_all:
+        config.DMDana_ini_config_setting_section.smooth_on = False
+        plotter.plot()
+        config.DMDana_ini_config_setting_section.smooth_on = True
+        plotter.plot()
+    else:
+        plotter.plot()
