@@ -9,43 +9,32 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from matplotlib.axes import Axes
+from pydantic.dataclasses import dataclass
 
 from ..lib import constant as const
 from ..lib.fft import fft_of_j
-from .config import DMDana_ini_config_setting_class, config_current, get_config
+from .config import DMDana_ini_config_setting_class, config_current
 
 
 #Read input
-class param_class(object):
-    def __init__(self,config: config_current):
-        self.Cutoff_list= [int(i) for i in config.DMDana_ini_config_setting_section['Cutoff_list'].split(',')]#it counts the number of pieces in jx(yz)_elec_tot.out
-        self.Window_type_list=[i.strip() for i in config.DMDana_ini_config_setting_section['Window_type_list'].split(',')]  # Rectangular, Flattop, Hann, Hamming 
-        self.Log_y_scale=config.DMDana_ini_config_setting_section.getboolean('Log_y_scale')
-        if self.Log_y_scale==None:
-            self.Log_y_scale=True
-        self.Summary_output_csv=config.DMDana_ini_config_setting_section.getboolean('Summary_output_csv')
-        self.Summary_output_xlsx=config.DMDana_ini_config_setting_section.getboolean('Summary_output_xlsx')
-        self.Summary_output_filename_csv=config.DMDana_ini_config_setting_section['Summary_output_filename_csv']
-        self.Summary_output_filename_xlsx=config.DMDana_ini_config_setting_section['Summary_output_filename_xlsx']
-        self.only_jtot=config.only_jtot
-        self.light_label=config.light_label
-        self.jx_data=config.jx_data
-        self.jy_data=config.jy_data
-        self.jz_data=config.jz_data
+@dataclass
+class config_FFT_spectrum_plot(config_current):
+    def __post_init__(self):
+        self.funcname='FFT_spectrum_plot'
+        super().__post_init__()
         
 def do(DMDana_ini_config_setting:DMDana_ini_config_setting_class):
-    config=get_config(DMDana_ini_config_setting,'FFT_spectrum_plot',0)
-    param=param_class(config)
-    plot_object=FFT_spectrum_plot(param)
+    config=config_FFT_spectrum_plot(DMDana_ini_config_setting=DMDana_ini_config_setting)
+    plot_object=plot_FFT_spectrum_plot(config)
     plot_object.plot()
     plot_object.output_database()
 
-class FFT_spectrum_plot(object):
-    def __init__(self,param: param_class):
+class plot_FFT_spectrum_plot(object):
+    def __init__(self,param: config_FFT_spectrum_plot):
         self.param=param
     def plot(self):
         #Plot FFT spectra
-        for Window_type,Cutoff in list(itertools.product(self.param.Window_type_list,self.param.Cutoff_list)):
+        for Window_type,Cutoff in list(itertools.product(self.param.configsetting.Window_type_list,self.param.configsetting.Cutoff_list)):
             paramdict=dict(Cutoff=Cutoff,Window_type=Window_type)
             output_prefix=''
             for name in paramdict:
@@ -54,8 +43,8 @@ class FFT_spectrum_plot(object):
                     output_prefix=output_prefix+'%d'%(paramdict[name])+';'
                 else:
                     output_prefix=output_prefix+str(paramdict[name])+';'
-            output_prefix+="log_y%s"%(str(self.param.Log_y_scale))
-            if not self.param.only_jtot:
+            output_prefix+="log_y%s"%(str(self.param.configsetting.Log_y_scale))
+            if not self.param.configsetting.only_jtot:
                 self.plot_tot_diag_offdiag(Cutoff,Window_type,output_prefix)
             else:
                 self.plot_tot(Cutoff,Window_type,output_prefix)
@@ -77,7 +66,7 @@ class FFT_spectrum_plot(object):
                 i: int
                 ax[i][j].ticklabel_format(style='sci', axis='y', scilimits=(0,0))
                 ax[i][j].yaxis.major.formatter._useMathText = True
-                if self.param.Log_y_scale:
+                if self.param.configsetting.Log_y_scale:
                     ax[i][j].set_yscale('log')
             ax[0][0].set_ylabel('$\hat{j}^{tot}(\omega)$ A/cm$^2$')
             ax[1][0].set_ylabel('$\hat{j}^{diag}(\omega)$ A/cm$^2$')
@@ -108,7 +97,7 @@ class FFT_spectrum_plot(object):
             ax[j].set_title(jdirection)
             ax[j].set_xlabel('$\omega$ (eV)')
             ax[j].plot(f_tot, abs(jw_tot), label='total')
-            if self.param.Log_y_scale:
+            if self.param.configsetting.Log_y_scale:
                 ax[j].set_yscale('log')
         fig.tight_layout()
         fig.savefig('./'+output_prefix+'-j-fft.png')
@@ -117,7 +106,7 @@ class FFT_spectrum_plot(object):
     def output_database(self):
         #Calculate information of current spectrums to output for convenience.
         database=pd.DataFrame()
-        for Window_type,Cutoff in list(itertools.product(self.param.Window_type_list,self.param.Cutoff_list)):
+        for Window_type,Cutoff in list(itertools.product(self.param.configsetting.Window_type_list,self.param.configsetting.Cutoff_list)):
             paramdict=dict(Cutoff=Cutoff,FFT_integral_start_time_fs=self.param.jx_data[Cutoff,0]/const.fs,FFT_integral_end_time_fs=self.param.jx_data[-1,0]/const.fs,Window_type=Window_type)
             database_newline_index=database.shape[0]
             for jtemp,jdirection,j in [(self.param.jx_data,'x',0),(self.param.jy_data,'y',1),(self.param.jz_data,'z',2)]:
@@ -127,10 +116,10 @@ class FFT_spectrum_plot(object):
                 # at the start of dynamics. The transient can be removed by choosing 
                 # appropriate cutoff below
                 f_tot, jw_tot = fft_of_j(jtemp[:,0:2:1], Cutoff,Window_type)
-                if not self.param.only_jtot:
+                if not self.param.configsetting.only_jtot:
                     f_d, jw_d = fft_of_j(jtemp[:,0:3:2], Cutoff,Window_type)
                     f_od, jw_od = fft_of_j(jtemp[:,0:4:3], Cutoff,Window_type)
-                if self.param.only_jtot:
+                if self.param.configsetting.only_jtot:
                     resultdisc={'FFT(j'+jdirection+'_tot)(0)':np.real(jw_tot[0]),
                             'j'+jdirection+'_tot_mean': np.mean(jtemp[Cutoff:,1]),
                             'time(fs)':jtemp[Cutoff,0]/const.fs}
@@ -143,9 +132,9 @@ class FFT_spectrum_plot(object):
                 database.loc[database_newline_index,list(paramdict)]=list(paramdict.values())
                 database.loc[database_newline_index,list(resultdisc)]=list(resultdisc.values())
         database=database.transpose()
-        if self.param.Summary_output_csv:
-            database.to_csv(self.param.Summary_output_filename_csv)
-        if self.param.Summary_output_xlsx:
-            database.to_excel(self.param.Summary_output_filename_xlsx)
+        if self.param.configsetting.Summary_output_csv:
+            database.to_csv(self.param.configsetting.Summary_output_filename_csv)
+        if self.param.configsetting.Summary_output_xlsx:
+            database.to_excel(self.param.configsetting.Summary_output_filename_xlsx)
             
 

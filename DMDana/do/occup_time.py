@@ -5,70 +5,73 @@ This plots the occupation functions with time, namely f(E,t)  of different style
 Be sure that your occupation filelists include complete number of files and also occupations_t0.out
 """
 import logging
-from typing import Union
+from typing import Optional, Union
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
 from mpl_toolkits.mplot3d.axes3d import Axes3D
+from pydantic import Field
+from pydantic.dataclasses import dataclass
 from scipy.optimize import curve_fit
 
 from ..lib import constant as const
-from .config import DMDana_ini_config_setting_class, config_occup, get_config
+from .config import DMDana_ini_config_setting_class, config_occup
 
 
-#Read input
-class param_class(object):
-    def __init__(self,config: config_occup):
-        #Hardcoded Setting 
-        self.cmap = mpl.colormaps['rainbow']
-        self.figsize=(12, 10)#Width, height in inches.
-        self.dpi=100.0#The resolution of the figure in dots-per-inch.
-        #Read from config
-        self.folder=config.folder
-        self.occup_time_plot_lowE=config.DMDana_ini_config_setting_section.getfloat('occup_time_plot_lowE')
-        self.occup_time_plot_highE=config.DMDana_ini_config_setting_section.getfloat('occup_time_plot_highE')
-        self.occup_time_plot_lowE_conduction=max(config.EcMin_au*const.Hatree_to_eV,0)-0.01# Sometimes DMD_Initialization determine wrong VBM and CBM, here we assume CBM is at least larger than mu (0 points), VBM is at most smaller than mu (0 point).
-        #self.occup_time_plot_highE_conduction=config.ETop_dm_au*const.Hatree_to_eV
-        #self.occup_time_plot_lowE_valence=config.EBot_dm_au*const.Hatree_to_eV
-        self.occup_time_plot_highE_valence=min(config.EvMax_au*const.Hatree_to_eV,0)+0.01
-        self.occup_time_plot_set_Erange=config.DMDana_ini_config_setting_section.getboolean('occup_time_plot_set_Erange')
-        self.plot_occupation_number_min=config.DMDana_ini_config_setting_section.getfloat('plot_occupation_number_min')
-        self.plot_occupation_number_max=config.DMDana_ini_config_setting_section.getfloat('plot_occupation_number_max')
-        self.plot_conduction_valence=config.DMDana_ini_config_setting_section.getboolean('plot_conduction_valence')
-        self.Substract_initial_occupation=config.DMDana_ini_config_setting_section.getboolean('Substract_initial_occupation')
-        self.plot_occupation_number_setlimit=config.DMDana_ini_config_setting_section.getboolean("plot_occupation_number_setlimit")
-        self.fit_Boltzmann=config.DMDana_ini_config_setting_section.getboolean('fit_Boltzmann')
-        self.fit_Boltzmann_initial_guess_mu=config.DMDana_ini_config_setting_section.getfloat('fit_Boltzmann_initial_guess_mu')
-        self.fit_Boltzmann_initial_guess_mu_auto=config.DMDana_ini_config_setting_section.getboolean('fit_Boltzmann_initial_guess_mu_auto')
-        self.fit_Boltzmann_initial_guess_T=config.DMDana_ini_config_setting_section.getfloat('fit_Boltzmann_initial_guess_T')
-        self.fit_Boltzmann_initial_guess_T_auto=config.DMDana_ini_config_setting_section.getboolean('fit_Boltzmann_initial_guess_T_auto')
-        self.figure_style=config.DMDana_ini_config_setting_section.get('figure_style')
-        self.output_all_figure_types=config.DMDana_ini_config_setting_section.getboolean('output_all_figure_types')
-        self.occup_selected_files=config.occup_selected_files
-        self.occup_t_tot=config.occup_t_tot
-        self.occup_timestep_for_selected_file_ps=config.occup_timestep_for_selected_file_ps
-        self.mu_au=config.mu_au
-        self.EBot_dm_au=config.EBot_dm_au
-        self.ETop_dm_au=config.ETop_dm_au
-        self.EcMin_au=config.EcMin_au
-        self.EvMax_au=config.EvMax_au
-        self.occup_Emin_au=config.occup_Emin_au
-        self.occup_Emax_au=config.occup_Emax_au
-        if not self.occup_time_plot_set_Erange:
-            self.occup_time_plot_highE=self.occup_Emax_au*const.Hatree_to_eV
-            self.occup_time_plot_lowE=self.occup_Emin_au*const.Hatree_to_eV
-        self.temperature_au=config.temperature_au
-        if self.fit_Boltzmann_initial_guess_mu_auto:
+@dataclass
+class config_occup_time(config_occup):
+    cmap: object = Field(default_factory=lambda: mpl.colormaps['rainbow'])
+    figsize: tuple = (12, 10)  # Width, height in inches.
+    dpi: float = 100.0  # The resolution of the figure in dots-per-inch.
+    
+    Substract_initial_occupation_this: bool = None
+    figure_style_this: str = None
+    occup_time_plot_set_Erange_this: bool = None
+    occup_time_plot_lowE_this: float = None
+    occup_time_plot_highE_this: Optional[float] = None
+    data_fermi: object = None
+    occup_time_plot_lowE_conduction: float = None
+    occup_time_plot_highE_valence: float = None
+    fit_Boltzmann_initial_guess_mu: float = None
+    fit_Boltzmann_initial_guess_T: float = None
+    def __post_init__(self):
+        self.funcname='occup_time'
+        super().__post_init__()
+        if self.occup_time_plot_set_Erange_this is None:
+            self.occup_time_plot_set_Erange_this=self.configsetting.occup_time_plot_set_Erange
+        if self.occup_time_plot_set_Erange_this:
+            if self.occup_time_plot_lowE_this is None:
+                self.occup_time_plot_lowE_this=self.configsetting.occup_time_plot_lowE
+            if self.occup_time_plot_highE_this is None:
+                self.occup_time_plot_highE_this=self.configsetting.occup_time_plot_highE
+        else:
+            if self.occup_time_plot_lowE_this is None:
+                self.occup_time_plot_lowE_this=self.occup_Emin_au*const.Hatree_to_eV
+            if self.occup_time_plot_highE_this is None:
+                self.occup_time_plot_highE_this=self.occup_Emax_au*const.Hatree_to_eV   
+        if self.figure_style_this is None:
+            self.figure_style_this=self.configsetting.figure_style
+        if self.Substract_initial_occupation_this is None:
+            self.Substract_initial_occupation_this=self.configsetting.Substract_initial_occupation
+        if self.data_fermi is None:
+            data_first=np.loadtxt(self.occup_selected_files[0])
+            energylist=data_first[:,0]
+            self.data_fermi=np.zeros(data_first.shape)
+            self.data_fermi[:,0]=energylist
+            self.data_fermi[:,1]=fermi(self.temperature_au,self.mu_au,energylist)  
+        if self.occup_time_plot_lowE_conduction is None:
+            self.occup_time_plot_lowE_conduction=max(self.EcMin_au*const.Hatree_to_eV, 0) - 0.01
+        if self.occup_time_plot_highE_valence is None:
+            self.occup_time_plot_highE_valence=min(self.EvMax_au*const.Hatree_to_eV, 0) + 0.01
+        if self.configsetting.fit_Boltzmann_initial_guess_mu_auto:
             self.fit_Boltzmann_initial_guess_mu=self.EcMin_au/const.eV
-        if self.fit_Boltzmann_initial_guess_T_auto:
+        else:
+            self.fit_Boltzmann_initial_guess_mu=self.configsetting.fit_Boltzmann_initial_guess_mu
+        if self.configsetting.fit_Boltzmann_initial_guess_T_auto:
             self.fit_Boltzmann_initial_guess_T=self.temperature_au/const.Kelvin
-        self.data_first=np.loadtxt(self.occup_selected_files[0])
-        self.energylist=self.data_first[:,0]
-        self.data_fermi=np.zeros(self.data_first.shape)
-        self.data_fermi[:,0]=self.energylist
-        self.data_fermi[:,1]=fermi(self.temperature_au,self.mu_au,self.energylist)
-        self.showlegend=config.DMDana_ini_config_setting_section.getboolean('showlegend')
+        else:
+            self.fit_Boltzmann_initial_guess_T=self.configsetting.fit_Boltzmann_initial_guess_T
 def fermi(temperature_au,mu_au,elist):
     ebyt = (elist - mu_au) / temperature_au
     occup=np.zeros(len(elist))
@@ -78,11 +81,11 @@ def fermi(temperature_au,mu_au,elist):
     occup[index_middle] = 1. / (np.exp(ebyt[index_middle]) + 1)
     return occup
 
-class occup_time(object):
-    def __init__(self,param: param_class):
+class plot_occup_time(object):
+    def __init__(self,param: config_occup_time):
         self.param=param
-        self.figure_style_this=self.param.figure_style #3D or heatmap
-        self.Substract_initial_occupation_this=self.param.Substract_initial_occupation 
+        self.figure_style_this=self.param.figure_style_this #3D or heatmap
+        self.Substract_initial_occupation_this=self.param.Substract_initial_occupation_this 
         self.fig = None
         if(self.figure_style_this not in ['3D','heatmap'] ):
             raise ValueError('figure_style should be 3D or heatmap')
@@ -132,14 +135,14 @@ class occup_time(object):
         data=data.copy()
         if self.Substract_initial_occupation_this:
             data[:,1]=data[:,1]-self.param.data_fermi[:,1]
-        data=data[np.logical_and(data[:,0]>self.param.occup_time_plot_lowE/const.Hatree_to_eV,data[:,0]<self.param.occup_time_plot_highE/const.Hatree_to_eV)]
-        assert len(data)>0, 'No data found in the energy range (%.3e,%.3e)'%(self.param.occup_time_plot_lowE, self.param.occup_time_plot_highE)   
+        data=data[np.logical_and(data[:,0]>self.param.occup_time_plot_lowE_this/const.Hatree_to_eV,data[:,0]<self.param.occup_time_plot_highE_this/const.Hatree_to_eV)]
+        assert len(data)>0, 'No data found in the energy range (%.3e,%.3e)'%(self.param.occup_time_plot_lowE_this, self.param.occup_time_plot_highE_this)   
         for _ in [None]:#Fit Bolzmman
-            if not self.param.fit_Boltzmann:
+            if not self.param.configsetting.fit_Boltzmann:
                 break
             if self.Substract_initial_occupation_this:
                 break
-            if not self.param.occup_time_plot_lowE>=self.param.occup_time_plot_lowE_conduction:
+            if not self.param.occup_time_plot_lowE_this>=self.param.occup_time_plot_lowE_conduction:
                 break
             self.Boltzmann_fit_and_plot(data,time_this_file_fs)
             self.fitted=True
@@ -155,7 +158,7 @@ class occup_time(object):
             return
         logging.info("Boltzmann Distribution t(fs) %.3e mu(eV) %.3e T(K) %.3e"%(time_this_file_fs,popt[0],popt[1]))
         data_fit=np.zeros((1000,2))
-        data_fit[:,0]=np.linspace(self.param.occup_time_plot_lowE/const.Hatree_to_eV,self.param.occup_time_plot_highE/const.Hatree_to_eV,1000)
+        data_fit[:,0]=np.linspace(self.param.occup_time_plot_lowE_this/const.Hatree_to_eV,self.param.occup_time_plot_highE_this/const.Hatree_to_eV,1000)
         data_fit[:,1]=Bolzmann(data_fit[:,0]*const.Hatree_to_eV,*popt)
         self.plot_data_func(data_fit,time_this_file_fs,mode='plot') 
 
@@ -176,23 +179,23 @@ class occup_time(object):
                 return self.ax.plot(data[:,0]*const.Hatree_to_eV, data[:,1],c=color,label='%.3e fs'%time_this_file_fs)
 
     def post_processing(self):
-        assert not self.param.occup_time_plot_lowE > self.param.occup_Emax_au*const.Hatree_to_eV , "Erange for plot is out of range of the data"
-        assert not self.param.occup_time_plot_highE < self.param.occup_Emin_au*const.Hatree_to_eV , "Erange for plot is out of range of the data"
-        assert not (self.param.occup_time_plot_lowE > self.param.EvMax_au*const.Hatree_to_eV and self.param.occup_time_plot_highE < self.param.EcMin_au*const.Hatree_to_eV) , "Erange for plot is out of range of the data"
-        self.ax.set_xlim(self.param.occup_time_plot_lowE, self.param.occup_time_plot_highE)
+        assert not self.param.occup_time_plot_lowE_this > self.param.occup_Emax_au*const.Hatree_to_eV , "Erange for plot is out of range of the data"
+        assert not self.param.occup_time_plot_highE_this < self.param.occup_Emin_au*const.Hatree_to_eV , "Erange for plot is out of range of the data"
+        assert not (self.param.occup_time_plot_lowE_this > self.param.EvMax_au*const.Hatree_to_eV and self.param.occup_time_plot_highE_this < self.param.EcMin_au*const.Hatree_to_eV) , "Erange for plot is out of range of the data"
+        self.ax.set_xlim(self.param.occup_time_plot_lowE_this, self.param.occup_time_plot_highE_this)
         self.ax.set_xlabel('E (eV)')
         self.fig.colorbar(self.figtemp,label='Time (ps)')   
         if self.figure_style_this=='3D':
              self.post_processing_3D_special()
         elif self.figure_style_this=='heatmap':
             self.post_processing_heatmap_special()
-        if self.param.showlegend:
+        if self.param.configsetting.showlegend:
             self.ax.legend()
 
     def post_processing_3D_special(self):
         self.ax.set_ylim(0, self.param.occup_t_tot/1000)
-        if self.param.plot_occupation_number_setlimit:
-            self.ax.set_zlim(self.param.plot_occupation_number_min, self.param.plot_occupation_number_max)
+        if self.param.configsetting.plot_occupation_number_setlimit:
+            self.ax.set_zlim(self.param.configsetting.plot_occupation_number_min, self.param.configsetting.plot_occupation_number_max)
         else:
             self.ax.set_zlim(self.occupation_min_for_alldata, self.occupation_max_for_alldata)          
         self.ax.set_ylabel('t (ps)')
@@ -207,8 +210,8 @@ class occup_time(object):
         
     def post_processing_heatmap_special(self):
 
-        if self.param.plot_occupation_number_setlimit:
-            self.ax.set_ylim(self.param.plot_occupation_number_min, self.param.plot_occupation_number_max)
+        if self.param.configsetting.plot_occupation_number_setlimit:
+            self.ax.set_ylim(self.param.configsetting.plot_occupation_number_min, self.param.configsetting.plot_occupation_number_max)
         else:
             self.ax.set_ylim(self.occupation_min_for_alldata, self.occupation_max_for_alldata) 
         if self.Substract_initial_occupation_this:
@@ -218,37 +221,36 @@ class occup_time(object):
     def save_fig(self):
         name="occup_time_Ttot%.1ffs_Step%.1ffs_%s_Emin%.3feV_Emax%.3feV%s.png"%\
         (self.param.occup_t_tot,self.param.occup_timestep_for_selected_file_ps*1000,\
-         self.figure_style_this,self.param.occup_time_plot_lowE,self.param.occup_time_plot_highE,'_fitted' if self.fitted else '')
+         self.figure_style_this,self.param.occup_time_plot_lowE_this,self.param.occup_time_plot_highE_this,'_fitted' if self.fitted else '')
         if self.Substract_initial_occupation_this:
             name="delta_"+name
         self.fig.savefig(name, bbox_inches="tight")   
         
 def do(DMDana_ini_config_setting:DMDana_ini_config_setting_class):
-    config=get_config(DMDana_ini_config_setting,'occup_time',0)
-    param=param_class(config)
-    logging.info('temperature(K): %.3e'%(param.temperature_au/const.Kelvin))
-    logging.info('mu(eV): %.3e'%(param.mu_au/const.eV))
+    config=config_occup_time(DMDana_ini_config_setting=DMDana_ini_config_setting)
+    logging.info('temperature(K): %.3e'%(config.temperature_au/const.Kelvin))
+    logging.info('mu(eV): %.3e'%(config.mu_au/const.eV))
 
-    do_sub(param)
-    if param.plot_conduction_valence:
-        param.occup_time_plot_set_Erange=True
-        param.occup_time_plot_highE=param.occup_Emax_au*const.Hatree_to_eV
-        param.occup_time_plot_lowE=param.occup_time_plot_lowE_conduction
-        do_sub(param)
-        param.occup_time_plot_highE=param.occup_time_plot_highE_valence
-        param.occup_time_plot_lowE=param.occup_Emin_au*const.Hatree_to_eV
-        do_sub(param)
+    do_sub(config)
+    if config.configsetting.plot_conduction_valence:
+        config.occup_time_plot_set_Erange_this=True
+        config.occup_time_plot_highE_this=config.occup_Emax_au*const.Hatree_to_eV
+        config.occup_time_plot_lowE_this=config.occup_time_plot_lowE_conduction
+        do_sub(config)
+        config.occup_time_plot_highE_this=config.occup_time_plot_highE_valence
+        config.occup_time_plot_lowE_this=config.occup_Emin_au*const.Hatree_to_eV
+        do_sub(config)
 
-def do_sub(param: param_class):
-    if param.output_all_figure_types:
+def do_sub(config: config_occup_time):
+    if config.configsetting.output_all_figure_types:
         for figure_style_each in ['3D','heatmap']:
-            param.figure_style=figure_style_each
+            config.figure_style_this=figure_style_each
             for Substract_initial_occupation_each in [True,False]:
-                param.Substract_initial_occupation=Substract_initial_occupation_each
-                plot_object=occup_time(param)
+                config.Substract_initial_occupation_this=Substract_initial_occupation_each
+                plot_object=plot_occup_time(config)
                 plot_object.do()
     else:
-        plot_object=occup_time(param)
+        plot_object=plot_occup_time(config)
         plot_object.do()
 
 #E mu in eV, T in Kelvin

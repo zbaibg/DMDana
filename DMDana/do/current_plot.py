@@ -10,10 +10,11 @@ from scipy.signal import savgol_filter
 from ..lib import constant as const
 from .config import DMDana_ini_config_setting_class, config_current
 
-class CurrentPlotter:
+
+class plot_current_plot:
     def __init__(self, config: config_current):
         self.config = config
-        self.configsetting = config.DMDana_ini_config_setting_section
+        self.configsetting = config.configsetting
         self.fig, self.ax = None, None
         self.timedata = None
         total_time = self.configsetting.t_max - self.configsetting.t_min
@@ -27,7 +28,7 @@ class CurrentPlotter:
         self.timedata = self.config.jx_data[:, 0] / const.fs
         self._check_data()
         
-        if self.config.only_jtot:
+        if self.config.configsetting.only_jtot:
             self._plot_tot()
         else:
             self._plot_tot_diag_offdiag()
@@ -44,7 +45,7 @@ class CurrentPlotter:
 
     def _setup_figure(self):
         # Setup figure layout based on the plotting mode
-        if self.config.only_jtot:
+        if self.config.configsetting.only_jtot:
             self.fig, self.ax = plt.subplots(1, 3, figsize=(10, 6), dpi=200, sharex=True)
         else:
             self.fig, self.ax = plt.subplots(3, 3, figsize=(10, 6), dpi=200, sharex=True)
@@ -78,7 +79,7 @@ class CurrentPlotter:
         smooth_str = 'off' if not self.configsetting.smooth_on else f'on_{self.configsetting.smooth_method}_smoothtimes_{self.configsetting.smooth_times}'
         if self.configsetting.smooth_method == 'flattop':
             smooth_str += f'_windowlen_{self.configsetting.smooth_windowlen}'
-        self.fig.savefig(f"j_smooth_{smooth_str}_{self.config.elec_or_hole}.png")
+        self.fig.savefig(f"j_smooth_{smooth_str}_{self.config.elec_or_hole_this}.png")
 
     def _format_ax(self, ax):
         # Format the axis for scientific notation
@@ -116,13 +117,13 @@ class CurrentPlotter:
         return data_used, timedata_used
 
 def do(DMDana_ini_config_setting: DMDana_ini_config_setting_class):
-    config = config_current('current_plot', DMDana_ini_config_setting, show_init_log=True)
-    plotter = CurrentPlotter(config)
+    config = config_current(funcname='current_plot', DMDana_ini_config_setting=DMDana_ini_config_setting, show_init_log=True)
+    plotter = plot_current_plot(config)
     
-    if config.DMDana_ini_config_setting_section.plot_all:
-        config.DMDana_ini_config_setting_section.smooth_on = False
+    if config.configsetting.plot_all:
+        config.configsetting.smooth_on = False
         plotter.plot()
-        config.DMDana_ini_config_setting_section.smooth_on = True
+        config.configsetting.smooth_on = True
         plotter.plot()
     else:
         plotter.plot()

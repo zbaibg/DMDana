@@ -1,8 +1,12 @@
 import glob
 import os
 from typing import List
+
 import numpy as np
+
+from ..lib.param_in_class import param_class
 from . import constant as const
+
 
 def check_and_get_path( filepath):
     assert os.path.isfile(filepath),"%s does not exist."%filepath
@@ -105,7 +109,7 @@ def get_current_data(folder, elec_or_hole):
     return data['x'], data['y'], data['z']
 
 
-def get_DMD_param(path='.'):
+def get_DMD_param(path='.') -> param_class:
     """
     get the parameters in param.in
 
@@ -129,7 +133,7 @@ def get_DMD_param(path='.'):
             list_for_this_line=line.split('=')
             assert len(list_for_this_line)==2,"param.in is not correctly setted."
             DMDparam_value[list_for_this_line[0].strip()]=list_for_this_line[1].strip()
-    return DMDparam_value
+    return param_class(**DMDparam_value)
 
 def get_mu_temperature(DMDparam_value,path='.'):
     """

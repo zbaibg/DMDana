@@ -10,27 +10,26 @@ import logging
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.figure import Figure
+from pydantic.dataclasses import dataclass
 
 from ..lib import constant as const
-from .config import DMDana_ini_config_setting_class, config_occup, get_config
+from .config import DMDana_ini_config_setting_class, config_occup
 
 
 #Read input
-class param_class(object):
-    def __init__(self,config: config_occup):
-        self.folder=config.folder
-        self.occup_selected_files=config.occup_selected_files
-        self.occup_timestep_for_selected_file_fs=config.occup_timestep_for_selected_file_fs
-        self.occup_maxmium_file_number_plotted_exclude_t0=config.occup_maxmium_file_number_plotted_exclude_t0
-        self.occup_t_tot=config.occup_t_tot
+@dataclass
+class config_occup_deriv(config_occup):
+    data_first: object = None # numpy array
+    def __post_init__(self):
+        self.funcname='occup_deriv'
+        super().__post_init__()
         self.data_first=np.loadtxt(self.folder+'/occupations_t0.out')
 def do(DMDana_ini_config_setting:DMDana_ini_config_setting_class):
-    config=get_config(DMDana_ini_config_setting,'occup_deriv',0)
-    param=param_class(config)
-    plot_object=occup_deriv(param)
+    config=config_occup_deriv(DMDana_ini_config_setting=DMDana_ini_config_setting)
+    plot_object=plot_occup_deriv(config)
     plot_object.do()
-class occup_deriv(object):
-    def __init__(self,param: param_class):
+class plot_occup_deriv(object):
+    def __init__(self,param: config_occup_deriv):
         self.param=param
     def do(self):
         n = len(self.param.occup_selected_files)#number of files left in "occup_selected_files"

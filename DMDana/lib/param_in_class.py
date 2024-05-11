@@ -150,3 +150,8 @@ class param_class(BaseModel):
     alg_use_dmDP_in_evolution:float=None
     degthr:float=None
     band_skipped:float=None
+    def __getitem__(self,key):#For compatibility 
+        return str(getattr(self,key))
+    def __setitem__(self,key,value_str):#For compatibility 
+        type_key=type(getattr(self,key))
+        setattr(self,key,type_key(value_str))

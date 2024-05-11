@@ -2,14 +2,22 @@ import configparser
 import os
 from dataclasses import dataclass, field
 from typing import List
+
 import numpy as np
+
 from DMDana.do.DMDana_ini_config_setting import DMDana_ini_config_setting_class
-from DMDana.lib.DMDparser import check_and_get_path, get_DMD_param, get_erange, get_mu_temperature, get_total_step_number, glob_occupation_files, read_text_from_file
-from ..do.config import (config_current, config_occup)
+from DMDana.lib.DMDparser import (check_and_get_path, get_DMD_param,
+                                  get_erange, get_mu_temperature,
+                                  get_total_step_number, glob_occupation_files,
+                                  read_text_from_file)
+
 from .. import do as DMDdo
+from ..do.config import config_current, config_occup
 from . import constant as const
-from .param_in_class import param_class
 from .constant import libpath
+from .param_in_class import param_class
+
+
 class analyze_class:
     def __init__(self,DMD_folder):
         self.DMD_folder=DMD_folder
@@ -160,8 +168,9 @@ class DMD(object):
     temperature_K:float=field(init=False,repr=False)
     #Initialization
     def __post_init__(self):
-        param_dist=get_DMD_param(self.DMD_folder)
-        self.param=param_class(**param_dist)
+        #param_dist=get_DMD_param(self.DMD_folder)
+        #self.param=param_class(**param_dist)
+        self.param=get_DMD_param(self.DMD_folder)
         self.occupations=occupations_class(DMD_folder=self.DMD_folder)
         self.analyze=analyze_class(DMD_folder=self.DMD_folder)
         self.lindblad_init=lindblad_init_class(DMD_folder=self.DMD_folder)

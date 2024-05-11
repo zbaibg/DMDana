@@ -8,6 +8,8 @@ from typing import List
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+from pydantic import Field
+from pydantic.dataclasses import dataclass
 
 from ..lib import constant as const
 from ..lib.fft import fft_of_j
@@ -15,30 +17,23 @@ from .config import DMDana_ini_config_setting_class, config_current
 
 
 #Read input
-class param_class(object):
-    def __init__(self,config: config_current):
-        self.Window_type_list=[i.strip() for i in config.DMDana_ini_config_setting_section['Window_type_list'].split(',')]  # Rectangular, Flattop, Hann, Hamming 
-        self.Database_output_filename_csv=config.DMDana_ini_config_setting_section['Database_output_filename_csv']
-        self.Database_output_filename_xlsx=config.DMDana_ini_config_setting_section['Database_output_filename_xlsx']
-        self.Database_output_csv=config.DMDana_ini_config_setting_section.getboolean('Database_output_csv')
-        self.Database_output_xlsx=config.DMDana_ini_config_setting_section.getboolean('Database_output_xlsx')
-        self.Figure_output_filename=config.DMDana_ini_config_setting_section['Figure_output_filename']
-        self.Cutoff_min=config.DMDana_ini_config_setting_section.getint('Cutoff_min')#These "Cutoff" values counts the number of pieces in jx(yz)_elec_tot.out
-        self.Cutoff_max=config.DMDana_ini_config_setting_section.getint('Cutoff_max')
-        self.jx_data=config.jx_data
-        self.jy_data=config.jy_data
-        self.jz_data=config.jz_data
-        if self.Cutoff_max<=0:
-            self.Cutoff_max=self.jx_data.shape[0]-1
-        self.Cutoff_step=config.DMDana_ini_config_setting_section.getint('Cutoff_step')
-        self.Cutoff_list= range(self.Cutoff_min,self.Cutoff_max,self.Cutoff_step)
-        self.only_jtot=config.only_jtot
+@dataclass
+class config_FFT_DC_convergence_test(config_current):
+    Cutoff_max: int = None
+    Cutoff_list: List[int] = None
+
+    def __post_init__(self):
+        self.funcname='FFT_DC_convergence_test'
+        super().__post_init__()
+        if self.Cutoff_max is None and self.configsetting.Cutoff_max <= 0:
+            self.Cutoff_max = self.jx_data.shape[0] - 1
+        self.Cutoff_list = range(self.configsetting.Cutoff_min, self.Cutoff_max, self.configsetting.Cutoff_step)
+        
 def do(DMDana_ini_config_setting:DMDana_ini_config_setting_class):
-    config=DMDana_ini_config_setting.get_folder_config('FFT_DC_convergence_test',0)
-    param=param_class(config)
-    FFT_DC_convergence_test(param).do()
-class FFT_DC_convergence_test(object):
-    def __init__(self,param: param_class):
+    config=config_FFT_DC_convergence_test(DMDana_ini_config_setting=DMDana_ini_config_setting)
+    plot_FFT_DC_convergence_test(config).do()
+class plot_FFT_DC_convergence_test(object):
+    def __init__(self,param: config_FFT_DC_convergence_test):
         self.param=param
     def do(self):
         database=self.calculate_and_output_database()
@@ -47,7 +42,7 @@ class FFT_DC_convergence_test(object):
     def calculate_and_output_database(self):
         #Calculate FFT DC results and output the data
         database=pd.DataFrame(dtype=object)
-        for Window_type,Cutoff in list(itertools.product(self.param.Window_type_list,self.param.Cutoff_list)):
+        for Window_type,Cutoff in list(itertools.product(self.param.configsetting.Window_type_list,self.param.Cutoff_list)):
             paramdict=dict(Cutoff=Cutoff,FFT_integral_start_time_fs=self.param.jx_data[Cutoff,0]/const.fs,FFT_integral_end_time_fs=self.param.jx_data[-1,0]/const.fs,Window_type=Window_type)
             database_newline_index=database.shape[0]
             for jtemp,jdirection,j in [(self.param.jx_data,'x',0),(self.param.jy_data,'y',1),(self.param.jz_data,'z',2)]:
@@ -57,10 +52,10 @@ class FFT_DC_convergence_test(object):
                 # at the start of dynamics. The transient can be removed by choosing 
                 # appropriate cutoff below
                 f_tot, jw_tot = fft_of_j(jtemp[:,0:2:1], Cutoff,Window_type)
-                if not self.param.only_jtot:
+                if not self.param.configsetting.only_jtot:
                     f_d, jw_d = fft_of_j(jtemp[:,0:3:2], Cutoff,Window_type)
                     f_od, jw_od = fft_of_j(jtemp[:,0:4:3], Cutoff,Window_type)
-                if self.param.only_jtot:
+                if self.param.configsetting.only_jtot:
                     resultdisc={'FFT(j'+jdirection+'_tot)(0)':np.real(jw_tot[0]),
                             'j'+jdirection+'_tot_mean': np.mean(jtemp[Cutoff:,1]),
                             'time(fs)':jtemp[Cutoff,0]/const.fs}
@@ -72,21 +67,21 @@ class FFT_DC_convergence_test(object):
                 
                 database.loc[database_newline_index,list(paramdict)]=list(paramdict.values())
                 database.loc[database_newline_index,list(resultdisc)]=list(resultdisc.values())
-        if self.param.Database_output_csv:
-            database.to_csv(self.param.Database_output_filename_csv)
-        if self.param.Database_output_xlsx:
-            database.to_excel(self.param.Database_output_filename_xlsx)
+        if self.param.configsetting.Database_output_csv:
+            database.to_csv(self.param.configsetting.Database_output_filename_csv)
+        if self.param.configsetting.Database_output_xlsx:
+            database.to_excel(self.param.configsetting.Database_output_filename_xlsx)
         return database
     def plot(self,database):
         #Plot the FFT DC results
-        if self.param.only_jtot:
+        if self.param.configsetting.only_jtot:
             self.plot_tot(database)
         else:
             self.plot_tot_diag_offdiag(database)
     def plot_tot(self,database):
         fig3,ax=plt.subplots(1,3,figsize=(16,9),dpi=200)
         ax: List[plt.Axes]
-        for win_type in self.param.Window_type_list:
+        for win_type in self.param.configsetting.Window_type_list:
             plottime=database[(database.Window_type==win_type)]['FFT_integral_start_time_fs']
             plotjx_tot=database[(database.Window_type==win_type)]['FFT(jx_tot)(0)']
             plotjy_tot=database[(database.Window_type==win_type)]['FFT(jy_tot)(0)']
@@ -103,12 +98,12 @@ class FFT_DC_convergence_test(object):
             ax[i].set_xlabel('cutoff time/fs')
             ax[i].legend()
         fig3.tight_layout()
-        fig3.savefig(self.param.Figure_output_filename)
+        fig3.savefig(self.param.configsetting.Figure_output_filename)
         plt.close(fig3)
     def plot_tot_diag_offdiag(self,database):
             fig,ax=plt.subplots(3,3,figsize=(16,9),dpi=200)
             ax: List[List[plt.Axes]]
-            for win_type in self.param.Window_type_list:
+            for win_type in self.param.configsetting.Window_type_list:
                 plottime=database[(database.Window_type==win_type)]['FFT_integral_start_time_fs']
                 plotjx_tot=database[(database.Window_type==win_type)]['FFT(jx_tot)(0)']
                 plotjy_tot=database[(database.Window_type==win_type)]['FFT(jy_tot)(0)']
@@ -140,6 +135,6 @@ class FFT_DC_convergence_test(object):
                     ax[i][j].set_yscale('log')
                     ax[i][j].legend()
             fig.tight_layout()
-            fig.savefig(self.param.Figure_output_filename)
+            fig.savefig(self.param.configsetting.Figure_output_filename)
             plt.close(fig)
             

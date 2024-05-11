@@ -1,8 +1,13 @@
 import configparser
 import os
+from typing import Any, List, Union
+
 from pydantic import BaseModel
+
 from ..lib.constant import libpath
 from ..lib.DMDparser import check_and_get_path
+
+
 class section_default_class(BaseModel):
     only_jtot:bool
     folder:str
@@ -18,7 +23,12 @@ class section_default_class(BaseModel):
     def getboolean(self,key):
         return bool(getattr(self,key))
     get=__getitem__
-class section_current_plot_class(section_default_class):
+class sections_current_classes(section_default_class):#for all current sections
+    elec_or_hole:str
+class sections_occup_classes(section_default_class):#for all occup sections
+    t_max:int
+    filelist_step:int
+class section_current_plot_class(sections_current_classes):
     current_plot_output:str
     t_min:float
     t_max:float
@@ -27,33 +37,36 @@ class section_current_plot_class(section_default_class):
     smooth_times:int
     smooth_windowlen:int
     plot_all:bool
-    elec_or_hole:str
+
     
-class section_FFT_DC_convergence_test_class(section_default_class):
+class section_FFT_DC_convergence_test_class(sections_current_classes):
     Cutoff_step:int
     Cutoff_min:int
     Cutoff_max:int
-    Window_type_list:str
+    Window_type_list:Union[str,List[str]]
     Database_output_csv:bool
     Database_output_xlsx:bool
     Database_output_filename_csv:str
     Database_output_filename_xlsx:str
     Figure_output_filename:str
-    elec_or_hole:str
+    def model_post_init(self,__context: Any):
+        if isinstance(self.Window_type_list,str):
+            self.Window_type_list=[i.strip() for i in self.Window_type_list.split(',')]  
     
-class section_FFT_spectrum_plot_class(section_default_class):
-    Cutoff_list:int
-    Window_type_list:str
+class section_FFT_spectrum_plot_class(sections_current_classes):
+    Cutoff_list:Union[str,List[int]]
+    Window_type_list:Union[str,List[str]]
     Log_y_scale:bool
     Summary_output_csv:bool
     Summary_output_xlsx:bool
     Summary_output_filename_csv:str
     Summary_output_filename_xlsx:str
-    elec_or_hole:str
-    
-class section_occup_time_class(section_default_class):
-    t_max:int
-    filelist_step:int
+    def model_post_init(self,__context: Any):
+        if isinstance(self.Window_type_list,str):
+            self.Window_type_list=[i.strip() for i in self.Window_type_list.split(',')]  
+        if isinstance(self.Cutoff_list,str):
+            self.Cutoff_list=[int(i) for i in self.Cutoff_list.split(',')]
+class section_occup_time_class(sections_occup_classes):
     occup_time_plot_set_Erange:bool
     occup_time_plot_lowE:float
     occup_time_plot_highE:float
@@ -70,9 +83,8 @@ class section_occup_time_class(section_default_class):
     fit_Boltzmann_initial_guess_T_auto:bool
     Substract_initial_occupation:bool
     showlegend:bool
-class section_occup_deriv_class(section_default_class):
-    t_max:int
-    filelist_step:int
+class section_occup_deriv_class(sections_occup_classes):
+    pass
     
 class DMDana_ini_config_setting_class(BaseModel):
    
