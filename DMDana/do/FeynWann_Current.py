@@ -3,11 +3,11 @@ import numpy as np
 import pandas as pd
 
 from ..lib import constant as const
-from .config import DMDana_ini_Class, config_current
+from .config import DMDana_ini_config_setting_class, config_current, get_config
 
 
-def do(DMDana_ini:DMDana_ini_Class):
-    config=DMDana_ini.get_folder_config('FeynWann_Current',0)
+def do(DMDana_ini_config_setting:DMDana_ini_config_setting_class):
+    config=get_config(DMDana_ini_config_setting,'FeynWann_Current',0)
     jx_elec_tot=pd.DataFrame()
     jy_elec_tot=pd.DataFrame()
     jz_elec_tot=pd.DataFrame()

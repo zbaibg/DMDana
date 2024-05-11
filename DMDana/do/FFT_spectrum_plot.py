@@ -12,29 +12,29 @@ from matplotlib.axes import Axes
 
 from ..lib import constant as const
 from ..lib.fft import fft_of_j
-from .config import DMDana_ini_Class, config_current
+from .config import DMDana_ini_config_setting_class, config_current, get_config
 
 
 #Read input
 class param_class(object):
     def __init__(self,config: config_current):
-        self.Cutoff_list= [int(i) for i in config.Input['Cutoff_list'].split(',')]#it counts the number of pieces in jx(yz)_elec_tot.out
-        self.Window_type_list=[i.strip() for i in config.Input['Window_type_list'].split(',')]  # Rectangular, Flattop, Hann, Hamming 
-        self.Log_y_scale=config.Input.getboolean('Log_y_scale')
+        self.Cutoff_list= [int(i) for i in config.DMDana_ini_config_setting_section['Cutoff_list'].split(',')]#it counts the number of pieces in jx(yz)_elec_tot.out
+        self.Window_type_list=[i.strip() for i in config.DMDana_ini_config_setting_section['Window_type_list'].split(',')]  # Rectangular, Flattop, Hann, Hamming 
+        self.Log_y_scale=config.DMDana_ini_config_setting_section.getboolean('Log_y_scale')
         if self.Log_y_scale==None:
             self.Log_y_scale=True
-        self.Summary_output_csv=config.Input.getboolean('Summary_output_csv')
-        self.Summary_output_xlsx=config.Input.getboolean('Summary_output_xlsx')
-        self.Summary_output_filename_csv=config.Input['Summary_output_filename_csv']
-        self.Summary_output_filename_xlsx=config.Input['Summary_output_filename_xlsx']
+        self.Summary_output_csv=config.DMDana_ini_config_setting_section.getboolean('Summary_output_csv')
+        self.Summary_output_xlsx=config.DMDana_ini_config_setting_section.getboolean('Summary_output_xlsx')
+        self.Summary_output_filename_csv=config.DMDana_ini_config_setting_section['Summary_output_filename_csv']
+        self.Summary_output_filename_xlsx=config.DMDana_ini_config_setting_section['Summary_output_filename_xlsx']
         self.only_jtot=config.only_jtot
         self.light_label=config.light_label
         self.jx_data=config.jx_data
         self.jy_data=config.jy_data
         self.jz_data=config.jz_data
         
-def do(DMDana_ini:DMDana_ini_Class):
-    config=DMDana_ini.get_folder_config('FFT_spectrum_plot',0)
+def do(DMDana_ini_config_setting:DMDana_ini_config_setting_class):
+    config=get_config(DMDana_ini_config_setting,'FFT_spectrum_plot',0)
     param=param_class(config)
     plot_object=FFT_spectrum_plot(param)
     plot_object.plot()

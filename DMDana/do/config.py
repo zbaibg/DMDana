@@ -5,7 +5,7 @@ import logging
 import os
 import git
 import numpy as np
-from DMDana.do.DMDana_ini_config_setting import DMDana_ini_config_setting_class, section_default_class
+from DMDana.do.DMDana_ini_config_setting import DMDana_ini_config_setting_class, section_current_plot_class, section_default_class
 from ..lib import constant as const
 from .. import libpath
 from . import allfuncname
@@ -70,6 +70,7 @@ class config_base(object):
 class config_current(config_base):
     def __init__(self, funcname_in: str,DMDana_ini_config_setting: DMDana_ini_config_setting_class,show_init_log=True):
         super().__init__(funcname_in,DMDana_ini_config_setting,show_init_log)
+        self.DMDana_ini_config_setting_section: section_current_plot_class
         self.only_jtot=None
         self.jx_data=None
         self.jy_data=None
@@ -140,7 +141,7 @@ class config_occup(config_base):
         
 
 
-def get_config_result(DMDana_ini_config_setting,funcname:str,show_init_log=True):
+def get_config(DMDana_ini_config_setting,funcname:str,show_init_log=True):
     assert funcname in allfuncname,'funcname is not correct.'
     if funcname in ['FFT_DC_convergence_test','current_plot','FFT_spectrum_plot']:
         config=config_current(funcname,DMDana_ini_config_setting,show_init_log=show_init_log)

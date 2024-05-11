@@ -11,30 +11,30 @@ import pandas as pd
 
 from ..lib import constant as const
 from ..lib.fft import fft_of_j
-from .config import DMDana_ini_Class, config_current
+from .config import DMDana_ini_config_setting_class, config_current
 
 
 #Read input
 class param_class(object):
     def __init__(self,config: config_current):
-        self.Window_type_list=[i.strip() for i in config.Input['Window_type_list'].split(',')]  # Rectangular, Flattop, Hann, Hamming 
-        self.Database_output_filename_csv=config.Input['Database_output_filename_csv']
-        self.Database_output_filename_xlsx=config.Input['Database_output_filename_xlsx']
-        self.Database_output_csv=config.Input.getboolean('Database_output_csv')
-        self.Database_output_xlsx=config.Input.getboolean('Database_output_xlsx')
-        self.Figure_output_filename=config.Input['Figure_output_filename']
-        self.Cutoff_min=config.Input.getint('Cutoff_min')#These "Cutoff" values counts the number of pieces in jx(yz)_elec_tot.out
-        self.Cutoff_max=config.Input.getint('Cutoff_max')
+        self.Window_type_list=[i.strip() for i in config.DMDana_ini_config_setting_section['Window_type_list'].split(',')]  # Rectangular, Flattop, Hann, Hamming 
+        self.Database_output_filename_csv=config.DMDana_ini_config_setting_section['Database_output_filename_csv']
+        self.Database_output_filename_xlsx=config.DMDana_ini_config_setting_section['Database_output_filename_xlsx']
+        self.Database_output_csv=config.DMDana_ini_config_setting_section.getboolean('Database_output_csv')
+        self.Database_output_xlsx=config.DMDana_ini_config_setting_section.getboolean('Database_output_xlsx')
+        self.Figure_output_filename=config.DMDana_ini_config_setting_section['Figure_output_filename']
+        self.Cutoff_min=config.DMDana_ini_config_setting_section.getint('Cutoff_min')#These "Cutoff" values counts the number of pieces in jx(yz)_elec_tot.out
+        self.Cutoff_max=config.DMDana_ini_config_setting_section.getint('Cutoff_max')
         self.jx_data=config.jx_data
         self.jy_data=config.jy_data
         self.jz_data=config.jz_data
         if self.Cutoff_max<=0:
             self.Cutoff_max=self.jx_data.shape[0]-1
-        self.Cutoff_step=config.Input.getint('Cutoff_step')
+        self.Cutoff_step=config.DMDana_ini_config_setting_section.getint('Cutoff_step')
         self.Cutoff_list= range(self.Cutoff_min,self.Cutoff_max,self.Cutoff_step)
         self.only_jtot=config.only_jtot
-def do(DMDana_ini:DMDana_ini_Class):
-    config=DMDana_ini.get_folder_config('FFT_DC_convergence_test',0)
+def do(DMDana_ini_config_setting:DMDana_ini_config_setting_class):
+    config=DMDana_ini_config_setting.get_folder_config('FFT_DC_convergence_test',0)
     param=param_class(config)
     FFT_DC_convergence_test(param).do()
 class FFT_DC_convergence_test(object):

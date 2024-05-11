@@ -14,7 +14,7 @@ from mpl_toolkits.mplot3d.axes3d import Axes3D
 from scipy.optimize import curve_fit
 
 from ..lib import constant as const
-from .config import DMDana_ini_Class, config_occup
+from .config import DMDana_ini_config_setting_class, config_occup, get_config
 
 
 #Read input
@@ -26,25 +26,25 @@ class param_class(object):
         self.dpi=100.0#The resolution of the figure in dots-per-inch.
         #Read from config
         self.folder=config.folder
-        self.occup_time_plot_lowE=config.Input.getfloat('occup_time_plot_lowE')
-        self.occup_time_plot_highE=config.Input.getfloat('occup_time_plot_highE')
+        self.occup_time_plot_lowE=config.DMDana_ini_config_setting_section.getfloat('occup_time_plot_lowE')
+        self.occup_time_plot_highE=config.DMDana_ini_config_setting_section.getfloat('occup_time_plot_highE')
         self.occup_time_plot_lowE_conduction=max(config.EcMin_au*const.Hatree_to_eV,0)-0.01# Sometimes DMD_Initialization determine wrong VBM and CBM, here we assume CBM is at least larger than mu (0 points), VBM is at most smaller than mu (0 point).
         #self.occup_time_plot_highE_conduction=config.ETop_dm_au*const.Hatree_to_eV
         #self.occup_time_plot_lowE_valence=config.EBot_dm_au*const.Hatree_to_eV
         self.occup_time_plot_highE_valence=min(config.EvMax_au*const.Hatree_to_eV,0)+0.01
-        self.occup_time_plot_set_Erange=config.Input.getboolean('occup_time_plot_set_Erange')
-        self.plot_occupation_number_min=config.Input.getfloat('plot_occupation_number_min')
-        self.plot_occupation_number_max=config.Input.getfloat('plot_occupation_number_max')
-        self.plot_conduction_valence=config.Input.getboolean('plot_conduction_valence')
-        self.Substract_initial_occupation=config.Input.getboolean('Substract_initial_occupation')
-        self.plot_occupation_number_setlimit=config.Input.getboolean("plot_occupation_number_setlimit")
-        self.fit_Boltzmann=config.Input.getboolean('fit_Boltzmann')
-        self.fit_Boltzmann_initial_guess_mu=config.Input.getfloat('fit_Boltzmann_initial_guess_mu')
-        self.fit_Boltzmann_initial_guess_mu_auto=config.Input.getboolean('fit_Boltzmann_initial_guess_mu_auto')
-        self.fit_Boltzmann_initial_guess_T=config.Input.getfloat('fit_Boltzmann_initial_guess_T')
-        self.fit_Boltzmann_initial_guess_T_auto=config.Input.getboolean('fit_Boltzmann_initial_guess_T_auto')
-        self.figure_style=config.Input.get('figure_style')
-        self.output_all_figure_types=config.Input.getboolean('output_all_figure_types')
+        self.occup_time_plot_set_Erange=config.DMDana_ini_config_setting_section.getboolean('occup_time_plot_set_Erange')
+        self.plot_occupation_number_min=config.DMDana_ini_config_setting_section.getfloat('plot_occupation_number_min')
+        self.plot_occupation_number_max=config.DMDana_ini_config_setting_section.getfloat('plot_occupation_number_max')
+        self.plot_conduction_valence=config.DMDana_ini_config_setting_section.getboolean('plot_conduction_valence')
+        self.Substract_initial_occupation=config.DMDana_ini_config_setting_section.getboolean('Substract_initial_occupation')
+        self.plot_occupation_number_setlimit=config.DMDana_ini_config_setting_section.getboolean("plot_occupation_number_setlimit")
+        self.fit_Boltzmann=config.DMDana_ini_config_setting_section.getboolean('fit_Boltzmann')
+        self.fit_Boltzmann_initial_guess_mu=config.DMDana_ini_config_setting_section.getfloat('fit_Boltzmann_initial_guess_mu')
+        self.fit_Boltzmann_initial_guess_mu_auto=config.DMDana_ini_config_setting_section.getboolean('fit_Boltzmann_initial_guess_mu_auto')
+        self.fit_Boltzmann_initial_guess_T=config.DMDana_ini_config_setting_section.getfloat('fit_Boltzmann_initial_guess_T')
+        self.fit_Boltzmann_initial_guess_T_auto=config.DMDana_ini_config_setting_section.getboolean('fit_Boltzmann_initial_guess_T_auto')
+        self.figure_style=config.DMDana_ini_config_setting_section.get('figure_style')
+        self.output_all_figure_types=config.DMDana_ini_config_setting_section.getboolean('output_all_figure_types')
         self.occup_selected_files=config.occup_selected_files
         self.occup_t_tot=config.occup_t_tot
         self.occup_timestep_for_selected_file_ps=config.occup_timestep_for_selected_file_ps
@@ -68,7 +68,7 @@ class param_class(object):
         self.data_fermi=np.zeros(self.data_first.shape)
         self.data_fermi[:,0]=self.energylist
         self.data_fermi[:,1]=fermi(self.temperature_au,self.mu_au,self.energylist)
-        self.showlegend=config.Input.getboolean('showlegend')
+        self.showlegend=config.DMDana_ini_config_setting_section.getboolean('showlegend')
 def fermi(temperature_au,mu_au,elist):
     ebyt = (elist - mu_au) / temperature_au
     occup=np.zeros(len(elist))
@@ -223,8 +223,8 @@ class occup_time(object):
             name="delta_"+name
         self.fig.savefig(name, bbox_inches="tight")   
         
-def do(DMDana_ini:DMDana_ini_Class):
-    config=DMDana_ini.get_folder_config('occup_time',0)
+def do(DMDana_ini_config_setting:DMDana_ini_config_setting_class):
+    config=get_config(DMDana_ini_config_setting,'occup_time',0)
     param=param_class(config)
     logging.info('temperature(K): %.3e'%(param.temperature_au/const.Kelvin))
     logging.info('mu(eV): %.3e'%(param.mu_au/const.eV))

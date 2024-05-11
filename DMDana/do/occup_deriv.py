@@ -12,7 +12,7 @@ import numpy as np
 from matplotlib.figure import Figure
 
 from ..lib import constant as const
-from .config import DMDana_ini_Class, config_occup
+from .config import DMDana_ini_config_setting_class, config_occup, get_config
 
 
 #Read input
@@ -24,8 +24,8 @@ class param_class(object):
         self.occup_maxmium_file_number_plotted_exclude_t0=config.occup_maxmium_file_number_plotted_exclude_t0
         self.occup_t_tot=config.occup_t_tot
         self.data_first=np.loadtxt(self.folder+'/occupations_t0.out')
-def do(DMDana_ini:DMDana_ini_Class):
-    config=DMDana_ini.get_folder_config('occup_deriv',0)
+def do(DMDana_ini_config_setting:DMDana_ini_config_setting_class):
+    config=get_config(DMDana_ini_config_setting,'occup_deriv',0)
     param=param_class(config)
     plot_object=occup_deriv(param)
     plot_object.do()
