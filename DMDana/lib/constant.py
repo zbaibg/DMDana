@@ -1,5 +1,5 @@
 import numpy as np
-
+libpath='/'.join(__file__.split('/')[0:-3])  # The path where DMDana is installed (not including DMDana)
 #customized constant
 
 #fs  = 41.341373335

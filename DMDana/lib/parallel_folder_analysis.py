@@ -5,7 +5,7 @@ from typing import Callable, Dict, List
 
 import pandas as pd
 
-from .DMDparser import DMD
+from .DMDdataclass import DMD
 
 
 def check_and_create_folder(path: str) -> str:

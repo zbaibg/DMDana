@@ -32,7 +32,7 @@ if __name__ == "__main__":
         import shutil
         import sys
 
-        from .config import libpath
+        from ..lib.constant import libpath
         if(not os.path.isfile('DMDana.ini')):
             shutil.copyfile(libpath+'/DMDana/do/DMDana_default.ini','./DMDana.ini')
         else:

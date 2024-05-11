@@ -1,18 +1,17 @@
 from ..lib.DMDparser import (get_DMD_param, get_current_data, get_erange, get_mu_temperature, glob_occupation_files)
-from .config import (config_current, config_occup, config_base)
 import datetime
 import logging
 import os
 import git
 import numpy as np
-from DMDana.do.DMDana_ini_config_setting import DMDana_ini_config_setting_class, section_current_plot_class, section_default_class
+from .DMDana_ini_config_setting import get_DMDana_ini_config_setting,DMDana_ini_config_setting_class, section_current_plot_class, section_default_class
+from ..lib.constant import libpath
 from ..lib import constant as const
-from .. import libpath
-from . import allfuncname
-# import these to here for compatibility with old code of other files which need these
 
+# import these to here for compatibility with old code of other files which need these
+allfuncname=['FFT_DC_convergence_test','current_plot','FFT_spectrum_plot','occup_time','occup_deriv']
 def workflow(funcname,param_path='./DMDana.ini'):
-    DMDana_ini_config_setting=DMDana_ini_config_setting_class(param_path)
+    DMDana_ini_config_setting=get_DMDana_ini_config_setting(param_path)
     assert funcname in allfuncname, 'funcname is not correct.'
     if funcname == "FFT_DC_convergence_test":
         from . import FFT_DC_convergence_test
@@ -32,8 +31,8 @@ def workflow(funcname,param_path='./DMDana.ini'):
 class config_base(object): 
     def __init__(self, funcname_in: str,DMDana_ini_config_setting: DMDana_ini_config_setting_class,show_init_log=True):
         self.logfile=None
-        self.DMDana_ini_config_setting_section: section_default_class=DMDana_ini_config_setting[self.funcname.replace('_','-')]# Due to historical reason, the name in DMDana.ini is with "-" instead of "_". Other parts of the code all use "_" for funcname
         self.funcname=funcname_in
+        self.DMDana_ini_config_setting_section: section_default_class=DMDana_ini_config_setting[self.funcname.replace('_','-')]# Due to historical reason, the name in DMDana.ini is with "-" instead of "_". Other parts of the code all use "_" for funcname
         self.EBot_probe_au=None
         self.ETop_probe_au=None 
         self.EBot_dm_au=None 
@@ -61,9 +60,9 @@ class config_base(object):
         logging.info("Submodule: %s"%funcname)
         logging.info("Start time: %s"%datetime.datetime.now())
         logging.info("===Configuration Parameter===")
-        paramdict=dict((self.DMDana_ini_config_setting.items(funcname.replace('_','-'))))
+        paramdict=self.DMDana_ini_config_setting_section.model_dump()
         for i in paramdict:
-            logging.info("%-35s"%i+':\t'+paramdict[i]+'')
+            logging.info("%-35s"%i+':\t'+str(paramdict[i])+'')
         logging.info("===Initialization finished===")
         
      

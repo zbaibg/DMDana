@@ -1,4 +1,8 @@
+import configparser
+import os
 from pydantic import BaseModel
+from ..lib.constant import libpath
+from ..lib.DMDparser import check_and_get_path
 class section_default_class(BaseModel):
     only_jtot:bool
     folder:str
@@ -78,9 +82,22 @@ class DMDana_ini_config_setting_class(BaseModel):
     section_FFT_spectrum_plot:section_FFT_spectrum_plot_class
     section_occup_time:section_occup_time_class
     section_occup_deriv:section_occup_deriv_class    
+
     def __getitem__(self,key):
         return getattr(self,'section_'+key.replace('-','_'))
     #def __setitem__(self,key,value):
         #setattr(self,key,value)
     def items(self,key):
         return dict((key,str(val))for key,val in self[key].model_dump().items())
+    
+
+def get_DMDana_ini_config_setting(configfile_path)->DMDana_ini_config_setting_class:
+    DMDana_ini_configparser0 = configparser.ConfigParser(inline_comment_prefixes="#")
+    if (os.path.isfile(configfile_path)):
+        default_ini=check_and_get_path(libpath+'/DMDana/do/DMDana_default.ini')
+        DMDana_ini_configparser0.read([default_ini,configfile_path])
+    else:
+        raise Warning('%s not exist. Default setting would be used. You could run "DMDana init" to initialize it.'%configfile_path)
+    return DMDana_ini_config_setting_class(**dict( ('section_'+key.replace('-','_'),val)for key,val in DMDana_ini_configparser0.items()))
+    
+
