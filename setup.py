@@ -18,7 +18,7 @@ with open('requirements.txt') as f:
     
 setup(
     name='DMDana',
-    version='0.1.0+' + git_revision_hash(),
+    version='0.1.0+' + git_revision_hash,
     packages=find_packages(),
     install_requires=required,
     package_data={'': ['DMDana_default.ini','githash.log']},
