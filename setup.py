@@ -19,6 +19,5 @@ setup(
     packages=find_packages(),
     install_requires=required,
     package_data={'': ['DMDana_default.ini','githash.log']},
-    include_package_data=True,
-    install_requires=[],
+    include_package_data=True
 )
