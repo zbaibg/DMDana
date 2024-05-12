@@ -2,7 +2,7 @@
 
 Requirement: Python version >3.2
 
-1. Make sure git it installed in your system. (to support logging git-hash during DMDana running)
+1. Make sure ```git``` is installed in your system. (to support logging git-hash during DMDana running)
 2. Download this. Run ```cd DMDana```,  ```pip install .```
 . If you want skip rerun pip install for code upgrade in the future (upgrade through ```git pull```), you can use "editable install mode" by ```pip install -e .```.
 3. Optional: to support CLI auto-completion run ```activate-global-python-argcomplete --user```, and restart your shell. (After restarting, if it does not work properly, consider manually running ```source ~/.bash_completion``` and add this command to your ```~/.bashrc```)
