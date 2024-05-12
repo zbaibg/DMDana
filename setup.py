@@ -1,7 +1,7 @@
 try:
     import git
-except ImportError:
-    raise ImportError("GitPython is not installed. Please install it before installing this package.")
+except ImportError as e:
+    raise ImportError(f"GitPython is not installed. Please install it before installing this package. Error details: {e}")
 from setuptools import find_packages, setup
 
 
