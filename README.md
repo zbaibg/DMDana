@@ -1,8 +1,10 @@
 ## Installation
 
-1. Download this. Run ```cd DMDana```,  ```pip install .```
+Requirement: Python version >=3.2, 
+
+1. install GitPython before installing DMDana to support logging git hash during DMDana running. (pip install GitPython)
+2. Download this. Run ```cd DMDana```,  ```pip install .```
 . If you want skip rerun pip install for code upgrade in the future (upgrade through ```git pull```), you can use "editable install mode" by ```pip install -e .```.
-2. Update your python to versions ```>3.2``` and run ```sh {download-path}/install_dependency.sh``` to install python dependencies it needs.
 3. Optional: to support CLI auto-completion run ```activate-global-python-argcomplete --user```, and restart your shell. (After restarting, if it does not work properly, consider manually running ```source ~/.bash_completion``` and add this command to your ```~/.bashrc```)
 ## Usage
 1. run ```cd {DMD-folder}```, where ```{DMD-folder}``` is your DMD folder path

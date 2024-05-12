@@ -1,23 +1,23 @@
-import git
+try:
+    import git
+except ImportError:
+    raise ImportError("GitPython is not installed. Please install it before installing this package.")
 from setuptools import find_packages, setup
 
-repo = git.Repo('.',search_parent_directories=True)
-sha = repo.head.object.hexsha
-with open('./DMDana/githash.log','w') as file:
-    file.write(sha)
-    print(sha,file=file)
-    print('This file is only updated when using pip install.',file=file)
-    print('The code would first check and use the hash from the .git folder in the parent folder if it exsits (for develop mode).',file=file)
-    print('If there is no .git folder in the parent folder, the code would check this githash.log file (for installed mode)',file=file)
+
+def get_git_revision_hash():
+    repo = git.Repo(search_parent_directories=True)
+    return repo.head.object.hexsha
 
 with open('requirements.txt') as f:
     required = f.read().splitlines()
     
 setup(
     name='DMDana',
-    version='1.0.0',
+    version='0.1.0+' + get_git_revision_hash(),
     packages=find_packages(),
     install_requires=required,
     package_data={'': ['DMDana_default.ini','githash.log']},
-    include_package_data=True
+    include_package_data=True,
+    python_requires='>3.2'
 )

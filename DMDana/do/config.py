@@ -5,6 +5,7 @@ from typing import Any, List, Optional, Union
 
 import git
 import numpy as np
+import pkg_resources
 from pydantic.dataclasses import dataclass
 
 from ..lib import constant as const
@@ -64,14 +65,9 @@ class config_base():
             self.DMDparam_value = get_DMD_param(self.folder)  # Use the param.in in the first folder
 
     def initial_log(self, funcname):
-        if os.path.isdir(libpath + '/.git'):  # if the code is in develop mode (without pip install)
-            repo = git.Repo(libpath, search_parent_directories=True)
-            sha = repo.head.object.hexsha
-        else:  # if the code is in installed mode (with pip install)
-            with open(libpath + '/DMDana/githash.log') as file:
-                sha = file.readline().strip()
+        DMDana_version=pkg_resources.get_distribution('DMDana').version
         logging.info("============DMDana============")
-        logging.info("Git hash %s (%s)" % (sha[:7], sha))
+        logging.info("DMDversion(with Git hash): %s" % DMDana_version)
         logging.info("Submodule: %s" % funcname)
         logging.info("Start time: %s" % datetime.datetime.now())
         logging.info("===Configuration Parameter===")
