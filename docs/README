@@ -1,0 +1,4 @@
+To generate docs, do the following:
+
+sphinx-apidoc -f -o . ../DMDana
+make html
