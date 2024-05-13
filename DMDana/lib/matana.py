@@ -14,23 +14,21 @@ class JDFTx_MatrixAnalyzer:
     """
     Class for analyzing JDFTx matrix data related to electronic structure calculations.
 
-    Attributes:
-        folder (str): The folder path containing the data files.
-        kmesh_num (Tuple[int, int, int]): The number of k-points in each direction (knx, kny, knz).
-        nb_dft (int): The number of DFT bands.
-        vmat_dft (np.ndarray): Matrix of DFT data loaded from files.
-        kveclist (np.ndarray): List of k-vectors associated with the matrix.
-        vmat_minus_k (np.ndarray): Matrix of -k corresponding to the given k-points.
+    :param folder: The folder path containing the data files.
+    :param kmesh_num: The number of k-points in each direction (knx, kny, knz).
+    :param nb_dft: The number of DFT bands.
+    :ivar vmat_dft: Matrix of DFT data loaded from files.
+    :ivar kveclist: List of k-vectors associated with the matrix.
+    :ivar vmat_minus_k: Matrix of -k corresponding to the given k-points.
     """
 
     def __init__(self, folder: str, kmesh_num: Tuple[int, int, int], nb_dft: int):
         """
         Initializes the JDFTx_MatrixAnalyzer object.
 
-        Parameters:
-            folder (str): The folder path containing the data files.
-            kmesh_num (Tuple[int, int, int]): The number of k-points in each direction (knx, kny, knz).
-            nb_dft (int): The number of DFT bands.
+        :param folder: The folder path containing the data files.
+        :param kmesh_num: The number of k-points in each direction (knx, kny, knz).
+        :param nb_dft: The number of DFT bands.
         """
         self.folder = folder
         self.kmesh_num = kmesh_num  # (knx, kny, knz)
@@ -60,27 +58,25 @@ class DMD_MatrixAnalyzer:
     """
     Class for analyzing DMD (Density Matrix Decomposition) matrix data from electronic structure computations.
 
-    Attributes:
-        DMDfolder (str): Path to the folder containing the DMD data files.
-        kmesh (np.ndarray): Number of k-points in each direction (x, y, z).
-        nb (int): Number of bands.
-        bBot_dm (int): Lower band index for DMD.
-        bTop_dm (int): Upper band index for DMD.
-        nb_dm (int): Number of DMD bands.
-        nk (int): Number of k-points.
-        kstep (np.ndarray): Step size between k-points in each direction.
-        denmat (np.ndarray): Density matrix from DMD calculations.
-        vmat (np.ndarray): Potential matrix from DMD calculations.
-        Emat (np.ndarray): Energy matrix from DMD calculations.
-        kveclist (np.ndarray): List of k-vectors.
+    :param DMDfolder: Path to the folder containing the DMD data files.
+    :ivar kmesh: Number of k-points in each direction (x, y, z).
+    :ivar nb: Number of bands.
+    :ivar bBot_dm: Lower band index for DMD.
+    :ivar bTop_dm: Upper band index for DMD.
+    :ivar nb_dm: Number of DMD bands.
+    :ivar nk: Number of k-points.
+    :ivar kstep: Step size between k-points in each direction.
+    :ivar denmat: Density matrix from DMD calculations.
+    :ivar vmat: Potential matrix from DMD calculations.
+    :ivar Emat: Energy matrix from DMD calculations.
+    :ivar kveclist: List of k-vectors.
     """
 
     def __init__(self, DMDfolder: str):
         """
         Initializes the DMD_MatrixAnalyzer object.
 
-        Parameters:
-            DMDfolder (str): The folder path containing the DMD data files.
+        :param DMDfolder: The folder path containing the DMD data files.
         """
         self.DMDfolder = DMDfolder
         self.kmesh = np.zeros(3, dtype=int)
@@ -127,12 +123,11 @@ def checkhermitian(mat: np.ndarray) -> bool:
     """
     Checks if a matrix is Hermitian along its last two dimensions.
 
-    Parameters:
-    - mat (numpy.ndarray): The matrix to be checked, which should be at least two-dimensional.
-
-    Returns:
-    - bool: Returns True if the matrix is Hermitian, False otherwise. A matrix is Hermitian
-            if it is equal to its complex conjugate transpose.
+    :param mat: The matrix to be checked, which should be at least two-dimensional.
+    :type mat: numpy.ndarray
+    :return: Returns True if the matrix is Hermitian, False otherwise. A matrix is Hermitian
+             if it is equal to its complex conjugate transpose.
+    :rtype: bool
     """
     # Reorder the last two dimensions of the matrix to prepare for transpose
     axessequence = np.arange(mat.ndim)
@@ -146,11 +141,10 @@ def shift_kvec(kveclist: np.ndarray) -> np.ndarray:
     """
     Shifts k-vectors to ensure all components are within the range [-0.5, 0.5).
 
-    Parameters:
-    - kveclist (numpy.ndarray): The array of k-vectors.
-
-    Returns:
-    - numpy.ndarray: The shifted array of k-vectors.
+    :param kveclist: The array of k-vectors.
+    :type kveclist: numpy.ndarray
+    :return: The shifted array of k-vectors.
+    :rtype: numpy.ndarray
     """
     # Shift each k-vector component to be within the specified range
     return (kveclist + 0.5) % 1 - 0.5
@@ -160,13 +154,14 @@ def get_mat_of_minus_k(mat: np.ndarray, kmesh_num: Tuple[int, int, int], kveclis
     """
     Constructs a matrix corresponding to the negative k-vectors from a given matrix.
 
-    Parameters:
-    - mat (np.ndarray): The input matrix whose rows/columns correspond to k-points. Expected to be a complex matrix.
-    - kmesh_num (Tuple[int, int, int]): The number of k-points in each direction of the k-space mesh (knx, kny, knz).
-    - kveclist (np.ndarray): The list of k-vectors associated with the matrix rows/columns. Expected to contain float entries.
-
-    Returns:
-    - np.ndarray: A new matrix where each entry is mapped to the corresponding -k vector from the input matrix.
+    :param mat: The input matrix whose rows/columns correspond to k-points. Expected to be a complex matrix.
+    :type mat: np.ndarray
+    :param kmesh_num: The number of k-points in each direction of the k-space mesh (knx, kny, knz).
+    :type kmesh_num: Tuple[int, int, int]
+    :param kveclist: The list of k-vectors associated with the matrix rows/columns. Expected to contain float entries.
+    :type kveclist: np.ndarray
+    :return: A new matrix where each entry is mapped to the corresponding -k vector from the input matrix.
+    :rtype: np.ndarray
     """
     # Shift k-vectors to standard range and calculate mesh indices
     kveclist_shifted = shift_kvec(kveclist)
@@ -197,15 +192,22 @@ def plot_hist(data: np.ndarray,
     """
     Plots a histogram of the provided data with extensive customization for display properties.
 
-    Parameters:
-    - data (numpy.ndarray): Data to be plotted in the histogram.
-    - title (str): Title of the histogram plot.
-    - ylabel (str): Label for the Y-axis.
-    - xlabel (str): Label for the X-axis.
-    - logbin (int): Number of logarithmic bins in the histogram.
-    - density (bool): If True, normalize the histogram; otherwise, count frequencies.
-    - scale (str): Scale of the plot axes ('linear', 'log', etc.).
-    - dpi (int): Resolution of the plot in dots per inch.
+    :param data: Data to be plotted in the histogram.
+    :type data: numpy.ndarray
+    :param title: Title of the histogram plot.
+    :type title: str
+    :param ylabel: Label for the Y-axis.
+    :type ylabel: str
+    :param xlabel: Label for the X-axis.
+    :type xlabel: str
+    :param logbin: Number of logarithmic bins in the histogram.
+    :type logbin: int
+    :param density: If True, normalize the histogram; otherwise, count frequencies.
+    :type density: bool
+    :param scale: Scale of the plot axes ('linear', 'log', etc.).
+    :type scale: str
+    :param dpi: Resolution of the plot in dots per inch.
+    :type dpi: int
     """
     plt.figure(dpi=dpi)
     hist, bins = np.histogram(data, bins=logbin, density=density)
@@ -222,16 +224,15 @@ def mat_init(path: str, shape: Tuple[int, ...], dtype: Type) -> np.ndarray:
     """
     Initializes a matrix from a binary file.
 
-    Parameters:
-    - path (str): File path to the binary data.
-    - shape (Tuple[int, ...]): Expected shape of the matrix. Tuple elements represent dimensions sizes.
-    - dtype (dtype): Data type of the matrix elements, e.g., np.int32, np.float64.
-
-    Returns:
-    - numpy.ndarray: The matrix loaded from the specified binary file.
-
-    Raises:
-    - AssertionError: If the number of elements read from the file does not match the expected product of the shape dimensions.
+    :param path: File path to the binary data.
+    :type path: str
+    :param shape: Expected shape of the matrix. Tuple elements represent dimensions sizes.
+    :type shape: Tuple[int, ...]
+    :param dtype: Data type of the matrix elements, e.g., np.int32, np.float64.
+    :type dtype: dtype
+    :return: The matrix loaded from the specified binary file.
+    :rtype: numpy.ndarray
+    :raises AssertionError: If the number of elements read from the file does not match the expected product of the shape dimensions.
     """
     # Read the binary file content into a numpy array
     mat_raw = np.fromfile(path, dtype=dtype)
@@ -245,12 +246,12 @@ def validate_kveclist(kveclist: np.ndarray, kmesh_num: Tuple[int, int, int]) -> 
     """
     Validates that all k-points in the kveclist are within the specified kmesh grid and their opposite points are also present.
 
-    Parameters:
-    - kveclist (numpy.ndarray): The list of k-vectors to validate.
-    - kmesh_num (Tuple[int, int, int]): The dimensions of the k-mesh grid (knx, kny, knz), specifying the number of k-points in each direction.
-
-    Returns:
-    - bool: True if all k-points and their opposites are valid within the kmesh, False otherwise.
+    :param kveclist: The list of k-vectors to validate.
+    :type kveclist: numpy.ndarray
+    :param kmesh_num: The dimensions of the k-mesh grid (knx, kny, knz), specifying the number of k-points in each direction.
+    :type kmesh_num: Tuple[int, int, int]
+    :return: True if all k-points and their opposites are valid within the kmesh, False otherwise.
+    :rtype: bool
     """
     # Create a grid of k-points for the kmesh
     kmesh_points = np.mgrid[0:kmesh_num[0], 0:kmesh_num[1], 0:kmesh_num[2]].reshape(3, -1).T / np.array(kmesh_num) - 0.5
@@ -269,13 +270,18 @@ class Plot_mat:
     A base class for creating and managing plots for matrix data, particularly for visualizing 
     k-space vectors or similar scientific data.
 
-    Attributes:
-        kveclist (np.ndarray): An array of k-vectors, typically representing points in a space.
-        fig (matplotlib.figure.Figure): The figure object where the plot(s) will be drawn.
-        title (str): Title of the overall figure.
-        ylabel (str): Label for the Y-axis of the plot.
-        dpi (int): Dots per inch, setting the resolution of the figure.
-        figsize (Tuple[int, int]): Dimensions of the figure (width, height) in inches.
+    :ivar kveclist: An array of k-vectors, typically representing points in a space.
+    :vartype kveclist: numpy.ndarray
+    :ivar fig: The figure object where the plot(s) will be drawn.
+    :vartype fig: matplotlib.figure.Figure
+    :ivar title: Title of the overall figure.
+    :vartype title: str
+    :ivar ylabel: Label for the Y-axis of the plot.
+    :vartype ylabel: str
+    :ivar dpi: Dots per inch, setting the resolution of the figure.
+    :vartype dpi: int
+    :ivar figsize: Dimensions of the figure (width, height) in inches.
+    :vartype figsize: Tuple[int, int]
     """
 
     def __init__(self, kveclist: Union[np.ndarray, list], dpi: int = 100, 
@@ -283,14 +289,16 @@ class Plot_mat:
         """
         Initializes the Plot_mat object with specified parameters and sets up the plotting environment.
         
-        Parameters:
-            kveclist (Union[np.ndarray, list]): List or array of k-vectors. If a list is provided,
-                                                it will be converted to an np.ndarray.
-            dpi (int, optional): Resolution of the plot in dots per inch. Default is 100.
-            figsize (Tuple[int, int], optional): Size of the figure (width, height) in inches.
-                                                 Default is (8, 6).
-            title (str, optional): Title of the overall figure. Default is an empty string.
-            ylabel (str, optional): Label for the Y-axis of the plot. Default is an empty string.
+        :param kveclist: List or array of k-vectors. If a list is provided, it will be converted to an np.ndarray.
+        :type kveclist: Union[numpy.ndarray, list]
+        :param dpi: Resolution of the plot in dots per inch. Default is 100.
+        :type dpi: int
+        :param figsize: Size of the figure (width, height) in inches. Default is (8, 6).
+        :type figsize: Tuple[int, int]
+        :param title: Title of the overall figure. Default is an empty string.
+        :type title: str
+        :param ylabel: Label for the Y-axis of the plot. Default is an empty string.
+        :type ylabel: str
         """
         self.kveclist = np.array(kveclist)
         self.fig = plt.figure(dpi=dpi, figsize=figsize)
@@ -301,8 +309,8 @@ class Plot_mat:
         """
         Adds a color bar to the plot and sets titles and labels.
 
-        Parameters:
-            colorbartmp (matplotlib.cm.ScalarMappable): The ScalarMappable instance from which the colorbar is created.
+        :param colorbartmp: The ScalarMappable instance from which the colorbar is created.
+        :type colorbartmp: matplotlib.cm.ScalarMappable
         """
         self.fig.subplots_adjust(right=0.8)
         cbar_ax = self.fig.add_axes([0.85, 0.15, 0.05, 0.7])  # Adjust these values as necessary to fit layout
@@ -310,6 +318,7 @@ class Plot_mat:
         self.fig.suptitle(self.title)
         if self.ylabel:  # Ensuring ylabel is not empty
             plt.ylabel(self.ylabel)
+            
     def show(self):
         """
         Displays the figure.
@@ -320,8 +329,8 @@ class Plot_mat:
         """
         Saves the figure to a file.
 
-        Parameters:
-            path (str): The path (and filename) to save the figure to.
+        :param path: The path (and filename) to save the figure to.
+        :type path: str
         """
         self.fig.savefig(path)
 
@@ -337,26 +346,35 @@ class Plot_mat2D(Plot_mat):
     It visualizes data points across multiple bands and directions using color gradients,
     ideal for examining electronic structures in materials science and physics.
 
-    Inherits:
-        Plot_mat: A base plotting class that provides a figure and common functionalities.
-
-    Attributes:
-        data (np.ndarray): The y-values for the plot, indexed by bands, directions, and k-points.
-                           Shape: (num_bands, num_directions, num_kpoints).
-        colors (np.ndarray): The colors corresponding to the data values, same shape as data.
-        kpaths (List[np.ndarray]): List of arrays, each representing a path through k-space.
-                                   Each array in the list is of shape (M, 3), where M is the number of points in the path.
-        labels (List[List[str]]): List of lists, each containing labels for the points in corresponding kpaths.
-        separate (bool, optional): If True, plots each band-direction combination in a separate subplot.
-                                   Default is True.
-        gap (float, optional): Gap between consecutive k-paths on the x-axis. Default is 0.1.
-        tolerance (float): Numerical tolerance used for matching k-points to k-paths.
-        title (str, optional): Title for the entire figure. Default is an empty string.
-        ylabel (str, optional): Label for the Y-axis of the plot. Default is an empty string.
-        vmin (float, optional): Minimum value for color scaling. Default is the minimum value in the data.
-        vmax (float, optional): Maximum value for color scaling. Default is the maximum value in the data.
-        dpi (int, optional): Resolution of the plot in dots per inch. Default is 100.
-        figsize (Tuple[int, int], optional): Size of the figure (width, height) in inches. Default is (8, 6).
+    :param kveclist: List or array of k-vectors. Shape: (num_kpoints, 3).
+    :type kveclist: Union[numpy.ndarray, List[List[float]]]
+    :param data: The y-values for the plot, indexed by bands, directions, and k-points. Shape: (num_bands, num_directions, num_kpoints).
+    :type data: np.ndarray
+    :param colors: The colors corresponding to the data values, same shape as data. Shape: (num_bands, num_directions, num_kpoints).
+    :type colors: np.ndarray
+    :param kpaths: List of arrays, each representing a path through k-space. Shape: (num_paths, M, 3).
+    :type kpaths: List[np.ndarray]
+    :param labels: List of lists, each containing labels for the points in corresponding kpaths. Shape: (num_paths, M).
+    :type labels: List[List[str]]
+    :param tolerance: Numerical tolerance used for matching k-points to k-paths.
+    :type tolerance: float
+    :param separate: If True, plots each band-direction combination in a separate subplot. Default is True.
+    :type separate: bool, optional
+    :param title: Title for the entire figure. Default is an empty string.
+    :type title: str, optional
+    :param ylabel: Label for the Y-axis of the plot. Default is an empty string.
+    :type ylabel: str, optional
+    :param gap: Gap between consecutive k-paths on the x-axis. Default is 0.1.
+    :type gap: float, optional
+    :param vmin: Minimum value for color scaling. Default is the minimum value in the data.
+    :type vmin: Union[None, float], optional
+    :param vmax: Maximum value for color scaling. Default is the maximum value in the data.
+    :type vmax: Union[None, float], optional
+    :param dpi: Resolution of the plot in dots per inch. Default is 100.
+    :type dpi: int, optional
+    :param figsize: Size of the figure (width, height) in inches. Default is (8, 6).
+    :type figsize: Tuple[int, int], optional
+    :inherits: Plot_mat: A base plotting class that provides a figure and common functionalities.
     """
 
     def __init__(self, kveclist: Union[np.ndarray, List[List[float]]], data: np.ndarray, colors: np.ndarray,
@@ -367,23 +385,34 @@ class Plot_mat2D(Plot_mat):
         """
         Initializes the Plot_mat2D object with specified parameters and setups the plotting environment.
 
-        Parameters:
-            kveclist (Union[np.ndarray, List[List[float]]]): List or array of k-vectors. Shpe: (num_kpoints, 3).
-            data (np.ndarray): The y-values for the plot, indexed by bands, directions, and k-points. Shape: (num_bands, num_directions, num_kpoints).
-            colors (np.ndarray): The colors corresponding to the data values, same shape as data. Shape: (num_bands, num_directions, num_kpoints).
-            kpaths (List[np.ndarray]): List of arrays, each representing a path through k-space. Shape: (num_paths, M, 3).
-                                       Each array in the list is of shape (M, 3), where M is the number of points in the path.
-            labels (List[List[str]]): List of lists, each containing labels for the points in corresponding kpaths. Shape: (num_paths, M).
-            tolerance (float): Numerical tolerance used for matching k-points to k-paths.
-            separate (bool, optional): If True, plots each band-direction combination in a separate subplot.
-                                       Default is True.
-            title (str, optional): Title for the entire figure. Default is an empty string.
-            ylabel (str, optional): Label for the Y-axis of the plot. Default is an empty string.
-            gap (float, optional): Gap between consecutive k-paths on the x-axis. Default is 0.1.
-            vmin (Union[None, float], optional): Minimum value for color scaling. Default is the minimum value in the data.
-            vmax (Union[None, float], optional): Maximum value for color scaling. Default is the maximum value in the data.
-            dpi (int, optional): Resolution of the plot in dots per inch. Default is 100.
-            figsize (Tuple[int, int], optional): Size of the figure (width, height) in inches. Default is (8, 6).
+        :param kveclist: List or array of k-vectors, where each k-vector is a list of three floats.
+        :type kveclist: Union[numpy.ndarray, List[List[float]]]
+        :param data: The y-values for the plot, indexed by bands, directions, and k-points.
+        :type data: np.ndarray
+        :param colors: The colors corresponding to the data values, same shape as data.
+        :type colors: np.ndarray
+        :param kpaths: List of arrays, each representing a path through k-space.
+        :type kpaths: List[np.ndarray]
+        :param labels: List of lists, each containing labels for the points in corresponding kpaths.
+        :type labels: List[List[str]]
+        :param tolerance: Numerical tolerance used for matching k-points to k-paths.
+        :type tolerance: float
+        :param separate: If True, plots each band-direction combination in a separate subplot.
+        :type separate: bool, optional
+        :param title: Title for the entire figure.
+        :type title: str, optional
+        :param ylabel: Label for the Y-axis of the plot.
+        :type ylabel: str, optional
+        :param gap: Gap between consecutive k-paths on the x-axis.
+        :type gap: float, optional
+        :param vmin: Minimum value for color scaling.
+        :type vmin: Union[None, float], optional
+        :param vmax: Maximum value for color scaling.
+        :type vmax: Union[None, float], optional
+        :param dpi: Resolution of the plot in dots per inch.
+        :type dpi: int, optional
+        :param figsize: Size of the figure (width, height) in inches.
+        :type figsize: Tuple[int, int], optional
         """
         super().__init__(kveclist, dpi=dpi, figsize=figsize, title=title, ylabel=ylabel)
         self.data = np.array(data)
@@ -430,13 +459,12 @@ class Plot_mat2D(Plot_mat):
         if colorbartmp:
             self.postprocess(colorbartmp)  # Use the inherited postprocess method
 
-
     def postprocess(self, colorbartmp: plt.cm.ScalarMappable):
         """
         Adds a color bar to the plot, adjust xlims, and sets titles and labels.
 
-        Parameters:
-            colorbartmp (matplotlib.cm.ScalarMappable): The ScalarMappable instance from which the colorbar is created.
+        :param colorbartmp: The ScalarMappable instance from which the colorbar is created.
+        :type colorbartmp: matplotlib.cm.ScalarMappable
         """
         if self.separate:
             for index, ax in enumerate(self.axlist):
@@ -498,20 +526,19 @@ class Plot_mat3D(Plot_mat):
     A class for visualizing 3D matrices representing data along specified paths in k-space.
     It visualizes data points across multiple bands and directions using color gradients.
 
+    :param kveclist: List of all k-vectors of Kmesh to be analyzed. Shape: (total number of k-points, number of dimensions).
+    :param color_b_k: Colors corresponding to the data points. Shape: (total number of k-points).
+    :param vmin: Minimum color scale value. Defaults to None.
+    :param vmax: Maximum color scale value. Defaults to None.
+    :param title: Title of the plot. Defaults to an empty string.
+    :param rownum: Number of rows in the subplot grid. Defaults to 1.
+    :param index_str_for_subtitle: String for subplot subtitles. Defaults to 'i'.
+    :param subtitle_on: Whether to display subtitles. Defaults to True.
+    :param dpi: Dots per inch for plot resolution. Defaults to 100.
+    :param figsize: Dimensions of the figure (width, height) in inches. Defaults to (12, 6).
+
     Inherits:
         Plot_mat: A base plotting class that provides figure setup and post-processing.
-
-    Attributes:
-        kveclist (np.ndarray): List of all k-vectors of Kmesh to be analyzed. Shape: (total number of k-points, number of dimensions).
-        color_b_k (np.ndarray): Colors corresponding to the data points. Shape: (total number of k-points).
-        vmin (Optional[float]): Minimum color scale value. Defaults to None.
-        vmax (Optional[float]): Maximum color scale value. Defaults to None.
-        title (str): Title of the plot. Defaults to an empty string.
-        rownum (int): Number of rows in the subplot grid. Defaults to 1.
-        index_str_for_subtitle (str): String for subplot subtitles. Defaults to 'i'.
-        subtitle_on (bool): Whether to display subtitles. Defaults to True.
-        dpi (int): Dots per inch for plot resolution. Defaults to 100.
-        figsize (Tuple[int, int]): Dimensions of the figure (width, height) in inches. Defaults to (12, 6).
     """
 
     def __init__(self, kveclist: np.ndarray, color_b_k: np.ndarray, 
@@ -522,17 +549,16 @@ class Plot_mat3D(Plot_mat):
         """
         Initializes the Plot_mat3D object with specified parameters and sets up the plotting environment.
 
-        Parameters:
-            kveclist (np.ndarray): List or array of k-vectors.
-            color_b_k (np.ndarray): Colors corresponding to the data points.
-            vmin (Optional[float]): Minimum color scale value. If None, defaults to the minimum value in the data.
-            vmax (Optional[float]): Maximum color scale value. If None, defaults to the maximum value in the data.
-            title (str): Title of the plot. Defaults to an empty string if not provided.
-            rownum (int): Number of rows in the subplot grid. Defaults to 1.
-            index_str_for_subtitle (str): String for subplot subtitles. Defaults to 'i'.
-            subtitle_on (bool): Whether to display subtitles. Defaults to True.
-            dpi (int): Dots per inch for plot resolution. Defaults to 100.
-            figsize (Tuple[int, int]): Dimensions of the figure (width, height) in inches. Defaults to (12, 6).
+        :param kveclist: List or array of k-vectors.
+        :param color_b_k: Colors corresponding to the data points.
+        :param vmin: Minimum color scale value. If None, defaults to the minimum value in the data.
+        :param vmax: Maximum color scale value. If None, defaults to the maximum value in the data.
+        :param title: Title of the plot. Defaults to an empty string if not provided.
+        :param rownum: Number of rows in the subplot grid. Defaults to 1.
+        :param index_str_for_subtitle: String for subplot subtitles. Defaults to 'i'.
+        :param subtitle_on: Whether to display subtitles. Defaults to True.
+        :param dpi: Dots per inch for plot resolution. Defaults to 100.
+        :param figsize: Dimensions of the figure (width, height) in inches. Defaults to (12, 6).
         """
         super().__init__(kveclist=kveclist, dpi=dpi, figsize=figsize, title=title)
         self.color_b_k = np.array(color_b_k)

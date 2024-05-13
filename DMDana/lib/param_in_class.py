@@ -1,6 +1,5 @@
 from pydantic import BaseModel
 
-
 class param_class(BaseModel):
     DEBUG:float=None
     restart:float=None
@@ -150,8 +149,25 @@ class param_class(BaseModel):
     alg_use_dmDP_in_evolution:float=None
     degthr:float=None
     band_skipped:float=None
-    def __getitem__(self,key):#For compatibility 
-        return str(getattr(self,key))
-    def __setitem__(self,key,value_str):#For compatibility 
-        type_key=type(getattr(self,key))
-        setattr(self,key,type_key(value_str))
+    def __getitem__(self, key):
+        """
+        Retrieve the string representation of the attribute specified by `key`.
+
+        :param key: The attribute name whose value is to be retrieved.
+        :type key: str
+        :return: The string representation of the attribute value.
+        :rtype: str
+        """
+        return str(getattr(self, key))
+
+    def __setitem__(self, key, value_str):
+        """
+        Set the attribute specified by `key` to a new value, converting `value_str` to the appropriate type.
+
+        :param key: The attribute name whose value is to be set.
+        :type key: str
+        :param value_str: The new value for the attribute, provided as a string.
+        :type value_str: str
+        """
+        type_key = type(getattr(self, key))
+        setattr(self, key, type_key(value_str))
