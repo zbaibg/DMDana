@@ -32,10 +32,15 @@ release = '0.1.0'
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-    'sphinx.ext.autodoc',
-    'sphinx.ext.viewcode',
-    'sphinx.ext.napoleon',
+    "sphinx.ext.autodoc",  # Core library for html generation from docstrings
+    "sphinx.ext.autosummary",  # Create neat summary tables
+    "sphinx.ext.coverage",  # Report missing documentation
+    "sphinx.ext.napoleon",  # NumPy style docstrings
 ]
+autosummary_generate = True
+autosummary_imported_members = True
+autosummary_ignore_module_all = False
+coverage_show_missing_items = True
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -45,6 +50,15 @@ templates_path = ['_templates']
 # This pattern also affects html_static_path and html_extra_path.
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
+# Move type hints from call signature to description
+autodoc_typehints = "description"
+
+# Order entries by type:
+autodoc_member_order = "groupwise"
+
+# Suppress unnecessary paths in class / function names:
+add_module_names = False
+python_use_unqualified_type_names = True
 
 # -- Options for HTML output -------------------------------------------------
 

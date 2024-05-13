@@ -24,7 +24,6 @@ jobs:
     - name: Build documentation
       run: |
         cd docs  # Replace 'docs' with your documentation directory, if different
-        sphinx-apidoc -f -o . ../DMDana
         make html
 
     - name: Deploy to GitHub Pages
