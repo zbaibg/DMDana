@@ -1,5 +1,5 @@
 #! /usr/bin/env python
-"""_summary_
+"""
 This plots FFT spectra of the DMD currents. It could also output the DC components of the current FFT-setting to files
 """
 import itertools

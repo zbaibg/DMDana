@@ -36,11 +36,8 @@ extensions = [
     "sphinx.ext.autosummary",  # Create neat summary tables
     "sphinx.ext.coverage",  # Report missing documentation
     "sphinx.ext.napoleon",  # NumPy style docstrings
+    "sphinx.ext.viewcode"
 ]
-autosummary_generate = True
-autosummary_imported_members = True
-autosummary_ignore_module_all = False
-coverage_show_missing_items = True
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -54,7 +51,7 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 autodoc_typehints = "description"
 
 # Order entries by type:
-autodoc_member_order = "groupwise"
+#autodoc_member_order = "groupwise"
 
 # Suppress unnecessary paths in class / function names:
 add_module_names = False

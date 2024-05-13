@@ -1,5 +1,5 @@
 #! /usr/bin/env python
-"""_summary_
+"""
 This plots the change of the Direct Current component calculated by different FFT-time-range and FFT-window-functions. This aims to check FFT convergence. It could also output the analysis results to files.
 """
 import itertools

@@ -1,7 +1,6 @@
 #! /usr/bin/env python
-"""_summary_
+"""
 This plots the occupation functions with time, namely f(E,t)  of different styles in batch.
- 
 Be sure that your occupation filelists include complete number of files and also occupations_t0.out
 """
 import logging

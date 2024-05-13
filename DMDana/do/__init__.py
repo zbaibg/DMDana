@@ -1,5 +1,4 @@
-'''from . import (DMDana_ini_config_setting, FeynWann_Current,
-               FFT_DC_convergence_test, FFT_spectrum_plot, config,
-               current_plot, occup_deriv, occup_time)
 '''
-#from . import __main__
+Visualization tools for DMD results
+'''
+

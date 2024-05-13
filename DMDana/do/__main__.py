@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # PYTHON_ARGCOMPLETE_OK
-"""_summary_
+"""
 Main executable file for DMDana
 Please run activate-global-python-argcomplete --user in the terminal to enable the auto-completion of the command line arguments.
 """

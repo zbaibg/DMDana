@@ -1,7 +1,11 @@
 To generate docs, do the following:
 
+```
 python -m pip install --upgrade pip
 pip install sphinx sphinx_rtd_theme
 pip install -e ..
 
 make html
+```
+
+You may need to clean api folder each time to make sure the api documents are regenerated correctly.

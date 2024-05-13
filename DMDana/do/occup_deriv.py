@@ -1,5 +1,5 @@
 #! /usr/bin/env python
-"""_summary_
+"""
 This script plots the E-axis maximum for the time derivative of the occupation funciton f(E,t), namely (df/dt)max_in_E_axis.
 (Using second center finite difference).
 This program does not read time from file content for now. It only count the file numbers to get time. 
