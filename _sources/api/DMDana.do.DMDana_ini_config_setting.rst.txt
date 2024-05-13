@@ -15,6 +15,7 @@ DMDana.do.DMDana\_ini\_config\_setting
       :toctree:
       :nosignatures:
    
+      change_folder_for_DMDana_ini_config_setting
       get_DMDana_ini_config_setting
    
    

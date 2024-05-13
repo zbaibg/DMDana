@@ -1,6 +1,0 @@
-DMDana.lib.logic\_func.debug\_elec\_or\_hole
-============================================
-
-.. currentmodule:: DMDana.lib.logic_func
-
-.. autofunction:: debug_elec_or_hole

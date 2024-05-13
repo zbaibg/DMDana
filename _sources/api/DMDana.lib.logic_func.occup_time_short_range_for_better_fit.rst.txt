@@ -1,6 +1,0 @@
-DMDana.lib.logic\_func.occup\_time\_short\_range\_for\_better\_fit
-==================================================================
-
-.. currentmodule:: DMDana.lib.logic_func
-
-.. autofunction:: occup_time_short_range_for_better_fit

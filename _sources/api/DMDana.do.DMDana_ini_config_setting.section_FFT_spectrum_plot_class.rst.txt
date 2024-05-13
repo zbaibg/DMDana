@@ -17,34 +17,13 @@ DMDana.do.DMDana\_ini\_config\_setting.section\_FFT\_spectrum\_plot\_class
    .. autosummary::
       :nosignatures:
    
+      ~section_FFT_spectrum_plot_class.Cutoff_list_to_list
+      ~section_FFT_spectrum_plot_class.Window_type_to_list
       ~section_FFT_spectrum_plot_class.__init__
-      ~section_FFT_spectrum_plot_class.construct
-      ~section_FFT_spectrum_plot_class.copy
-      ~section_FFT_spectrum_plot_class.dict
-      ~section_FFT_spectrum_plot_class.from_orm
       ~section_FFT_spectrum_plot_class.get
       ~section_FFT_spectrum_plot_class.getboolean
       ~section_FFT_spectrum_plot_class.getfloat
       ~section_FFT_spectrum_plot_class.getint
-      ~section_FFT_spectrum_plot_class.json
-      ~section_FFT_spectrum_plot_class.model_construct
-      ~section_FFT_spectrum_plot_class.model_copy
-      ~section_FFT_spectrum_plot_class.model_dump
-      ~section_FFT_spectrum_plot_class.model_dump_json
-      ~section_FFT_spectrum_plot_class.model_json_schema
-      ~section_FFT_spectrum_plot_class.model_parametrized_name
-      ~section_FFT_spectrum_plot_class.model_post_init
-      ~section_FFT_spectrum_plot_class.model_rebuild
-      ~section_FFT_spectrum_plot_class.model_validate
-      ~section_FFT_spectrum_plot_class.model_validate_json
-      ~section_FFT_spectrum_plot_class.model_validate_strings
-      ~section_FFT_spectrum_plot_class.parse_file
-      ~section_FFT_spectrum_plot_class.parse_obj
-      ~section_FFT_spectrum_plot_class.parse_raw
-      ~section_FFT_spectrum_plot_class.schema
-      ~section_FFT_spectrum_plot_class.schema_json
-      ~section_FFT_spectrum_plot_class.update_forward_refs
-      ~section_FFT_spectrum_plot_class.validate
    
    
 
@@ -54,11 +33,6 @@ DMDana.do.DMDana\_ini\_config\_setting.section\_FFT\_spectrum\_plot\_class
 
    .. autosummary::
    
-      ~section_FFT_spectrum_plot_class.model_computed_fields
-      ~section_FFT_spectrum_plot_class.model_config
-      ~section_FFT_spectrum_plot_class.model_extra
-      ~section_FFT_spectrum_plot_class.model_fields
-      ~section_FFT_spectrum_plot_class.model_fields_set
       ~section_FFT_spectrum_plot_class.Cutoff_list
       ~section_FFT_spectrum_plot_class.Window_type_list
       ~section_FFT_spectrum_plot_class.Log_y_scale

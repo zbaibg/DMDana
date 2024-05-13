@@ -1,6 +1,0 @@
-DMDana.do.occup\_deriv.do
-=========================
-
-.. currentmodule:: DMDana.do.occup_deriv
-
-.. autofunction:: do

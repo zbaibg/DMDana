@@ -1,6 +1,0 @@
-DMDana.lib.parallel\_folder\_analysis.read\_folders
-===================================================
-
-.. currentmodule:: DMDana.lib.parallel_folder_analysis
-
-.. autofunction:: read_folders

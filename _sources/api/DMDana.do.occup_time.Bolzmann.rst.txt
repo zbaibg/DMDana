@@ -1,6 +1,0 @@
-DMDana.do.occup\_time.Bolzmann
-==============================
-
-.. currentmodule:: DMDana.do.occup_time
-
-.. autofunction:: Bolzmann

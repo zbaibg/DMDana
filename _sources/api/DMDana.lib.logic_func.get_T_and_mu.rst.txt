@@ -1,6 +1,0 @@
-DMDana.lib.logic\_func.get\_T\_and\_mu
-======================================
-
-.. currentmodule:: DMDana.lib.logic_func
-
-.. autofunction:: get_T_and_mu

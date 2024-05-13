@@ -73,17 +73,19 @@
   <h1>Source code for DMDana.do.DMDana_ini_config_setting</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">configparser</span>
 <span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span>
 
-<span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">BaseModel</span>
+<span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">field_validator</span>
+<span class="kn">from</span> <span class="nn">pydantic.dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
 
-<span class="kn">from</span> <span class="nn">..lib.constant</span> <span class="kn">import</span> <span class="n">libpath</span>
+<span class="kn">from</span> <span class="nn">..lib.constant</span> <span class="kn">import</span> <span class="n">allfuncname</span><span class="p">,</span> <span class="n">libpath</span>
 <span class="kn">from</span> <span class="nn">..lib.DMDparser</span> <span class="kn">import</span> <span class="n">check_and_get_path</span>
 
 
 <div class="viewcode-block" id="section_default_class">
 <a class="viewcode-back" href="../../../api/DMDana.do.DMDana_ini_config_setting.section_default_class.html#DMDana.do.DMDana_ini_config_setting.section_default_class">[docs]</a>
-<span class="k">class</span> <span class="nc">section_default_class</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">section_default_class</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A class for default section configurations, compatible with configparser.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -148,9 +150,9 @@
     <span class="n">get</span> <span class="o">=</span> <span class="fm">__getitem__</span></div>
 
 
-
 <div class="viewcode-block" id="sections_current_classes">
 <a class="viewcode-back" href="../../../api/DMDana.do.DMDana_ini_config_setting.sections_current_classes.html#DMDana.do.DMDana_ini_config_setting.sections_current_classes">[docs]</a>
+<span class="nd">@dataclass</span>
 <span class="k">class</span> <span class="nc">sections_current_classes</span><span class="p">(</span><span class="n">section_default_class</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A class for current section configurations.</span>
@@ -158,9 +160,9 @@
     <span class="n">elec_or_hole</span><span class="p">:</span> <span class="nb">str</span></div>
 
 
-
 <div class="viewcode-block" id="sections_occup_classes">
 <a class="viewcode-back" href="../../../api/DMDana.do.DMDana_ini_config_setting.sections_occup_classes.html#DMDana.do.DMDana_ini_config_setting.sections_occup_classes">[docs]</a>
+<span class="nd">@dataclass</span>
 <span class="k">class</span> <span class="nc">sections_occup_classes</span><span class="p">(</span><span class="n">section_default_class</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A class for occupation section configurations.</span>
@@ -169,9 +171,9 @@
     <span class="n">filelist_step</span><span class="p">:</span> <span class="nb">int</span></div>
 
 
-
 <div class="viewcode-block" id="section_current_plot_class">
 <a class="viewcode-back" href="../../../api/DMDana.do.DMDana_ini_config_setting.section_current_plot_class.html#DMDana.do.DMDana_ini_config_setting.section_current_plot_class">[docs]</a>
+<span class="nd">@dataclass</span>
 <span class="k">class</span> <span class="nc">section_current_plot_class</span><span class="p">(</span><span class="n">sections_current_classes</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A class for current plot section configurations.</span>
@@ -186,9 +188,9 @@
     <span class="n">plot_all</span><span class="p">:</span> <span class="nb">bool</span></div>
 
 
-
 <div class="viewcode-block" id="section_FFT_DC_convergence_test_class">
 <a class="viewcode-back" href="../../../api/DMDana.do.DMDana_ini_config_setting.section_FFT_DC_convergence_test_class.html#DMDana.do.DMDana_ini_config_setting.section_FFT_DC_convergence_test_class">[docs]</a>
+<span class="nd">@dataclass</span>
 <span class="k">class</span> <span class="nc">section_FFT_DC_convergence_test_class</span><span class="p">(</span><span class="n">sections_current_classes</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A class for FFT DC convergence test section configurations.</span>
@@ -203,52 +205,49 @@
     <span class="n">Database_output_filename_xlsx</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">Figure_output_filename</span><span class="p">:</span> <span class="nb">str</span>
 
-<div class="viewcode-block" id="section_FFT_DC_convergence_test_class.model_post_init">
-<a class="viewcode-back" href="../../../api/DMDana.do.DMDana_ini_config_setting.section_FFT_DC_convergence_test_class.html#DMDana.do.DMDana_ini_config_setting.section_FFT_DC_convergence_test_class.model_post_init">[docs]</a>
-    <span class="k">def</span> <span class="nf">model_post_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__context</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Post-initialization to handle the conversion of Window_type_list from string to list.</span>
-<span class="sd">        </span>
-<span class="sd">        :param __context: Contextual information for post-initialization.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Window_type_list</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">Window_type_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">Window_type_list</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)]</span></div>
-</div>
-
 
 
 <div class="viewcode-block" id="section_FFT_spectrum_plot_class">
 <a class="viewcode-back" href="../../../api/DMDana.do.DMDana_ini_config_setting.section_FFT_spectrum_plot_class.html#DMDana.do.DMDana_ini_config_setting.section_FFT_spectrum_plot_class">[docs]</a>
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">validate_assignment</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span> <span class="c1">#make this class&#39;s attribute be type-validated/converted when assigning</span>
 <span class="k">class</span> <span class="nc">section_FFT_spectrum_plot_class</span><span class="p">(</span><span class="n">sections_current_classes</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A class for FFT spectrum plot section configurations.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">Cutoff_list</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span>
-    <span class="n">Window_type_list</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span>
+    <span class="n">Cutoff_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
+    <span class="n">Window_type_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
     <span class="n">Log_y_scale</span><span class="p">:</span> <span class="nb">bool</span>
     <span class="n">Summary_output_csv</span><span class="p">:</span> <span class="nb">bool</span>
     <span class="n">Summary_output_xlsx</span><span class="p">:</span> <span class="nb">bool</span>
     <span class="n">Summary_output_filename_csv</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">Summary_output_filename_xlsx</span><span class="p">:</span> <span class="nb">str</span>
-
-<div class="viewcode-block" id="section_FFT_spectrum_plot_class.model_post_init">
-<a class="viewcode-back" href="../../../api/DMDana.do.DMDana_ini_config_setting.section_FFT_spectrum_plot_class.html#DMDana.do.DMDana_ini_config_setting.section_FFT_spectrum_plot_class.model_post_init">[docs]</a>
-    <span class="k">def</span> <span class="nf">model_post_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__context</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Post-initialization to handle the conversion of Window_type_list and Cutoff_list from string to list.</span>
-<span class="sd">        </span>
-<span class="sd">        :param __context: Contextual information for post-initialization.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Window_type_list</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">Window_type_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">Window_type_list</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)]</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Cutoff_list</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">Cutoff_list</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">Cutoff_list</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)]</span></div>
-</div>
-
+    
+    <span class="nd">@field_validator</span><span class="p">(</span><span class="s1">&#39;Window_type_list&#39;</span><span class="p">,</span><span class="n">mode</span><span class="o">=</span><span class="s1">&#39;before&#39;</span><span class="p">)</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">Window_type_to_list</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">Window_type_list</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">Window_type_list</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">return</span> <span class="p">[</span><span class="n">i</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">Window_type_list</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)]</span>
+    
+    <span class="nd">@field_validator</span><span class="p">(</span><span class="s1">&#39;Cutoff_list&#39;</span><span class="p">,</span><span class="n">mode</span><span class="o">=</span><span class="s1">&#39;before&#39;</span><span class="p">)</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">Cutoff_list_to_list</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">Cutoff_list</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">Cutoff_list</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">return</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">Cutoff_list</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">Cutoff_list</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="k">return</span> <span class="p">[</span><span class="n">Cutoff_list</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">Cutoff_list</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+            <span class="k">return</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">Cutoff_list</span><span class="p">)]</span></div>
 
 
 <div class="viewcode-block" id="section_occup_time_class">
 <a class="viewcode-back" href="../../../api/DMDana.do.DMDana_ini_config_setting.section_occup_time_class.html#DMDana.do.DMDana_ini_config_setting.section_occup_time_class">[docs]</a>
+<span class="nd">@dataclass</span>
 <span class="k">class</span> <span class="nc">section_occup_time_class</span><span class="p">(</span><span class="n">sections_occup_classes</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A class for occupation time section configurations.</span>
@@ -271,9 +270,9 @@
     <span class="n">showlegend</span><span class="p">:</span> <span class="nb">bool</span></div>
 
 
-
 <div class="viewcode-block" id="section_occup_deriv_class">
 <a class="viewcode-back" href="../../../api/DMDana.do.DMDana_ini_config_setting.section_occup_deriv_class.html#DMDana.do.DMDana_ini_config_setting.section_occup_deriv_class">[docs]</a>
+<span class="nd">@dataclass</span>
 <span class="k">class</span> <span class="nc">section_occup_deriv_class</span><span class="p">(</span><span class="n">sections_occup_classes</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A class for occupation derivative section configurations.</span>
@@ -281,10 +280,10 @@
     <span class="k">pass</span></div>
 
 
-
 <div class="viewcode-block" id="DMDana_ini_config_setting_class">
 <a class="viewcode-back" href="../../../api/DMDana.do.DMDana_ini_config_setting.DMDana_ini_config_setting_class.html#DMDana.do.DMDana_ini_config_setting.DMDana_ini_config_setting_class">[docs]</a>
-<span class="k">class</span> <span class="nc">DMDana_ini_config_setting_class</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">DMDana_ini_config_setting_class</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A class to manage all configuration settings for DMDana.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -294,33 +293,33 @@
     <span class="n">section_FFT_spectrum_plot</span><span class="p">:</span> <span class="n">section_FFT_spectrum_plot_class</span>
     <span class="n">section_occup_time</span><span class="p">:</span> <span class="n">section_occup_time_class</span>
     <span class="n">section_occup_deriv</span><span class="p">:</span> <span class="n">section_occup_deriv_class</span>
-
-    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;def __getitem__(self, key: str):</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 <span class="sd">        Retrieve a section configuration using its key.</span>
 <span class="sd">        </span>
 <span class="sd">        :param key: The key of the section to retrieve.</span>
 <span class="sd">        :return: The section configuration object.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;section_&#39;</span> <span class="o">+</span> <span class="n">key</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="s1">&#39;_&#39;</span><span class="p">))</span>
+<span class="sd">        return getattr(self, &#39;section_&#39; + key.replace(&#39;-&#39;, &#39;_&#39;))&#39;&#39;&#39;</span>
 
-<div class="viewcode-block" id="DMDana_ini_config_setting_class.items">
-<a class="viewcode-back" href="../../../api/DMDana.do.DMDana_ini_config_setting.DMDana_ini_config_setting_class.html#DMDana.do.DMDana_ini_config_setting.DMDana_ini_config_setting_class.items">[docs]</a>
-    <span class="k">def</span> <span class="nf">items</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;def items(self, key):</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 <span class="sd">        Retrieve all items of a section as a dictionary.</span>
 <span class="sd">        </span>
 <span class="sd">        :param key: The key of the section.</span>
 <span class="sd">        :return: A dictionary of all items in the section.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="nb">dict</span><span class="p">((</span><span class="n">key</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">val</span><span class="p">))</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">model_dump</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">())</span></div>
-</div>
+<span class="sd">        return dict((key, str(val)) for key, val in self[key].__dict__.items())&#39;&#39;&#39;</span>
 
+    <span class="k">def</span> <span class="nf">get_section_from_funcname</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">funcname</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">funcname</span> <span class="ow">in</span> <span class="n">allfuncname</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;funcname is not valid, it should be in </span><span class="si">{</span><span class="n">allfuncname</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="s1">&#39;section_&#39;</span><span class="o">+</span><span class="n">funcname</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="get_DMDana_ini_config_setting">
 <a class="viewcode-back" href="../../../api/DMDana.do.DMDana_ini_config_setting.get_DMDana_ini_config_setting.html#DMDana.do.DMDana_ini_config_setting.get_DMDana_ini_config_setting">[docs]</a>
-<span class="k">def</span> <span class="nf">get_DMDana_ini_config_setting</span><span class="p">(</span><span class="n">configfile_path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DMDana_ini_config_setting_class</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">get_DMDana_ini_config_setting</span><span class="p">(</span><span class="n">configfile_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DMDana_ini_config_setting_class</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Load and return the DMDana configuration settings from a file.</span>
 <span class="sd">    </span>
@@ -328,14 +327,48 @@
 <span class="sd">    :return: An instance of DMDana_ini_config_setting_class with loaded settings.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">DMDana_ini_configparser0</span> <span class="o">=</span> <span class="n">configparser</span><span class="o">.</span><span class="n">ConfigParser</span><span class="p">(</span><span class="n">inline_comment_prefixes</span><span class="o">=</span><span class="s2">&quot;#&quot;</span><span class="p">)</span>
+    <span class="n">DMDana_ini_configparser0</span><span class="o">.</span><span class="n">optionxform</span> <span class="o">=</span> <span class="nb">str</span>
     <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">configfile_path</span><span class="p">):</span>
         <span class="n">default_ini</span> <span class="o">=</span> <span class="n">check_and_get_path</span><span class="p">(</span><span class="n">libpath</span> <span class="o">+</span> <span class="s1">&#39;/DMDana/do/DMDana_default.ini&#39;</span><span class="p">)</span>
         <span class="n">DMDana_ini_configparser0</span><span class="o">.</span><span class="n">read</span><span class="p">([</span><span class="n">default_ini</span><span class="p">,</span> <span class="n">configfile_path</span><span class="p">])</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">Warning</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1"> not exist. Default setting would be used. You could run &quot;DMDana init&quot; to initialize it.&#39;</span> <span class="o">%</span> <span class="n">configfile_path</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">DMDana_ini_config_setting_class</span><span class="p">(</span><span class="o">**</span><span class="nb">dict</span><span class="p">((</span><span class="s1">&#39;section_&#39;</span> <span class="o">+</span> <span class="n">key</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="s1">&#39;_&#39;</span><span class="p">),</span> <span class="n">val</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">DMDana_ini_configparser0</span><span class="o">.</span><span class="n">items</span><span class="p">()))</span></div>
+    
+    <span class="k">def</span> <span class="nf">class_convert</span><span class="p">(</span><span class="n">config_parser</span><span class="p">:</span> <span class="n">configparser</span><span class="o">.</span><span class="n">ConfigParser</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generate an instance of this class from a configparser instance.</span>
+<span class="sd">        :param config_parser: configparser.ConfigParser instance, containing all the configurations.</span>
+<span class="sd">        :return: DMDana_ini_config_setting_class instance.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">dict_all</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">Field_Class_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">sec_var_name</span><span class="p">:</span> <span class="n">section_name_class</span> <span class="k">for</span> <span class="n">sec_var_name</span><span class="p">,</span> <span class="n">section_name_class</span> <span class="ow">in</span> <span class="n">DMDana_ini_config_setting_class</span><span class="o">.</span><span class="vm">__annotations__</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+
+        <span class="k">for</span> <span class="n">section</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">config_parser</span><span class="o">.</span><span class="n">sections</span><span class="p">())</span><span class="o">+</span><span class="p">[</span><span class="s1">&#39;DEFAULT&#39;</span><span class="p">]:</span>
+            <span class="n">section_var_name</span> <span class="o">=</span> <span class="s1">&#39;section_&#39;</span> <span class="o">+</span> <span class="n">section</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="s1">&#39;_&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">section_var_name</span> <span class="ow">in</span> <span class="n">Field_Class_dict</span><span class="p">:</span>
+                <span class="n">section_class</span> <span class="o">=</span> <span class="n">Field_Class_dict</span><span class="p">[</span><span class="n">section_var_name</span><span class="p">]</span>
+                <span class="n">dict_all</span><span class="p">[</span><span class="n">section_var_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">section_class</span><span class="p">(</span><span class="o">**</span><span class="nb">dict</span><span class="p">(</span><span class="n">config_parser</span><span class="o">.</span><span class="n">items</span><span class="p">(</span><span class="n">section</span><span class="p">)))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No field found for section </span><span class="si">{</span><span class="n">section_var_name</span><span class="si">}</span><span class="s2"> in DMDana_ini_config_setting_class&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">DMDana_ini_config_setting_class</span><span class="p">(</span><span class="o">**</span><span class="n">dict_all</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">class_convert</span><span class="p">(</span><span class="n">DMDana_ini_configparser0</span><span class="p">)</span></div>
 
 
+<div class="viewcode-block" id="change_folder_for_DMDana_ini_config_setting">
+<a class="viewcode-back" href="../../../api/DMDana.do.DMDana_ini_config_setting.change_folder_for_DMDana_ini_config_setting.html#DMDana.do.DMDana_ini_config_setting.change_folder_for_DMDana_ini_config_setting">[docs]</a>
+<span class="k">def</span> <span class="nf">change_folder_for_DMDana_ini_config_setting</span><span class="p">(</span><span class="n">DMDana_ini_config_setting</span><span class="p">:</span><span class="n">DMDana_ini_config_setting_class</span><span class="p">,</span><span class="n">change_DMD_folder_to</span><span class="p">:</span><span class="nb">str</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    change DMD folder in the DMDana configuration settings.</span>
+<span class="sd">    </span>
+<span class="sd">    :param DMDana_ini_config_setting: DMDana_ini_config_setting_class instance.</span>
+<span class="sd">    :param change_DMD_folder_to: change the DMD folder in the DMDana.ini to this folder.</span>
+<span class="sd">    :return: An instance of DMDana_ini_config_setting_class with loaded settings.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">section_key</span><span class="p">,</span><span class="n">section_data</span> <span class="ow">in</span> <span class="n">DMDana_ini_config_setting</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">section_data</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">section_default_class</span><span class="p">,</span><span class="n">Any</span><span class="p">]</span>
+        <span class="n">section_data</span><span class="o">.</span><span class="n">folder</span><span class="o">=</span><span class="n">change_DMD_folder_to</span>
+    <span class="k">return</span> <span class="n">DMDana_ini_config_setting</span></div>
 
 </pre></div>
 

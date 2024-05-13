@@ -1,6 +1,0 @@
-DMDana.lib.logic\_func.get\_step\_and\_time
-===========================================
-
-.. currentmodule:: DMDana.lib.logic_func
-
-.. autofunction:: get_step_and_time

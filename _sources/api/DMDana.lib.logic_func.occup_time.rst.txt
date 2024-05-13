@@ -1,6 +1,0 @@
-DMDana.lib.logic\_func.occup\_time
-==================================
-
-.. currentmodule:: DMDana.lib.logic_func
-
-.. autofunction:: occup_time

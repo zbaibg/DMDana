@@ -1,6 +1,0 @@
-DMDana.lib.logic\_func.current\_plot
-====================================
-
-.. currentmodule:: DMDana.lib.logic_func
-
-.. autofunction:: current_plot

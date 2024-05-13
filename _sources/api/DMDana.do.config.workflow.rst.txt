@@ -1,6 +1,0 @@
-DMDana.do.config.workflow
-=========================
-
-.. currentmodule:: DMDana.do.config
-
-.. autofunction:: workflow

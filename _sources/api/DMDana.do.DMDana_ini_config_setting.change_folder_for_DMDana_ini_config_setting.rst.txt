@@ -1,0 +1,6 @@
+DMDana.do.DMDana\_ini\_config\_setting.change\_folder\_for\_DMDana\_ini\_config\_setting
+========================================================================================
+
+.. currentmodule:: DMDana.do.DMDana_ini_config_setting
+
+.. autofunction:: change_folder_for_DMDana_ini_config_setting

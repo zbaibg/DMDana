@@ -18,33 +18,10 @@ DMDana.do.DMDana\_ini\_config\_setting.sections\_occup\_classes
       :nosignatures:
    
       ~sections_occup_classes.__init__
-      ~sections_occup_classes.construct
-      ~sections_occup_classes.copy
-      ~sections_occup_classes.dict
-      ~sections_occup_classes.from_orm
       ~sections_occup_classes.get
       ~sections_occup_classes.getboolean
       ~sections_occup_classes.getfloat
       ~sections_occup_classes.getint
-      ~sections_occup_classes.json
-      ~sections_occup_classes.model_construct
-      ~sections_occup_classes.model_copy
-      ~sections_occup_classes.model_dump
-      ~sections_occup_classes.model_dump_json
-      ~sections_occup_classes.model_json_schema
-      ~sections_occup_classes.model_parametrized_name
-      ~sections_occup_classes.model_post_init
-      ~sections_occup_classes.model_rebuild
-      ~sections_occup_classes.model_validate
-      ~sections_occup_classes.model_validate_json
-      ~sections_occup_classes.model_validate_strings
-      ~sections_occup_classes.parse_file
-      ~sections_occup_classes.parse_obj
-      ~sections_occup_classes.parse_raw
-      ~sections_occup_classes.schema
-      ~sections_occup_classes.schema_json
-      ~sections_occup_classes.update_forward_refs
-      ~sections_occup_classes.validate
    
    
 
@@ -54,11 +31,6 @@ DMDana.do.DMDana\_ini\_config\_setting.sections\_occup\_classes
 
    .. autosummary::
    
-      ~sections_occup_classes.model_computed_fields
-      ~sections_occup_classes.model_config
-      ~sections_occup_classes.model_extra
-      ~sections_occup_classes.model_fields
-      ~sections_occup_classes.model_fields_set
       ~sections_occup_classes.t_max
       ~sections_occup_classes.filelist_step
       ~sections_occup_classes.only_jtot
