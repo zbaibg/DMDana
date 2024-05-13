@@ -1,0 +1,6 @@
+DMDana.lib.DMDparser.check\_and\_get\_path
+==========================================
+
+.. currentmodule:: DMDana.lib.DMDparser
+
+.. autofunction:: check_and_get_path

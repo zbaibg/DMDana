@@ -10,7 +10,7 @@ Welcome to DMDana's documentation!
    :maxdepth: 2
    :caption: Contents:
 
-   modules
+   api
    
 Indices and tables
 ==================

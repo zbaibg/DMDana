@@ -1,0 +1,62 @@
+DMDana.lib.logic\_func
+======================
+
+.. automodule:: DMDana.lib.logic_func
+  
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+      :nosignatures:
+   
+      FFT_spectrum_plot_linear
+      FFT_spectrum_plot_log
+      current_plot
+      dataclass
+      debug_elec_or_hole
+      fermi
+      field
+      get_Boltzfitted
+      get_Scat_State
+      get_T_and_mu
+      get_conduction_change
+      get_step_and_time
+      init_analyze
+      occup_deriv
+      occup_time
+      occup_time_short_range_for_better_fit
+      parallel_folder_analysis
+      parse_param_in
+      read_FFT_spectrum_plot_summary
+      read_lindblad_out
+      read_text_from_file
+      tell_system
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :nosignatures:
+      :toctree:
+      :template: class.rst
+   
+      FolderAnalysis
+      logic_func
+   
+   
+
+   
+   
+   
+
+
+

@@ -1,0 +1,45 @@
+DMDana.do.occup\_deriv
+======================
+
+.. automodule:: DMDana.do.occup_deriv
+  
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+      :nosignatures:
+   
+      dataclass
+      do
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :nosignatures:
+      :toctree:
+      :template: class.rst
+   
+      DMDana_ini_config_setting_class
+      Figure
+      config_occup
+      config_occup_deriv
+      plot_occup_deriv
+   
+   
+
+   
+   
+   
+
+
+

@@ -1,0 +1,6 @@
+DMDana.do.config.dataclass
+==========================
+
+.. currentmodule:: DMDana.do.config
+
+.. autofunction:: dataclass

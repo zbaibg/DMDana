@@ -1,0 +1,6 @@
+DMDana.lib.DMDparser.get\_current\_data
+=======================================
+
+.. currentmodule:: DMDana.lib.DMDparser
+
+.. autofunction:: get_current_data

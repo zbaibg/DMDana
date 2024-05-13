@@ -1,0 +1,6 @@
+DMDana.lib.matana.mat\_init
+===========================
+
+.. currentmodule:: DMDana.lib.matana
+
+.. autofunction:: mat_init

@@ -1,0 +1,6 @@
+DMDana.lib.DMDparser.glob\_occupation\_files
+============================================
+
+.. currentmodule:: DMDana.lib.DMDparser
+
+.. autofunction:: glob_occupation_files

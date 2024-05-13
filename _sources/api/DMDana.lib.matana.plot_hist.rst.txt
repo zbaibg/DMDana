@@ -1,0 +1,6 @@
+DMDana.lib.matana.plot\_hist
+============================
+
+.. currentmodule:: DMDana.lib.matana
+
+.. autofunction:: plot_hist

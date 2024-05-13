@@ -1,0 +1,47 @@
+DMDana.lib.DMDparser
+====================
+
+.. automodule:: DMDana.lib.DMDparser
+  
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+      :nosignatures:
+   
+      check_and_get_path
+      get_DMD_param
+      get_current_data
+      get_erange
+      get_mu_temperature
+      get_total_step_number
+      glob_occupation_files
+      read_text_from_file
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :nosignatures:
+      :toctree:
+      :template: class.rst
+   
+      param_class
+   
+   
+
+   
+   
+   
+
+
+

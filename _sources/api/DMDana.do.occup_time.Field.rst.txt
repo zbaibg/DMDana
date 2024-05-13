@@ -1,0 +1,6 @@
+DMDana.do.occup\_time.Field
+===========================
+
+.. currentmodule:: DMDana.do.occup_time
+
+.. autofunction:: Field

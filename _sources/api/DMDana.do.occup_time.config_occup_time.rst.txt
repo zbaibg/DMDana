@@ -1,0 +1,71 @@
+
+DMDana.do.occup\_time.config\_occup\_time
+=========================================
+
+.. currentmodule:: DMDana.do.occup_time
+
+.. autoclass:: config_occup_time
+   :members:
+   :show-inheritance:
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :nosignatures:
+   
+      ~config_occup_time.__init__
+      ~config_occup_time.initial_log
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~config_occup_time.DMDparam_value
+      ~config_occup_time.EBot_dm_au
+      ~config_occup_time.EBot_eph_au
+      ~config_occup_time.EBot_probe_au
+      ~config_occup_time.ETop_dm_au
+      ~config_occup_time.ETop_eph_au
+      ~config_occup_time.ETop_probe_au
+      ~config_occup_time.EcMin_au
+      ~config_occup_time.EvMax_au
+      ~config_occup_time.Substract_initial_occupation_this
+      ~config_occup_time.cmap
+      ~config_occup_time.configsetting
+      ~config_occup_time.data_fermi
+      ~config_occup_time.dpi
+      ~config_occup_time.figsize
+      ~config_occup_time.figure_style_this
+      ~config_occup_time.filelist_step
+      ~config_occup_time.fit_Boltzmann_initial_guess_T
+      ~config_occup_time.fit_Boltzmann_initial_guess_mu
+      ~config_occup_time.folder
+      ~config_occup_time.funcname
+      ~config_occup_time.log_initialized
+      ~config_occup_time.mu_au
+      ~config_occup_time.occup_Emax_au
+      ~config_occup_time.occup_Emin_au
+      ~config_occup_time.occup_maxmium_file_number_plotted_exclude_t0
+      ~config_occup_time.occup_selected_files
+      ~config_occup_time.occup_t_tot
+      ~config_occup_time.occup_time_plot_highE_this
+      ~config_occup_time.occup_time_plot_highE_valence
+      ~config_occup_time.occup_time_plot_lowE_conduction
+      ~config_occup_time.occup_time_plot_lowE_this
+      ~config_occup_time.occup_time_plot_set_Erange_this
+      ~config_occup_time.occup_timestep_for_all_files
+      ~config_occup_time.occup_timestep_for_selected_file_fs
+      ~config_occup_time.occup_timestep_for_selected_file_ps
+      ~config_occup_time.show_init_log
+      ~config_occup_time.temperature_au
+      ~config_occup_time.DMDana_ini_config_setting
+   
+   

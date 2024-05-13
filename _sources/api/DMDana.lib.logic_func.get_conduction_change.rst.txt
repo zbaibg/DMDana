@@ -1,0 +1,6 @@
+DMDana.lib.logic\_func.get\_conduction\_change
+==============================================
+
+.. currentmodule:: DMDana.lib.logic_func
+
+.. autofunction:: get_conduction_change

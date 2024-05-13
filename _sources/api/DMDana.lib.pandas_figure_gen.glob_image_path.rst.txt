@@ -1,0 +1,6 @@
+DMDana.lib.pandas\_figure\_gen.glob\_image\_path
+================================================
+
+.. currentmodule:: DMDana.lib.pandas_figure_gen
+
+.. autofunction:: glob_image_path

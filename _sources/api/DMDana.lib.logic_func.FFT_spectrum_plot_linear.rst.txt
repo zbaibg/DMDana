@@ -1,0 +1,6 @@
+DMDana.lib.logic\_func.FFT\_spectrum\_plot\_linear
+==================================================
+
+.. currentmodule:: DMDana.lib.logic_func
+
+.. autofunction:: FFT_spectrum_plot_linear

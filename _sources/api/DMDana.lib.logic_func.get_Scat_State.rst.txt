@@ -1,0 +1,6 @@
+DMDana.lib.logic\_func.get\_Scat\_State
+=======================================
+
+.. currentmodule:: DMDana.lib.logic_func
+
+.. autofunction:: get_Scat_State

@@ -1,0 +1,50 @@
+DMDana.lib.matana
+=================
+
+.. automodule:: DMDana.lib.matana
+  
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+      :nosignatures:
+   
+      checkhermitian
+      deepcopy
+      get_mat_of_minus_k
+      mat_init
+      plot_hist
+      shift_kvec
+      validate_kveclist
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :nosignatures:
+      :toctree:
+      :template: class.rst
+   
+      DMD_MatrixAnalyzer
+      JDFTx_MatrixAnalyzer
+      Plot_mat
+      Plot_mat2D
+      Plot_mat3D
+   
+   
+
+   
+   
+   
+
+
+

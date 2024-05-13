@@ -1,0 +1,6 @@
+DMDana.lib.DMDparser.read\_text\_from\_file
+===========================================
+
+.. currentmodule:: DMDana.lib.DMDparser
+
+.. autofunction:: read_text_from_file

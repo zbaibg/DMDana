@@ -1,0 +1,37 @@
+
+DMDana.do.occup\_time.plot\_occup\_time
+=======================================
+
+.. currentmodule:: DMDana.do.occup_time
+
+.. autoclass:: plot_occup_time
+   :members:
+   :show-inheritance:
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :nosignatures:
+   
+      ~plot_occup_time.Boltzmann_fit_and_plot
+      ~plot_occup_time.__init__
+      ~plot_occup_time.do
+      ~plot_occup_time.plot_data
+      ~plot_occup_time.plot_data_func
+      ~plot_occup_time.plot_one_curve
+      ~plot_occup_time.post_processing
+      ~plot_occup_time.post_processing_3D_special
+      ~plot_occup_time.post_processing_heatmap_special
+      ~plot_occup_time.pre_processing
+      ~plot_occup_time.read_occup_file
+      ~plot_occup_time.save_fig
+   
+   
+
+   
+   
+   

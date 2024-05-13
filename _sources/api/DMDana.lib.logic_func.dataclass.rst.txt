@@ -1,0 +1,6 @@
+DMDana.lib.logic\_func.dataclass
+================================
+
+.. currentmodule:: DMDana.lib.logic_func
+
+.. autofunction:: dataclass

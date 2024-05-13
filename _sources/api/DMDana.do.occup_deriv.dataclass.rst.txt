@@ -1,0 +1,6 @@
+DMDana.do.occup\_deriv.dataclass
+================================
+
+.. currentmodule:: DMDana.do.occup_deriv
+
+.. autofunction:: dataclass

@@ -1,0 +1,6 @@
+DMDana.do.DMDana\_ini\_config\_setting.check\_and\_get\_path
+============================================================
+
+.. currentmodule:: DMDana.do.DMDana_ini_config_setting
+
+.. autofunction:: check_and_get_path

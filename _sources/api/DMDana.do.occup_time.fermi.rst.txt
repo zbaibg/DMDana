@@ -1,0 +1,6 @@
+DMDana.do.occup\_time.fermi
+===========================
+
+.. currentmodule:: DMDana.do.occup_time
+
+.. autofunction:: fermi

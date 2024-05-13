@@ -1,0 +1,43 @@
+DMDana.do.current\_plot
+=======================
+
+.. automodule:: DMDana.do.current_plot
+  
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+      :nosignatures:
+   
+      do
+      savgol_filter
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :nosignatures:
+      :toctree:
+      :template: class.rst
+   
+      DMDana_ini_config_setting_class
+      config_current
+      plot_current_plot
+   
+   
+
+   
+   
+   
+
+
+

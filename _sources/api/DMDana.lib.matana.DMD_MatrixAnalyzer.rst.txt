@@ -1,0 +1,27 @@
+
+DMDana.lib.matana.DMD\_MatrixAnalyzer
+=====================================
+
+.. currentmodule:: DMDana.lib.matana
+
+.. autoclass:: DMD_MatrixAnalyzer
+   :members:
+   :show-inheritance:
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :nosignatures:
+   
+      ~DMD_MatrixAnalyzer.__init__
+      ~DMD_MatrixAnalyzer.load_basic_data
+   
+   
+
+   
+   
+   

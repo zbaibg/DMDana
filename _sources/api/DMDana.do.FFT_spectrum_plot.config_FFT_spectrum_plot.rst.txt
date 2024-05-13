@@ -1,0 +1,45 @@
+
+DMDana.do.FFT\_spectrum\_plot.config\_FFT\_spectrum\_plot
+=========================================================
+
+.. currentmodule:: DMDana.do.FFT_spectrum_plot
+
+.. autoclass:: config_FFT_spectrum_plot
+   :members:
+   :show-inheritance:
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :nosignatures:
+   
+      ~config_FFT_spectrum_plot.__init__
+      ~config_FFT_spectrum_plot.initial_log
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~config_FFT_spectrum_plot.DMDparam_value
+      ~config_FFT_spectrum_plot.bandlabel
+      ~config_FFT_spectrum_plot.configsetting
+      ~config_FFT_spectrum_plot.elec_or_hole_this
+      ~config_FFT_spectrum_plot.folder
+      ~config_FFT_spectrum_plot.funcname
+      ~config_FFT_spectrum_plot.jx_data
+      ~config_FFT_spectrum_plot.jy_data
+      ~config_FFT_spectrum_plot.jz_data
+      ~config_FFT_spectrum_plot.light_label
+      ~config_FFT_spectrum_plot.log_initialized
+      ~config_FFT_spectrum_plot.show_init_log
+      ~config_FFT_spectrum_plot.DMDana_ini_config_setting
+   
+   

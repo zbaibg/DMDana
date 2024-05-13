@@ -1,0 +1,6 @@
+DMDana.lib.pandas\_figure\_gen.display\_images
+==============================================
+
+.. currentmodule:: DMDana.lib.pandas_figure_gen
+
+.. autofunction:: display_images

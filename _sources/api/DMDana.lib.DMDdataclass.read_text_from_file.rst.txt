@@ -1,0 +1,6 @@
+DMDana.lib.DMDdataclass.read\_text\_from\_file
+==============================================
+
+.. currentmodule:: DMDana.lib.DMDdataclass
+
+.. autofunction:: read_text_from_file

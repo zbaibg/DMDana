@@ -1,0 +1,6 @@
+DMDana.lib.logic\_func.read\_FFT\_spectrum\_plot\_summary
+=========================================================
+
+.. currentmodule:: DMDana.lib.logic_func
+
+.. autofunction:: read_FFT_spectrum_plot_summary

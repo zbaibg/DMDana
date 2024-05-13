@@ -1,0 +1,6 @@
+DMDana.do.occup\_time.curve\_fit
+================================
+
+.. currentmodule:: DMDana.do.occup_time
+
+.. autofunction:: curve_fit

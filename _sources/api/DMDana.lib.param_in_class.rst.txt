@@ -1,0 +1,33 @@
+DMDana.lib.param\_in\_class
+===========================
+
+.. automodule:: DMDana.lib.param_in_class
+  
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :nosignatures:
+      :toctree:
+      :template: class.rst
+   
+      BaseModel
+      param_class
+   
+   
+
+   
+   
+   
+
+
+

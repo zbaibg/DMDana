@@ -1,0 +1,31 @@
+DMDana.lib.fft
+==============
+
+.. automodule:: DMDana.lib.fft
+  
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+      :nosignatures:
+   
+      fft_of_j
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

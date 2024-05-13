@@ -1,0 +1,43 @@
+
+DMDana.lib.DMDdataclass.DMD
+===========================
+
+.. currentmodule:: DMDana.lib.DMDdataclass
+
+.. autoclass:: DMD
+   :members:
+   :show-inheritance:
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :nosignatures:
+   
+      ~DMD.__init__
+      ~DMD.get_mu_eV_and_T_K
+      ~DMD.get_total_step_num_and_total_time_fs
+      ~DMD.start_analyze
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~DMD.DMD_folder
+      ~DMD.param
+      ~DMD.occupations
+      ~DMD.analyze
+      ~DMD.lindblad_init
+      ~DMD.total_time_fs
+      ~DMD.total_step_num
+      ~DMD.mu_eV
+      ~DMD.temperature_K
+   
+   

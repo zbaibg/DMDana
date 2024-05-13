@@ -1,0 +1,6 @@
+DMDana.lib.logic\_func.init\_analyze
+====================================
+
+.. currentmodule:: DMDana.lib.logic_func
+
+.. autofunction:: init_analyze

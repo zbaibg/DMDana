@@ -1,0 +1,6 @@
+DMDana.lib.DMDparser.get\_mu\_temperature
+=========================================
+
+.. currentmodule:: DMDana.lib.DMDparser
+
+.. autofunction:: get_mu_temperature

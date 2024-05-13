@@ -1,0 +1,27 @@
+
+DMDana.do.occup\_deriv.plot\_occup\_deriv
+=========================================
+
+.. currentmodule:: DMDana.do.occup_deriv
+
+.. autoclass:: plot_occup_deriv
+   :members:
+   :show-inheritance:
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :nosignatures:
+   
+      ~plot_occup_deriv.__init__
+      ~plot_occup_deriv.do
+   
+   
+
+   
+   
+   

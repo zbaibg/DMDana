@@ -1,0 +1,207 @@
+
+DMDana.lib.DMDparser.param\_class
+=================================
+
+.. currentmodule:: DMDana.lib.DMDparser
+
+.. autoclass:: param_class
+   :members:
+   :show-inheritance:
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :nosignatures:
+   
+      ~param_class.__init__
+      ~param_class.construct
+      ~param_class.copy
+      ~param_class.dict
+      ~param_class.from_orm
+      ~param_class.json
+      ~param_class.model_construct
+      ~param_class.model_copy
+      ~param_class.model_dump
+      ~param_class.model_dump_json
+      ~param_class.model_json_schema
+      ~param_class.model_parametrized_name
+      ~param_class.model_post_init
+      ~param_class.model_rebuild
+      ~param_class.model_validate
+      ~param_class.model_validate_json
+      ~param_class.model_validate_strings
+      ~param_class.parse_file
+      ~param_class.parse_obj
+      ~param_class.parse_raw
+      ~param_class.schema
+      ~param_class.schema_json
+      ~param_class.update_forward_refs
+      ~param_class.validate
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~param_class.model_computed_fields
+      ~param_class.model_config
+      ~param_class.model_extra
+      ~param_class.model_fields
+      ~param_class.model_fields_set
+      ~param_class.DEBUG
+      ~param_class.restart
+      ~param_class.code
+      ~param_class.material_model
+      ~param_class.compute_tau_only
+      ~param_class.alg_scatt_enable
+      ~param_class.alg_eph_enable
+      ~param_class.modeStart
+      ~param_class.modeEnd
+      ~param_class.scale_scatt
+      ~param_class.scale_eph
+      ~param_class.scale_ei
+      ~param_class.scale_ee
+      ~param_class.alg_only_eimp
+      ~param_class.alg_only_ee
+      ~param_class.alg_only_intravalley
+      ~param_class.alg_only_intervalley
+      ~param_class.alg_eph_sepr_eh
+      ~param_class.alg_eph_need_elec
+      ~param_class.alg_eph_need_hole
+      ~param_class.alg_semiclassical
+      ~param_class.alg_summode
+      ~param_class.alg_ddmdteq
+      ~param_class.alg_expt
+      ~param_class.alg_expt_elight
+      ~param_class.alg_scatt
+      ~param_class.alg_picture
+      ~param_class.alg_linearize
+      ~param_class.alg_linearize_dPee
+      ~param_class.need_imsig
+      ~param_class.alg_modelH0hasBS
+      ~param_class.alg_read_Bso
+      ~param_class.alg_Pin_is_sparse
+      ~param_class.alg_sparseP
+      ~param_class.alg_thr_sparseP
+      ~param_class.alg_phenom_relax
+      ~param_class.tau_phenom
+      ~param_class.bStart_tau
+      ~param_class.bEnd_tau
+      ~param_class.alg_phenom_recomb
+      ~param_class.tau_phenom_recomb
+      ~param_class.degauss
+      ~param_class.ndegauss
+      ~param_class.temperature
+      ~param_class.nk1
+      ~param_class.nk2
+      ~param_class.nk3
+      ~param_class.ewind
+      ~param_class.lattvec1
+      ~param_class.lattvec2
+      ~param_class.lattvec3
+      ~param_class.dim
+      ~param_class.thickness
+      ~param_class.scissor
+      ~param_class.mu
+      ~param_class.carrier_density
+      ~param_class.carrier_density_means_excess_density
+      ~param_class.Bx
+      ~param_class.By
+      ~param_class.Bz
+      ~param_class.gfac_normal_dist
+      ~param_class.gfac_k_resolved
+      ~param_class.gfac_mean
+      ~param_class.gfac_sigma
+      ~param_class.gfac_cap
+      ~param_class.scale_Ez
+      ~param_class.scrMode
+      ~param_class.scrFormula
+      ~param_class.update_screening
+      ~param_class.dynamic_screening
+      ~param_class.ppamodel
+      ~param_class.eppa_screening
+      ~param_class.meff_screening
+      ~param_class.omegamax_screening
+      ~param_class.nomega_screening
+      ~param_class.dynamic_screening_ee_two_freqs
+      ~param_class.fderavitive_technique_static_screening
+      ~param_class.smearing_screening
+      ~param_class.epsilon_background
+      ~param_class.impurity_density
+      ~param_class.impMode
+      ~param_class.partial_ionized
+      ~param_class.Z_impurity
+      ~param_class.g_impurity
+      ~param_class.E_impurity
+      ~param_class.degauss_eimp
+      ~param_class.detailBalance
+      ~param_class.freq_update_eimp_model
+      ~param_class.eeMode
+      ~param_class.ee_antisymmetry
+      ~param_class.degauss_ee
+      ~param_class.freq_update_ee_model
+      ~param_class.laserMode
+      ~param_class.pumpMode
+      ~param_class.laserAlg
+      ~param_class.pumpA0
+      ~param_class.laserA
+      ~param_class.pumpE
+      ~param_class.laserE
+      ~param_class.pumpTau
+      ~param_class.pump_tcenter
+      ~param_class.pumpPoltype
+      ~param_class.laserPoltype
+      ~param_class.ExEyPolAngle
+      ~param_class.probePoltype
+      ~param_class.probeEmin
+      ~param_class.probeEmax
+      ~param_class.probeDE
+      ~param_class.probeTau
+      ~param_class.Bxpert
+      ~param_class.Bypert
+      ~param_class.Bzpert
+      ~param_class.needL
+      ~param_class.t0
+      ~param_class.tend
+      ~param_class.tstep
+      ~param_class.tstep_pump
+      ~param_class.tstep_laser
+      ~param_class.print_tot_band
+      ~param_class.alg_set_scv_zero
+      ~param_class.freq_measure
+      ~param_class.freq_measure_ene
+      ~param_class.freq_compute_tau
+      ~param_class.de_measure
+      ~param_class.degauss_measure
+      ~param_class.occup_write_interval
+      ~param_class.valley
+      ~param_class.file_forbid_vtrans
+      ~param_class.type_q_ana
+      ~param_class.rotate_spin_axes
+      ~param_class.sdir_z
+      ~param_class.sdir_x
+      ~param_class.alg_ode_method
+      ~param_class.ode_hstart
+      ~param_class.ode_hmin
+      ~param_class.ode_hmax
+      ~param_class.ode_hmax_laser
+      ~param_class.ode_epsabs
+      ~param_class.print_along_kpath
+      ~param_class.kpath_start
+      ~param_class.kpath_end
+      ~param_class.alg_use_dmDP_taufm_as_init
+      ~param_class.alg_DP_beyond_carrierlifetime
+      ~param_class.alg_mix_tauneq
+      ~param_class.alg_positive_tauneq
+      ~param_class.alg_use_dmDP_in_evolution
+      ~param_class.degthr
+      ~param_class.band_skipped
+   
+   

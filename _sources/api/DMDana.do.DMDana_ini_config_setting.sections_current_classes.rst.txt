@@ -1,0 +1,66 @@
+
+DMDana.do.DMDana\_ini\_config\_setting.sections\_current\_classes
+=================================================================
+
+.. currentmodule:: DMDana.do.DMDana_ini_config_setting
+
+.. autoclass:: sections_current_classes
+   :members:
+   :show-inheritance:
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :nosignatures:
+   
+      ~sections_current_classes.__init__
+      ~sections_current_classes.construct
+      ~sections_current_classes.copy
+      ~sections_current_classes.dict
+      ~sections_current_classes.from_orm
+      ~sections_current_classes.get
+      ~sections_current_classes.getboolean
+      ~sections_current_classes.getfloat
+      ~sections_current_classes.getint
+      ~sections_current_classes.json
+      ~sections_current_classes.model_construct
+      ~sections_current_classes.model_copy
+      ~sections_current_classes.model_dump
+      ~sections_current_classes.model_dump_json
+      ~sections_current_classes.model_json_schema
+      ~sections_current_classes.model_parametrized_name
+      ~sections_current_classes.model_post_init
+      ~sections_current_classes.model_rebuild
+      ~sections_current_classes.model_validate
+      ~sections_current_classes.model_validate_json
+      ~sections_current_classes.model_validate_strings
+      ~sections_current_classes.parse_file
+      ~sections_current_classes.parse_obj
+      ~sections_current_classes.parse_raw
+      ~sections_current_classes.schema
+      ~sections_current_classes.schema_json
+      ~sections_current_classes.update_forward_refs
+      ~sections_current_classes.validate
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~sections_current_classes.model_computed_fields
+      ~sections_current_classes.model_config
+      ~sections_current_classes.model_extra
+      ~sections_current_classes.model_fields
+      ~sections_current_classes.model_fields_set
+      ~sections_current_classes.elec_or_hole
+      ~sections_current_classes.only_jtot
+      ~sections_current_classes.folder
+   
+   

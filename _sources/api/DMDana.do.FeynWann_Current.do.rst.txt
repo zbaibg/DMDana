@@ -1,0 +1,6 @@
+DMDana.do.FeynWann\_Current.do
+==============================
+
+.. currentmodule:: DMDana.do.FeynWann_Current
+
+.. autofunction:: do

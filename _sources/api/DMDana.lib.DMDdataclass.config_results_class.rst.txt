@@ -1,0 +1,36 @@
+
+DMDana.lib.DMDdataclass.config\_results\_class
+==============================================
+
+.. currentmodule:: DMDana.lib.DMDdataclass
+
+.. autoclass:: config_results_class
+   :members:
+   :show-inheritance:
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :nosignatures:
+   
+      ~config_results_class.__init__
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~config_results_class.FFT_DC_convergence_test
+      ~config_results_class.FFT_spectrum_plot
+      ~config_results_class.current_plot
+      ~config_results_class.occup_deriv
+      ~config_results_class.occup_time
+   
+   

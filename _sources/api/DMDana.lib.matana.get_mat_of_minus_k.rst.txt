@@ -1,0 +1,6 @@
+DMDana.lib.matana.get\_mat\_of\_minus\_k
+========================================
+
+.. currentmodule:: DMDana.lib.matana
+
+.. autofunction:: get_mat_of_minus_k

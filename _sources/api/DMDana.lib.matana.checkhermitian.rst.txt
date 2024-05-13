@@ -1,0 +1,6 @@
+DMDana.lib.matana.checkhermitian
+================================
+
+.. currentmodule:: DMDana.lib.matana
+
+.. autofunction:: checkhermitian

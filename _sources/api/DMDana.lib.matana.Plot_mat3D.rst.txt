@@ -1,0 +1,30 @@
+
+DMDana.lib.matana.Plot\_mat3D
+=============================
+
+.. currentmodule:: DMDana.lib.matana
+
+.. autoclass:: Plot_mat3D
+   :members:
+   :show-inheritance:
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :nosignatures:
+   
+      ~Plot_mat3D.__init__
+      ~Plot_mat3D.close
+      ~Plot_mat3D.postprocess
+      ~Plot_mat3D.savefig
+      ~Plot_mat3D.show
+   
+   
+
+   
+   
+   

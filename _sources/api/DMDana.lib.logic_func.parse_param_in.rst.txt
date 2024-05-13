@@ -1,0 +1,6 @@
+DMDana.lib.logic\_func.parse\_param\_in
+=======================================
+
+.. currentmodule:: DMDana.lib.logic_func
+
+.. autofunction:: parse_param_in

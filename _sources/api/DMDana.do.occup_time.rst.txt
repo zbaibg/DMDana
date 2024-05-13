@@ -1,0 +1,50 @@
+DMDana.do.occup\_time
+=====================
+
+.. automodule:: DMDana.do.occup_time
+  
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+      :nosignatures:
+   
+      Bolzmann
+      Field
+      curve_fit
+      dataclass
+      do
+      do_sub
+      fermi
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :nosignatures:
+      :toctree:
+      :template: class.rst
+   
+      Axes3D
+      DMDana_ini_config_setting_class
+      config_occup
+      config_occup_time
+      plot_occup_time
+   
+   
+
+   
+   
+   
+
+
+

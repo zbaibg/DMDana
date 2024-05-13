@@ -1,0 +1,6 @@
+DMDana.lib.matana.shift\_kvec
+=============================
+
+.. currentmodule:: DMDana.lib.matana
+
+.. autofunction:: shift_kvec

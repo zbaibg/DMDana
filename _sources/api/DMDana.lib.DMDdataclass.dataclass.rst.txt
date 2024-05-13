@@ -1,0 +1,6 @@
+DMDana.lib.DMDdataclass.dataclass
+=================================
+
+.. currentmodule:: DMDana.lib.DMDdataclass
+
+.. autofunction:: dataclass

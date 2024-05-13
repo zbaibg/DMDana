@@ -1,0 +1,6 @@
+DMDana.lib.DMDdataclass.field
+=============================
+
+.. currentmodule:: DMDana.lib.DMDdataclass
+
+.. autofunction:: field

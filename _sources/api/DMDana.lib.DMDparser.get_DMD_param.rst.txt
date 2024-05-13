@@ -1,0 +1,6 @@
+DMDana.lib.DMDparser.get\_DMD\_param
+====================================
+
+.. currentmodule:: DMDana.lib.DMDparser
+
+.. autofunction:: get_DMD_param

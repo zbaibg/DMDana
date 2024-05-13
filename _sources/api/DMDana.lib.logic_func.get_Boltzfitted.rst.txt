@@ -1,0 +1,6 @@
+DMDana.lib.logic\_func.get\_Boltzfitted
+=======================================
+
+.. currentmodule:: DMDana.lib.logic_func
+
+.. autofunction:: get_Boltzfitted

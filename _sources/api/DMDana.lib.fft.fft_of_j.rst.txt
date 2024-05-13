@@ -1,0 +1,6 @@
+DMDana.lib.fft.fft\_of\_j
+=========================
+
+.. currentmodule:: DMDana.lib.fft
+
+.. autofunction:: fft_of_j

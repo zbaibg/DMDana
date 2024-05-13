@@ -1,0 +1,6 @@
+DMDana.do.DMDana\_ini\_config\_setting.get\_DMDana\_ini\_config\_setting
+========================================================================
+
+.. currentmodule:: DMDana.do.DMDana_ini_config_setting
+
+.. autofunction:: get_DMDana_ini_config_setting

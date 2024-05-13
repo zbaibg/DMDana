@@ -1,0 +1,6 @@
+DMDana.lib.logic\_func.tell\_system
+===================================
+
+.. currentmodule:: DMDana.lib.logic_func
+
+.. autofunction:: tell_system

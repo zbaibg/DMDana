@@ -1,0 +1,6 @@
+DMDana.lib.DMDdataclass.get\_erange
+===================================
+
+.. currentmodule:: DMDana.lib.DMDdataclass
+
+.. autofunction:: get_erange

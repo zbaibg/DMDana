@@ -1,0 +1,83 @@
+
+DMDana.do.DMDana\_ini\_config\_setting.section\_occup\_time\_class
+==================================================================
+
+.. currentmodule:: DMDana.do.DMDana_ini_config_setting
+
+.. autoclass:: section_occup_time_class
+   :members:
+   :show-inheritance:
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :nosignatures:
+   
+      ~section_occup_time_class.__init__
+      ~section_occup_time_class.construct
+      ~section_occup_time_class.copy
+      ~section_occup_time_class.dict
+      ~section_occup_time_class.from_orm
+      ~section_occup_time_class.get
+      ~section_occup_time_class.getboolean
+      ~section_occup_time_class.getfloat
+      ~section_occup_time_class.getint
+      ~section_occup_time_class.json
+      ~section_occup_time_class.model_construct
+      ~section_occup_time_class.model_copy
+      ~section_occup_time_class.model_dump
+      ~section_occup_time_class.model_dump_json
+      ~section_occup_time_class.model_json_schema
+      ~section_occup_time_class.model_parametrized_name
+      ~section_occup_time_class.model_post_init
+      ~section_occup_time_class.model_rebuild
+      ~section_occup_time_class.model_validate
+      ~section_occup_time_class.model_validate_json
+      ~section_occup_time_class.model_validate_strings
+      ~section_occup_time_class.parse_file
+      ~section_occup_time_class.parse_obj
+      ~section_occup_time_class.parse_raw
+      ~section_occup_time_class.schema
+      ~section_occup_time_class.schema_json
+      ~section_occup_time_class.update_forward_refs
+      ~section_occup_time_class.validate
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~section_occup_time_class.model_computed_fields
+      ~section_occup_time_class.model_config
+      ~section_occup_time_class.model_extra
+      ~section_occup_time_class.model_fields
+      ~section_occup_time_class.model_fields_set
+      ~section_occup_time_class.occup_time_plot_set_Erange
+      ~section_occup_time_class.occup_time_plot_lowE
+      ~section_occup_time_class.occup_time_plot_highE
+      ~section_occup_time_class.plot_conduction_valence
+      ~section_occup_time_class.plot_occupation_number_setlimit
+      ~section_occup_time_class.plot_occupation_number_min
+      ~section_occup_time_class.plot_occupation_number_max
+      ~section_occup_time_class.output_all_figure_types
+      ~section_occup_time_class.figure_style
+      ~section_occup_time_class.fit_Boltzmann
+      ~section_occup_time_class.fit_Boltzmann_initial_guess_mu
+      ~section_occup_time_class.fit_Boltzmann_initial_guess_mu_auto
+      ~section_occup_time_class.fit_Boltzmann_initial_guess_T
+      ~section_occup_time_class.fit_Boltzmann_initial_guess_T_auto
+      ~section_occup_time_class.Substract_initial_occupation
+      ~section_occup_time_class.showlegend
+      ~section_occup_time_class.t_max
+      ~section_occup_time_class.filelist_step
+      ~section_occup_time_class.only_jtot
+      ~section_occup_time_class.folder
+   
+   

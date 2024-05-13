@@ -1,0 +1,6 @@
+DMDana.lib.pandas\_figure\_gen.plot\_correlation\_heatmap
+=========================================================
+
+.. currentmodule:: DMDana.lib.pandas_figure_gen
+
+.. autofunction:: plot_correlation_heatmap

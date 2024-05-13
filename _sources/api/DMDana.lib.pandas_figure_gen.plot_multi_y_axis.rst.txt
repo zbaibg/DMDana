@@ -1,0 +1,6 @@
+DMDana.lib.pandas\_figure\_gen.plot\_multi\_y\_axis
+===================================================
+
+.. currentmodule:: DMDana.lib.pandas_figure_gen
+
+.. autofunction:: plot_multi_y_axis

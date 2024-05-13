@@ -1,0 +1,46 @@
+DMDana.do.FFT\_spectrum\_plot
+=============================
+
+.. automodule:: DMDana.do.FFT_spectrum_plot
+  
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+      :nosignatures:
+   
+      dataclass
+      do
+      fft_of_j
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :nosignatures:
+      :toctree:
+      :template: class.rst
+   
+      Axes
+      DMDana_ini_config_setting_class
+      config_FFT_spectrum_plot
+      config_current
+      plot_FFT_spectrum_plot
+   
+   
+
+   
+   
+   
+
+
+

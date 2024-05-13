@@ -1,0 +1,6 @@
+DMDana.lib.parallel\_folder\_analysis.save\_database
+====================================================
+
+.. currentmodule:: DMDana.lib.parallel_folder_analysis
+
+.. autofunction:: save_database

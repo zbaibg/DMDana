@@ -1,0 +1,6 @@
+DMDana.lib.DMDparser.get\_erange
+================================
+
+.. currentmodule:: DMDana.lib.DMDparser
+
+.. autofunction:: get_erange

@@ -1,0 +1,58 @@
+DMDana.lib.DMDdataclass
+=======================
+
+.. automodule:: DMDana.lib.DMDdataclass
+  
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+      :nosignatures:
+   
+      check_and_get_path
+      dataclass
+      field
+      get_DMD_param
+      get_erange
+      get_mu_temperature
+      get_total_step_number
+      glob_occupation_files
+      read_text_from_file
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :nosignatures:
+      :toctree:
+      :template: class.rst
+   
+      DMD
+      DMDana_ini_config_setting_class
+      analyze_class
+      config_current
+      config_occup
+      config_results_class
+      energy_class
+      lindblad_init_class
+      occupation_file_class
+      occupations_class
+      param_class
+   
+   
+
+   
+   
+   
+
+
+

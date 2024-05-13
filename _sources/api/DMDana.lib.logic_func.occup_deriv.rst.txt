@@ -1,0 +1,6 @@
+DMDana.lib.logic\_func.occup\_deriv
+===================================
+
+.. currentmodule:: DMDana.lib.logic_func
+
+.. autofunction:: occup_deriv

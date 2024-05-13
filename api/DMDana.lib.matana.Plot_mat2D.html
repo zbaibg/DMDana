@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DMDana.lib.matana.Plot_mat2D &mdash; DMDana 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=01f34227"></script>
+        <script src="../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="DMDana.lib.matana.Plot_mat3D" href="DMDana.lib.matana.Plot_mat3D.html" />
+    <link rel="prev" title="DMDana.lib.matana.Plot_mat" href="DMDana.lib.matana.Plot_mat.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            DMDana
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="DMDana.html">DMDana</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="DMDana.do.html">DMDana.do</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="DMDana.lib.html">DMDana.lib</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="DMDana.lib.DMDdataclass.html">DMDana.lib.DMDdataclass</a></li>
+<li class="toctree-l4"><a class="reference internal" href="DMDana.lib.DMDparser.html">DMDana.lib.DMDparser</a></li>
+<li class="toctree-l4"><a class="reference internal" href="DMDana.lib.constant.html">DMDana.lib.constant</a></li>
+<li class="toctree-l4"><a class="reference internal" href="DMDana.lib.fft.html">DMDana.lib.fft</a></li>
+<li class="toctree-l4"><a class="reference internal" href="DMDana.lib.logic_func.html">DMDana.lib.logic_func</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="DMDana.lib.matana.html">DMDana.lib.matana</a></li>
+<li class="toctree-l4"><a class="reference internal" href="DMDana.lib.pandas_figure_gen.html">DMDana.lib.pandas_figure_gen</a></li>
+<li class="toctree-l4"><a class="reference internal" href="DMDana.lib.parallel_folder_analysis.html">DMDana.lib.parallel_folder_analysis</a></li>
+<li class="toctree-l4"><a class="reference internal" href="DMDana.lib.param_in_class.html">DMDana.lib.param_in_class</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">DMDana</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../api.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="DMDana.html">DMDana</a></li>
+          <li class="breadcrumb-item"><a href="DMDana.lib.html">DMDana.lib</a></li>
+          <li class="breadcrumb-item"><a href="DMDana.lib.matana.html">DMDana.lib.matana</a></li>
+      <li class="breadcrumb-item active">DMDana.lib.matana.Plot_mat2D</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/DMDana.lib.matana.Plot_mat2D.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="dmdana-lib-matana-plot-mat2d">
+<h1>DMDana.lib.matana.Plot_mat2D<a class="headerlink" href="#dmdana-lib-matana-plot-mat2d" title="Link to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="DMDana.lib.matana.Plot_mat2D">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Plot_mat2D</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kveclist</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colors</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kpaths</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tolerance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">separate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylabel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dpi</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(12,</span> <span class="pre">8)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DMDana.lib.matana.Plot_mat2D" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="DMDana.lib.matana.Plot_mat.html#DMDana.lib.matana.Plot_mat" title="DMDana.lib.matana.Plot_mat"><code class="xref py py-class docutils literal notranslate"><span class="pre">Plot_mat</span></code></a></p>
+<p>Class for visualizing 2D matrices representing data along specified paths in k-space.
+It visualizes data points across multiple bands and directions using color gradients,
+ideal for examining electronic structures in materials science and physics.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>kveclist</strong> (<em>Union</em><em>[</em><em>numpy.ndarray</em><em>, </em><em>List</em><em>[</em><em>List</em><em>[</em><em>float</em><em>]</em><em>]</em><em>]</em>) – List or array of k-vectors. Shape: (num_kpoints, 3).</p></li>
+<li><p><strong>data</strong> (<em>np.ndarray</em>) – The y-values for the plot, indexed by bands, directions, and k-points. Shape: (num_bands, num_directions, num_kpoints).</p></li>
+<li><p><strong>colors</strong> (<em>np.ndarray</em>) – The colors corresponding to the data values, same shape as data. Shape: (num_bands, num_directions, num_kpoints).</p></li>
+<li><p><strong>kpaths</strong> (<em>List</em><em>[</em><em>np.ndarray</em><em>]</em>) – List of arrays, each representing a path through k-space. Shape: (num_paths, M, 3).</p></li>
+<li><p><strong>labels</strong> (<em>List</em><em>[</em><em>List</em><em>[</em><em>str</em><em>]</em><em>]</em>) – List of lists, each containing labels for the points in corresponding kpaths. Shape: (num_paths, M).</p></li>
+<li><p><strong>tolerance</strong> (<em>float</em>) – Numerical tolerance used for matching k-points to k-paths.</p></li>
+<li><p><strong>separate</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, plots each band-direction combination in a separate subplot. Default is True.</p></li>
+<li><p><strong>title</strong> (<em>str</em><em>, </em><em>optional</em>) – Title for the entire figure. Default is an empty string.</p></li>
+<li><p><strong>ylabel</strong> (<em>str</em><em>, </em><em>optional</em>) – Label for the Y-axis of the plot. Default is an empty string.</p></li>
+<li><p><strong>gap</strong> (<em>float</em><em>, </em><em>optional</em>) – Gap between consecutive k-paths on the x-axis. Default is 0.1.</p></li>
+<li><p><strong>vmin</strong> (<em>Union</em><em>[</em><em>None</em><em>, </em><em>float</em><em>]</em><em>, </em><em>optional</em>) – Minimum value for color scaling. Default is the minimum value in the data.</p></li>
+<li><p><strong>vmax</strong> (<em>Union</em><em>[</em><em>None</em><em>, </em><em>float</em><em>]</em><em>, </em><em>optional</em>) – Maximum value for color scaling. Default is the maximum value in the data.</p></li>
+<li><p><strong>dpi</strong> (<em>int</em><em>, </em><em>optional</em>) – Resolution of the plot in dots per inch. Default is 100.</p></li>
+<li><p><strong>figsize</strong> (<em>Tuple</em><em>[</em><em>int</em><em>, </em><em>int</em><em>]</em><em>, </em><em>optional</em>) – Size of the figure (width, height) in inches. Default is (8, 6).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Inherits<span class="colon">:</span></dt>
+<dd class="field-even"><p>Plot_mat: A base plotting class that provides a figure and common functionalities.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="DMDana.lib.matana.Plot_mat2D.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kveclist</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colors</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kpaths</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tolerance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">separate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylabel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dpi</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(12,</span> <span class="pre">8)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DMDana.lib.matana.Plot_mat2D.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initializes the Plot_mat2D object with specified parameters and setups the plotting environment.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>kveclist</strong> (<em>Union</em><em>[</em><em>numpy.ndarray</em><em>, </em><em>List</em><em>[</em><em>List</em><em>[</em><em>float</em><em>]</em><em>]</em><em>]</em>) – List or array of k-vectors, where each k-vector is a list of three floats.</p></li>
+<li><p><strong>data</strong> (<em>np.ndarray</em>) – The y-values for the plot, indexed by bands, directions, and k-points.</p></li>
+<li><p><strong>colors</strong> (<em>np.ndarray</em>) – The colors corresponding to the data values, same shape as data.</p></li>
+<li><p><strong>kpaths</strong> (<em>List</em><em>[</em><em>np.ndarray</em><em>]</em>) – List of arrays, each representing a path through k-space.</p></li>
+<li><p><strong>labels</strong> (<em>List</em><em>[</em><em>List</em><em>[</em><em>str</em><em>]</em><em>]</em>) – List of lists, each containing labels for the points in corresponding kpaths.</p></li>
+<li><p><strong>tolerance</strong> (<em>float</em>) – Numerical tolerance used for matching k-points to k-paths.</p></li>
+<li><p><strong>separate</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, plots each band-direction combination in a separate subplot.</p></li>
+<li><p><strong>title</strong> (<em>str</em><em>, </em><em>optional</em>) – Title for the entire figure.</p></li>
+<li><p><strong>ylabel</strong> (<em>str</em><em>, </em><em>optional</em>) – Label for the Y-axis of the plot.</p></li>
+<li><p><strong>gap</strong> (<em>float</em><em>, </em><em>optional</em>) – Gap between consecutive k-paths on the x-axis.</p></li>
+<li><p><strong>vmin</strong> (<em>Union</em><em>[</em><em>None</em><em>, </em><em>float</em><em>]</em><em>, </em><em>optional</em>) – Minimum value for color scaling.</p></li>
+<li><p><strong>vmax</strong> (<em>Union</em><em>[</em><em>None</em><em>, </em><em>float</em><em>]</em><em>, </em><em>optional</em>) – Maximum value for color scaling.</p></li>
+<li><p><strong>dpi</strong> (<em>int</em><em>, </em><em>optional</em>) – Resolution of the plot in dots per inch.</p></li>
+<li><p><strong>figsize</strong> (<em>Tuple</em><em>[</em><em>int</em><em>, </em><em>int</em><em>]</em><em>, </em><em>optional</em>) – Size of the figure (width, height) in inches.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#DMDana.lib.matana.Plot_mat2D.__init__" title="DMDana.lib.matana.Plot_mat2D.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a></p></td>
+<td><p>Initializes the Plot_mat2D object with specified parameters and setups the plotting environment.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">close</span></code></p></td>
+<td><p>Closes the figure, freeing up resources.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#DMDana.lib.matana.Plot_mat2D.match_kpoints_to_path" title="DMDana.lib.matana.Plot_mat2D.match_kpoints_to_path"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match_kpoints_to_path</span></code></a></p></td>
+<td><p>Finds k-points from kveclist that are close to the given k-path.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#DMDana.lib.matana.Plot_mat2D.plot_data" title="DMDana.lib.matana.Plot_mat2D.plot_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_data</span></code></a></p></td>
+<td><p>Plots the data on the prepared subplots.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#DMDana.lib.matana.Plot_mat2D.postprocess" title="DMDana.lib.matana.Plot_mat2D.postprocess"><code class="xref py py-obj docutils literal notranslate"><span class="pre">postprocess</span></code></a></p></td>
+<td><p>Adds a color bar to the plot, adjust xlims, and sets titles and labels.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#DMDana.lib.matana.Plot_mat2D.process_paths" title="DMDana.lib.matana.Plot_mat2D.process_paths"><code class="xref py py-obj docutils literal notranslate"><span class="pre">process_paths</span></code></a></p></td>
+<td><p>Calculate x-axis positions for plotting based on the specified k-paths.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">savefig</span></code></p></td>
+<td><p>Saves the figure to a file.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#DMDana.lib.matana.Plot_mat2D.setup_figure" title="DMDana.lib.matana.Plot_mat2D.setup_figure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setup_figure</span></code></a></p></td>
+<td><p>Set up the figure with subplots configured for separate bands and directions if specified.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">show</span></code></p></td>
+<td><p>Displays the figure.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt class="sig sig-object py" id="DMDana.lib.matana.Plot_mat2D.match_kpoints_to_path">
+<span class="sig-name descname"><span class="pre">match_kpoints_to_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DMDana.lib.matana.Plot_mat2D.match_kpoints_to_path" title="Link to this definition"></a></dt>
+<dd><p>Finds k-points from kveclist that are close to the given k-path.
+Returns indices of matched k-points and their projections along the path.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>path</strong> (<em>ndarray</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="DMDana.lib.matana.Plot_mat2D.plot_data">
+<span class="sig-name descname"><span class="pre">plot_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#DMDana.lib.matana.Plot_mat2D.plot_data" title="Link to this definition"></a></dt>
+<dd><p>Plots the data on the prepared subplots.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="DMDana.lib.matana.Plot_mat2D.postprocess">
+<span class="sig-name descname"><span class="pre">postprocess</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">colorbartmp</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DMDana.lib.matana.Plot_mat2D.postprocess" title="Link to this definition"></a></dt>
+<dd><p>Adds a color bar to the plot, adjust xlims, and sets titles and labels.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>colorbartmp</strong> (<em>matplotlib.cm.ScalarMappable</em>) – The ScalarMappable instance from which the colorbar is created.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="DMDana.lib.matana.Plot_mat2D.process_paths">
+<span class="sig-name descname"><span class="pre">process_paths</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#DMDana.lib.matana.Plot_mat2D.process_paths" title="Link to this definition"></a></dt>
+<dd><p>Calculate x-axis positions for plotting based on the specified k-paths.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="DMDana.lib.matana.Plot_mat2D.setup_figure">
+<span class="sig-name descname"><span class="pre">setup_figure</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#DMDana.lib.matana.Plot_mat2D.setup_figure" title="Link to this definition"></a></dt>
+<dd><p>Set up the figure with subplots configured for separate bands and directions if specified.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="DMDana.lib.matana.Plot_mat.html" class="btn btn-neutral float-left" title="DMDana.lib.matana.Plot_mat" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="DMDana.lib.matana.Plot_mat3D.html" class="btn btn-neutral float-right" title="DMDana.lib.matana.Plot_mat3D" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Zihao Bai.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
