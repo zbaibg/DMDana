@@ -23,58 +23,65 @@ from .DMDana_ini_config_setting import (DMDana_ini_config_setting_class,
                                         section_occup_time_class)
 
 # import these to here for compatibility with old code of other files which need these
-allfuncname=['FFT_DC_convergence_test','current_plot','FFT_spectrum_plot','occup_time','occup_deriv']
-def workflow(funcname,param_path='./DMDana.ini'):
-    DMDana_ini_config_setting=get_DMDana_ini_config_setting(param_path)
-    assert funcname in allfuncname, 'funcname is not correct.'
-    if funcname == "FFT_DC_convergence_test":
-        from . import FFT_DC_convergence_test
-        FFT_DC_convergence_test.do(DMDana_ini_config_setting)
-    elif funcname == "FFT_spectrum_plot":
-        from . import FFT_spectrum_plot
-        FFT_spectrum_plot.do(DMDana_ini_config_setting)
-    elif funcname == "current_plot":
-        from . import current_plot
-        current_plot.do(DMDana_ini_config_setting)
-    elif funcname == "occup_deriv":
-        from . import occup_deriv
-        occup_deriv.do(DMDana_ini_config_setting)
-    elif funcname == "occup_time":
-        from . import occup_time
-        occup_time.do(DMDana_ini_config_setting)
 
-@dataclass
+@dataclass(config=dict(arbitrary_types_allowed=True))
 class config_base():
 
     DMDana_ini_config_setting: DMDana_ini_config_setting_class
     funcname: str = None
     show_init_log: bool = True
     log_initialized: bool = False
-    folder: str='./'
+    DMDfolder: str= None
     DMDparam_value: param_class = None
+    logger: Optional[logging.Logger] = None
     configsetting: Union[section_FFT_DC_convergence_test_class,section_FFT_spectrum_plot_class,section_current_plot_class,section_occup_deriv_class,section_occup_time_class,section_default_class] = None
 
     def __post_init__(self):
         assert self.funcname is not None, 'funcname is not set.'
+        if self.DMDfolder is None:
+            self.DMDfolder=self.DMDana_ini_config_setting.section_DEFAULT.folder
         if self.configsetting is None:
-            self.configsetting = self.DMDana_ini_config_setting[self.funcname.replace('_', '-')]
+            self.configsetting = self.DMDana_ini_config_setting.get_section_from_funcname(self.funcname)
         if self.show_init_log and not self.log_initialized:
             self.initial_log(self.funcname)
             self.log_initialized = True
         if self.DMDparam_value is None:
-            self.DMDparam_value = get_DMD_param(self.folder)  # Use the param.in in the first folder
+            self.DMDparam_value = get_DMD_param(self.DMDfolder)  # Use the param.in in the first folder
 
     def initial_log(self, funcname):
         DMDana_version=pkg_resources.get_distribution('DMDana').version
-        logging.info("============DMDana============")
-        logging.info("DMDversion(with Git hash): %s" % DMDana_version)
-        logging.info("Submodule: %s" % funcname)
-        logging.info("Start time: %s" % datetime.datetime.now())
-        logging.info("===Configuration Parameter===")
-        paramdict = self.configsetting.model_dump()
+        self.log('info',"============DMDana============")
+        self.log('info',"DMDversion(with Git hash): %s" % DMDana_version)
+        self.log('info',"Submodule: %s" % funcname)
+        self.log('info',"Start time: %s" % datetime.datetime.now())
+        self.log('info',"===Configuration Parameter===")
+        paramdict = self.configsetting.__dict__
         for i in paramdict:
-            logging.info("%-35s" % i + ':\t' + str(paramdict[i]) + '')
-        logging.info("===Initialization finished===")
+            self.log('info',"%-35s" % i + ':\t' + str(paramdict[i]) + '')
+        self.log('info',"===Initialization finished===")
+    def log(self,levelstr: str,msg: Any):
+        '''
+        log msg with levelstr
+        
+        param: levelstr : str , 'info' , 'warning' , 'error'
+        param: msg : Any
+        '''
+        if msg is not str:
+            msg=str(msg)
+        if levelstr=='debug':
+            Level=logging.DEBUG
+        elif levelstr=='info':
+            Level=logging.INFO
+        elif levelstr=='warning':
+            Level=logging.WARNING
+        elif levelstr=='error':
+            Level=logging.ERROR
+        else:
+            raise ValueError(f'levelstr {levelstr} is not valid, it should be either "debug", "info", "warning", or "error"')
+        if self.logger is None:
+            logging.log(Level, msg)
+        else:
+            self.logger.log(Level, msg)
 @dataclass
 class config_current(config_base):
     elec_or_hole_this: str = None
@@ -90,7 +97,7 @@ class config_current(config_base):
         if self.elec_or_hole_this is None:
             self.elec_or_hole_this = self.configsetting.elec_or_hole
         if self.jx_data is None or self.jy_data is None or self.jz_data is None:
-            self.jx_data, self.jy_data, self.jz_data = get_current_data(self.folder, self.elec_or_hole_this)
+            self.jx_data, self.jy_data, self.jz_data = get_current_data(self.DMDfolder, self.elec_or_hole_this)
             assert len(self.jx_data) == len(self.jy_data) == len(self.jz_data), 'The line number in jx_data, jy_data, jz_data are not the same. Please deal with your data.'
         if self.bandlabel is None:
             self.bandlabel = {'elec': 'conduction bands', 'hole': 'valence bands', 'total': 'all bands'}[self.elec_or_hole_this]
@@ -124,11 +131,11 @@ class config_occup(config_base):
         super().__post_init__()
         self.configsetting: Union[section_occup_deriv_class, section_occup_time_class]
         if self.mu_au is None or self.temperature_au is None:
-            self.mu_au, self.temperature_au = get_mu_temperature(self.DMDparam_value, path=self.folder)
+            self.mu_au, self.temperature_au = get_mu_temperature(self.DMDparam_value, path=self.DMDfolder)
         if self.EBot_probe_au is None or self.ETop_probe_au is None or self.EBot_dm_au is None or self.ETop_dm_au is None or self.EBot_eph_au is None or self.ETop_eph_au is None or self.EvMax_au is None or self.EcMin_au is None:
-            self.EBot_probe_au, self.ETop_probe_au, self.EBot_dm_au, self.ETop_dm_au, self.EBot_eph_au, self.ETop_eph_au, self.EvMax_au, self.EcMin_au = get_erange(path=self.folder)
+            self.EBot_probe_au, self.ETop_probe_au, self.EBot_dm_au, self.ETop_dm_au, self.EBot_eph_au, self.ETop_eph_au, self.EvMax_au, self.EcMin_au = get_erange(path=self.DMDfolder)
         if self.occup_selected_files is None or self.occup_timestep_for_all_files is None or self.filelist_step is None or self.occup_timestep_for_selected_file_fs is None or self.occup_timestep_for_selected_file_ps is None or self.occup_t_tot is None or self.occup_maxmium_file_number_plotted_exclude_t0 is None or self.occup_Emin_au is None or self.occup_Emax_au is None:
-            self.occup_selected_files = glob_occupation_files(self.folder)
+            self.occup_selected_files = glob_occupation_files(self.DMDfolder)
             assert len(self.occup_selected_files) >= 3, 'The number of occupation files is less than 3. Please check your data.'
             with open(self.occup_selected_files[1]) as f:
                 firstline_this_file = f.readline()

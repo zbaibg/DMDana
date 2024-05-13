@@ -1,14 +1,16 @@
 import configparser
 import os
-from typing import Any, List, Union
+from typing import Any, Dict, List, Union
 
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator
+from pydantic.dataclasses import dataclass
 
-from ..lib.constant import libpath
+from ..lib.constant import allfuncname, libpath
 from ..lib.DMDparser import check_and_get_path
 
 
-class section_default_class(BaseModel):
+@dataclass
+class section_default_class:
     """
     A class for default section configurations, compatible with configparser.
     """
@@ -63,14 +65,14 @@ class section_default_class(BaseModel):
 
     get = __getitem__
 
-
+@dataclass
 class sections_current_classes(section_default_class):
     """
     A class for current section configurations.
     """
     elec_or_hole: str
 
-
+@dataclass
 class sections_occup_classes(section_default_class):
     """
     A class for occupation section configurations.
@@ -78,7 +80,7 @@ class sections_occup_classes(section_default_class):
     t_max: int
     filelist_step: int
 
-
+@dataclass
 class section_current_plot_class(sections_current_classes):
     """
     A class for current plot section configurations.
@@ -92,7 +94,7 @@ class section_current_plot_class(sections_current_classes):
     smooth_windowlen: int
     plot_all: bool
 
-
+@dataclass
 class section_FFT_DC_convergence_test_class(sections_current_classes):
     """
     A class for FFT DC convergence test section configurations.
@@ -107,40 +109,43 @@ class section_FFT_DC_convergence_test_class(sections_current_classes):
     Database_output_filename_xlsx: str
     Figure_output_filename: str
 
-    def model_post_init(self, __context: Any):
+    def __post_init__(self):
         """
         Post-initialization to handle the conversion of Window_type_list from string to list.
-        
-        :param __context: Contextual information for post-initialization.
         """
         if isinstance(self.Window_type_list, str):
             self.Window_type_list = [i.strip() for i in self.Window_type_list.split(',')]
 
-
+@dataclass(config=dict(validate_assignment=True)) #make this class's attribute be type-validated/converted when assigning
 class section_FFT_spectrum_plot_class(sections_current_classes):
     """
     A class for FFT spectrum plot section configurations.
     """
-    Cutoff_list: Union[str, List[int]]
-    Window_type_list: Union[str, List[str]]
+    Cutoff_list: List[int]
+    Window_type_list: List[str]
     Log_y_scale: bool
     Summary_output_csv: bool
     Summary_output_xlsx: bool
     Summary_output_filename_csv: str
     Summary_output_filename_xlsx: str
+    
+    @field_validator('Window_type_list',mode='before')
+    @classmethod
+    def Window_type_to_list(cls, Window_type_list: Any) -> List:
+        if isinstance(Window_type_list, str):
+            return [i.strip() for i in Window_type_list.split(',')]
+    
+    @field_validator('Cutoff_list',mode='before')
+    @classmethod
+    def Cutoff_list_to_list(cls, Cutoff_list: Any) -> List:
+        if isinstance(Cutoff_list, str):
+            return [int(i) for i in Cutoff_list.split(',')]
+        if isinstance(Cutoff_list, int):
+            return [Cutoff_list]
+        if isinstance(Cutoff_list, float):
+            return [int(Cutoff_list)]
 
-    def model_post_init(self, __context: Any):
-        """
-        Post-initialization to handle the conversion of Window_type_list and Cutoff_list from string to list.
-        
-        :param __context: Contextual information for post-initialization.
-        """
-        if isinstance(self.Window_type_list, str):
-            self.Window_type_list = [i.strip() for i in self.Window_type_list.split(',')]
-        if isinstance(self.Cutoff_list, str):
-            self.Cutoff_list = [int(i) for i in self.Cutoff_list.split(',')]
-
-
+@dataclass
 class section_occup_time_class(sections_occup_classes):
     """
     A class for occupation time section configurations.
@@ -162,15 +167,15 @@ class section_occup_time_class(sections_occup_classes):
     Substract_initial_occupation: bool
     showlegend: bool
 
-
+@dataclass
 class section_occup_deriv_class(sections_occup_classes):
     """
     A class for occupation derivative section configurations.
     """
     pass
 
-
-class DMDana_ini_config_setting_class(BaseModel):
+@dataclass
+class DMDana_ini_config_setting_class:
     """
     A class to manage all configuration settings for DMDana.
     """
@@ -180,27 +185,30 @@ class DMDana_ini_config_setting_class(BaseModel):
     section_FFT_spectrum_plot: section_FFT_spectrum_plot_class
     section_occup_time: section_occup_time_class
     section_occup_deriv: section_occup_deriv_class
-
-    def __getitem__(self, key):
+    
+    '''def __getitem__(self, key: str):
         """
         Retrieve a section configuration using its key.
         
         :param key: The key of the section to retrieve.
         :return: The section configuration object.
         """
-        return getattr(self, 'section_' + key.replace('-', '_'))
+        return getattr(self, 'section_' + key.replace('-', '_'))'''
 
-    def items(self, key):
+    '''def items(self, key):
         """
         Retrieve all items of a section as a dictionary.
         
         :param key: The key of the section.
         :return: A dictionary of all items in the section.
         """
-        return dict((key, str(val)) for key, val in self[key].model_dump().items())
+        return dict((key, str(val)) for key, val in self[key].__dict__.items())'''
 
+    def get_section_from_funcname(self, funcname: str):
+        assert funcname in allfuncname, f"funcname is not valid, it should be in {allfuncname}"
+        return getattr(self,'section_'+funcname)
 
-def get_DMDana_ini_config_setting(configfile_path) -> DMDana_ini_config_setting_class:
+def get_DMDana_ini_config_setting(configfile_path: str) -> DMDana_ini_config_setting_class:
     """
     Load and return the DMDana configuration settings from a file.
     
@@ -208,11 +216,42 @@ def get_DMDana_ini_config_setting(configfile_path) -> DMDana_ini_config_setting_
     :return: An instance of DMDana_ini_config_setting_class with loaded settings.
     """
     DMDana_ini_configparser0 = configparser.ConfigParser(inline_comment_prefixes="#")
+    DMDana_ini_configparser0.optionxform = str
     if os.path.isfile(configfile_path):
         default_ini = check_and_get_path(libpath + '/DMDana/do/DMDana_default.ini')
         DMDana_ini_configparser0.read([default_ini, configfile_path])
     else:
         raise Warning('%s not exist. Default setting would be used. You could run "DMDana init" to initialize it.' % configfile_path)
-    return DMDana_ini_config_setting_class(**dict(('section_' + key.replace('-', '_'), val) for key, val in DMDana_ini_configparser0.items()))
+    
+    def class_convert(config_parser: configparser.ConfigParser):
+        """
+        Generate an instance of this class from a configparser instance.
+        :param config_parser: configparser.ConfigParser instance, containing all the configurations.
+        :return: DMDana_ini_config_setting_class instance.
+        """
+        dict_all = {}
+        Field_Class_dict = {sec_var_name: section_name_class for sec_var_name, section_name_class in DMDana_ini_config_setting_class.__annotations__.items()}
 
+        for section in list(config_parser.sections())+['DEFAULT']:
+            section_var_name = 'section_' + section.replace('-', '_')
+            if section_var_name in Field_Class_dict:
+                section_class = Field_Class_dict[section_var_name]
+                dict_all[section_var_name] = section_class(**dict(config_parser.items(section)))
+            else:
+                raise ValueError(f"No field found for section {section_var_name} in DMDana_ini_config_setting_class")
+        return DMDana_ini_config_setting_class(**dict_all)
+    
+    return class_convert(DMDana_ini_configparser0)
 
+def change_folder_for_DMDana_ini_config_setting(DMDana_ini_config_setting:DMDana_ini_config_setting_class,change_DMD_folder_to:str):
+    """
+    change DMD folder in the DMDana configuration settings.
+    
+    :param DMDana_ini_config_setting: DMDana_ini_config_setting_class instance.
+    :param change_DMD_folder_to: change the DMD folder in the DMDana.ini to this folder.
+    :return: An instance of DMDana_ini_config_setting_class with loaded settings.
+    """
+    for section_key,section_data in DMDana_ini_config_setting.__dict__.items():
+        section_data: Union[section_default_class,Any]
+        section_data.folder=change_DMD_folder_to
+    return DMDana_ini_config_setting

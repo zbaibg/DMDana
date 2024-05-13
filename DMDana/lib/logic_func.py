@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 
 from ..do.occup_time import fermi
-from . import DMDparser
+from . import DMDdataclass
 from .constant import *
 from .DMDparser import read_text_from_file
 from .parallel_folder_analysis import FolderAnalysis, parallel_folder_analysis
@@ -58,26 +58,26 @@ def get_step_and_time(fa:FolderAnalysis,func_logger):
     
 
 def occup_time(fa:FolderAnalysis,func_logger):
-    fa.DMD_instance.analyze.configsetting.section_occup_time.t_max=-1
-    config_result=fa.DMD_instance.analyze.config_result.occup_time
+    fa.DMD_instance.analyze.DMDana_ini_config_setting.section_occup_time.t_max=-1
+    config_result=fa.DMD_instance.analyze.config_gen.occup_time
     occup_timestep_for_all_files=config_result.occup_timestep_for_all_files
     filelist_step=int(np.round(500/occup_timestep_for_all_files))
-    fa.DMD_instance.analyze.configsetting.section_occup_time.filelist_step=filelist_step
+    fa.DMD_instance.analyze.DMDana_ini_config_setting.section_occup_time.filelist_step=filelist_step
     occup_t_tot=config_result.occup_t_tot
     t_max_for_occup_time=-1 if occup_t_tot<2502 else 2502
-    fa.DMD_instance.analyze.configsetting.section_occup_time.t_max=t_max_for_occup_time
-    fa.DMD_instance.analyze.configsetting.section_occup_time.showlegend=True
+    fa.DMD_instance.analyze.DMDana_ini_config_setting.section_occup_time.t_max=t_max_for_occup_time
+    fa.DMD_instance.analyze.DMDana_ini_config_setting.section_occup_time.showlegend=True
     fa.DMD_instance.analyze.occup_time()
     
 
 def occup_time_short_range_for_better_fit(fa:FolderAnalysis,func_logger):
-    occup_time_config_tmp=fa.DMD_instance.analyze.config_result.occup_time
+    occup_time_config_tmp=fa.DMD_instance.analyze.config_gen.occup_time
     occup_Emax_eV=occup_time_config_tmp.occup_Emax_au/eV
     EcMin_eV=fa.DMD_instance.lindblad_init.energy.EcMin_eV
-    fa.DMD_instance.analyze.configsetting.section_occup_time.plot_conduction_valence=False
-    fa.DMD_instance.analyze.configsetting.section_occup_time.occup_time_plot_set_Erange=True
-    fa.DMD_instance.analyze.configsetting.section_occup_time.occup_time_plot_lowE=(occup_Emax_eV+EcMin_eV)/2
-    fa.DMD_instance.analyze.configsetting.section_occup_time.occup_time_plot_highE=occup_Emax_eV
+    fa.DMD_instance.analyze.DMDana_ini_config_setting.section_occup_time.plot_conduction_valence=False
+    fa.DMD_instance.analyze.DMDana_ini_config_setting.section_occup_time.occup_time_plot_set_Erange=True
+    fa.DMD_instance.analyze.DMDana_ini_config_setting.section_occup_time.occup_time_plot_lowE=(occup_Emax_eV+EcMin_eV)/2
+    fa.DMD_instance.analyze.DMDana_ini_config_setting.section_occup_time.occup_time_plot_highE=occup_Emax_eV
     fa.DMD_instance.analyze.occup_time()
     
 
@@ -92,27 +92,25 @@ def current_plot(fa:FolderAnalysis,func_logger):
 def FFT_spectrum_plot_log(fa:FolderAnalysis,func_logger):
     fa.DMD_instance.get_total_step_num_and_total_time_fs()
     assert fa.DMD_instance.total_step_num!=None,'total_step_num is not set, please run get_total_step_num_and_total_time_fs() first'
-    fa.DMD_instance.analyze.configsetting.section_FFT_spectrum_plot.Cutoff_list=max(fa.DMD_instance.total_step_num-1000,1)
-    fa.DMD_instance.analyze.configsetting.section_FFT_spectrum_plot.Log_y_scale=True
+    fa.DMD_instance.analyze.DMDana_ini_config_setting.section_FFT_spectrum_plot.Cutoff_list=max(fa.DMD_instance.total_step_num-1000,1)
+    fa.DMD_instance.analyze.DMDana_ini_config_setting.section_FFT_spectrum_plot.Log_y_scale=True
     fa.DMD_instance.analyze.FFT_spectrum_plot()    
     
 def FFT_spectrum_plot_linear(fa:FolderAnalysis,func_logger):
     fa.DMD_instance.get_total_step_num_and_total_time_fs()
     assert fa.DMD_instance.total_step_num!=None,'total_step_num is not set, please run get_total_step_num_and_total_time_fs() first'
-    fa.DMD_instance.analyze.configsetting.section_FFT_spectrum_plot.Cutoff_list=max(fa.DMD_instance.total_step_num-1000,1)
-    fa.DMD_instance.analyze.configsetting.section_FFT_spectrum_plot.Log_y_scale=False
+    fa.DMD_instance.analyze.DMDana_ini_config_setting.section_FFT_spectrum_plot.Cutoff_list=max(fa.DMD_instance.total_step_num-1000,1)
+    fa.DMD_instance.analyze.DMDana_ini_config_setting.section_FFT_spectrum_plot.Log_y_scale=False
     fa.DMD_instance.analyze.FFT_spectrum_plot()  
 
-def init_analyze(fa:FolderAnalysis,func_logger):
-    #fa.DMD_instance.start_analyze()
-    fa.DMD_instance.analyze.configfile_path=fa.current_folder+'/DMDana.ini'       
-    if fa.DMD_instance.lindblad_init.nv>fa.DMD_instance.lindblad_init.bBot_dm:
-        fa.DMD_instance.analyze.configsetting.section_current_plot.elec_or_hole=elec_or_hole_for_Semi_Conductor_currents
-        fa.DMD_instance.analyze.configsetting.section_FFT_spectrum_plot.elec_or_hole=elec_or_hole_for_Semi_Conductor_currents
-    else:
-        fa.DMD_instance.analyze.configsetting.section_current_plot.elec_or_hole='elec'  
-        fa.DMD_instance.analyze.configsetting.section_FFT_spectrum_plot.elec_or_hole='elec'
-    fa.df.loc[fa.index,'current_analyze_elec_or_hole']=fa.DMD_instance.analyze.configsetting.section_current_plot.elec_or_hole
+def init_current_elec_or_hole(fa:FolderAnalysis,func_logger):  
+    if fa.DMD_instance.lindblad_init.nv>fa.DMD_instance.lindblad_init.bBot_dm:#semi-conductor
+        fa.DMD_instance.analyze.DMDana_ini_config_setting.section_current_plot.elec_or_hole=elec_or_hole_for_Semi_Conductor_currents
+        fa.DMD_instance.analyze.DMDana_ini_config_setting.section_FFT_spectrum_plot.elec_or_hole=elec_or_hole_for_Semi_Conductor_currents
+    else:#metal
+        fa.DMD_instance.analyze.DMDana_ini_config_setting.section_current_plot.elec_or_hole='elec'  
+        fa.DMD_instance.analyze.DMDana_ini_config_setting.section_FFT_spectrum_plot.elec_or_hole='elec'
+    fa.df.loc[fa.index,'current_analyze_elec_or_hole']=fa.DMD_instance.analyze.DMDana_ini_config_setting.section_current_plot.elec_or_hole
 
 #Read FFT-spectrum-plot-summary.csv to extact the DC current of 3 directions\
 
@@ -172,20 +170,20 @@ def tell_system(fa:FolderAnalysis,func_logger):
         fa.df.loc[fa.index,'System']='GeS'
 
 def get_conduction_change(fa:FolderAnalysis,func_logger):
-    init_analyze(fa,func_logger)
-    fa.DMD_instance.analyze.configsetting.section_occup_time.t_max=-1
-    config_result=fa.DMD_instance.analyze.config_result.occup_time
+    init_current_elec_or_hole(fa,func_logger)
+    fa.DMD_instance.analyze.DMDana_ini_config_setting.section_occup_time.t_max=-1
+    config_result=fa.DMD_instance.analyze.config_gen.occup_time
     occup_timestep_for_all_files=config_result.occup_timestep_for_all_files
     filelist_step=int(np.round(500/occup_timestep_for_all_files))
-    fa.DMD_instance.analyze.configsetting.section_occup_time.filelist_step=filelist_step
+    fa.DMD_instance.analyze.DMDana_ini_config_setting.section_occup_time.filelist_step=filelist_step
     occup_t_tot=config_result.occup_t_tot
     t_max_for_occup_time=-1 if occup_t_tot<2502 else 2502
-    fa.DMD_instance.analyze.configsetting.section_occup_time.t_max=t_max_for_occup_time
-    occup_t_tot_update=fa.DMD_instance.analyze.config_result.occup_time.occup_t_tot
-    for i in fa.DMD_instance.analyze.config_result.occup_time.occup_selected_files:
-        if DMDparser.occupation_file_class(i).time_fs< occup_t_tot_update+fa.DMD_instance.analyze.config_result.occup_time.occup_timestep_for_selected_file_ps*1000/2:
-            lastone=i
-    occupationfile=DMDparser.occupation_file_class(lastone)
+    fa.DMD_instance.analyze.DMDana_ini_config_setting.section_occup_time.t_max=t_max_for_occup_time
+    occup_t_tot_update=fa.DMD_instance.analyze.config_gen.occup_time.occup_t_tot
+    for occup_file_path in fa.DMD_instance.analyze.config_gen.occup_time.occup_selected_files:
+        if DMDdataclass.occupation_file_class(path=occup_file_path).time_fs< occup_t_tot_update+fa.DMD_instance.analyze.config_gen.occup_time.occup_timestep_for_selected_file_ps*1000/2:
+            lastone=occup_file_path
+    occupationfile=DMDdataclass.occupation_file_class(lastone)
     time_fs_to_eval_occupa=occupationfile.time_fs
     EcMin_eV=max(fa.DMD_instance.mu_eV, fa.DMD_instance.lindblad_init.energy.EcMin_eV)
     EvMax_eV=min(fa.DMD_instance.mu_eV, fa.DMD_instance.lindblad_init.energy.EvMax_eV)
@@ -201,24 +199,27 @@ def get_conduction_change(fa:FolderAnalysis,func_logger):
     fa.df.loc[fa.index,'Max_Occupation_change_Valence']=Valence_band_Max_Change
     fa.df.loc[fa.index,'time_fs_to_evaluate_occupation_change']=time_fs_to_eval_occupa
 
-
+def init_summary(fa:FolderAnalysis,func_logger):
+    fa.DMD_instance.analyze.config_init_log(init_log=False)
 @dataclass    
 class logic_func():
     file_prefix:str
     func_list:list= field(default_factory=list)
 
 analyze_current=logic_func(file_prefix='analyze_current',
-                   func_list=[ init_analyze,
+                   func_list=[ init_current_elec_or_hole,
                         current_plot,
                         FFT_spectrum_plot_log,
                         FFT_spectrum_plot_linear])
 analyze_occup=logic_func(file_prefix='analyze_occup',
-                   func_list=[ init_analyze,
+                   func_list=[
                         occup_time,
                         #occup_deriv,
                         occup_time_short_range_for_better_fit])
 summary=logic_func(file_prefix='summary',
-                func_list=[read_lindblad_out,
+                func_list=[
+                init_summary,
+                read_lindblad_out,
                 get_Scat_State,
                 tell_system,
                 parse_param_in,

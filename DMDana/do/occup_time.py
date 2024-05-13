@@ -18,7 +18,7 @@ from ..lib import constant as const
 from .config import DMDana_ini_config_setting_class, config_occup
 
 
-@dataclass
+@dataclass(config=dict(arbitrary_types_allowed=True))
 class config_occup_time(config_occup):
     cmap: object = Field(default_factory=lambda: mpl.colormaps['rainbow'])
     figsize: tuple = (12, 10)  # Width, height in inches.
@@ -29,7 +29,7 @@ class config_occup_time(config_occup):
     occup_time_plot_set_Erange_this: bool = None
     occup_time_plot_lowE_this: float = None
     occup_time_plot_highE_this: Optional[float] = None
-    data_fermi: object = None
+    data_fermi: np.ndarray = None
     occup_time_plot_lowE_conduction: float = None
     occup_time_plot_highE_valence: float = None
     fit_Boltzmann_initial_guess_mu: float = None
@@ -195,7 +195,7 @@ class plot_occup_time(object):
         self.ax.set_ylim(0, self.param.occup_t_tot/1000)
         if self.param.configsetting.plot_occupation_number_setlimit:
             self.ax.set_zlim(self.param.configsetting.plot_occupation_number_min, self.param.configsetting.plot_occupation_number_max)
-        else:
+        elif self.occupation_min_for_alldata != self.occupation_max_for_alldata:
             self.ax.set_zlim(self.occupation_min_for_alldata, self.occupation_max_for_alldata)          
         self.ax.set_ylabel('t (ps)')
         if self.Substract_initial_occupation_this:
@@ -211,7 +211,7 @@ class plot_occup_time(object):
 
         if self.param.configsetting.plot_occupation_number_setlimit:
             self.ax.set_ylim(self.param.configsetting.plot_occupation_number_min, self.param.configsetting.plot_occupation_number_max)
-        else:
+        elif self.occupation_min_for_alldata != self.occupation_max_for_alldata:
             self.ax.set_ylim(self.occupation_min_for_alldata, self.occupation_max_for_alldata) 
         if self.Substract_initial_occupation_this:
             self.ax.set_ylabel('f-f(t=0)')
@@ -225,8 +225,7 @@ class plot_occup_time(object):
             name="delta_"+name
         self.fig.savefig(name, bbox_inches="tight")   
         
-def do(DMDana_ini_config_setting:DMDana_ini_config_setting_class):
-    config=config_occup_time(DMDana_ini_config_setting=DMDana_ini_config_setting)
+def do(config:config_occup_time):
     logging.info('temperature(K): %.3e'%(config.temperature_au/const.Kelvin))
     logging.info('mu(eV): %.3e'%(config.mu_au/const.eV))
 

@@ -8,6 +8,10 @@ import argparse
 
 import argcomplete
 
+from ..lib.constant import allfuncname
+from ..lib.DMDdataclass import analyze_class
+from .DMDana_ini_config_setting import get_DMDana_ini_config_setting
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="DMD post-analysis script collection")  
     subparsers = parser.add_subparsers(dest="command")
@@ -61,7 +65,7 @@ if __name__ == "__main__":
         datefmt='%m/%d/%Y %I:%M:%S %p',
         filemode='a',)
     try:
-        workflow(funcname,'./DMDana.ini')
+        analyze_class(configfile_path='./DMDana.ini').perform(funcname)
     except Exception as e:
         logging.exception(e)
         logging.error('Analysis failed.')

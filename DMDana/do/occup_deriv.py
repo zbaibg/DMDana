@@ -17,15 +17,14 @@ from .config import DMDana_ini_config_setting_class, config_occup
 
 
 #Read input
-@dataclass
+@dataclass(config=dict(arbitrary_types_allowed=True))
 class config_occup_deriv(config_occup):
-    data_first: object = None # numpy array
+    data_first: np.ndarray = None # numpy array
     def __post_init__(self):
         self.funcname='occup_deriv'
         super().__post_init__()
-        self.data_first=np.loadtxt(self.folder+'/occupations_t0.out')
-def do(DMDana_ini_config_setting:DMDana_ini_config_setting_class):
-    config=config_occup_deriv(DMDana_ini_config_setting=DMDana_ini_config_setting)
+        self.data_first=np.loadtxt(self.DMDfolder+'/occupations_t0.out')
+def do(config:config_occup_deriv):
     plot_object=plot_occup_deriv(config)
     plot_object.do()
 class plot_occup_deriv(object):

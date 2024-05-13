@@ -1,6 +1,8 @@
 import numpy as np
 
 libpath='/'.join(__file__.split('/')[0:-3])  # The path where DMDana is installed (not including DMDana)
+allfuncname=['FFT_DC_convergence_test','current_plot','FFT_spectrum_plot','occup_time','occup_deriv']
+
 #customized constant
 
 #fs  = 41.341373335

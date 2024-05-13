@@ -6,8 +6,7 @@ from ..lib import constant as const
 from .config import DMDana_ini_config_setting_class, config_current
 
 
-def do(DMDana_ini_config_setting:DMDana_ini_config_setting_class):
-    config=config_current(DMDana_ini_config_setting=DMDana_ini_config_setting,funcname='FeynWann_Current')
+def do(config:config_current):
     jx_elec_tot=pd.DataFrame()
     jy_elec_tot=pd.DataFrame()
     jz_elec_tot=pd.DataFrame()

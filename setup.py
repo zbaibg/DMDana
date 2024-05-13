@@ -1,5 +1,7 @@
 import subprocess
+
 from setuptools import find_packages, setup
+
 
 def get_git_revision_hash():
     try:

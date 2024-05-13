@@ -23,18 +23,19 @@ class config_FFT_spectrum_plot(config_current):
         self.funcname='FFT_spectrum_plot'
         super().__post_init__()
         
-def do(DMDana_ini_config_setting:DMDana_ini_config_setting_class):
-    config=config_FFT_spectrum_plot(DMDana_ini_config_setting=DMDana_ini_config_setting)
+def do(config:config_FFT_spectrum_plot):
     plot_object=plot_FFT_spectrum_plot(config)
     plot_object.plot()
     plot_object.output_database()
 
 class plot_FFT_spectrum_plot(object):
-    def __init__(self,param: config_FFT_spectrum_plot):
-        self.param=param
+    def __init__(self,config: config_FFT_spectrum_plot):
+        self.config=config
     def plot(self):
         #Plot FFT spectra
-        for Window_type,Cutoff in list(itertools.product(self.param.configsetting.Window_type_list,self.param.configsetting.Cutoff_list)):
+        #self.config.log('info',f'Cutofflist {self.config.configsetting.Cutoff_list}')
+        #self.config.log('info',f'Window_type_list {self.config.configsetting.Window_type_list}')
+        for Window_type,Cutoff in list(itertools.product(self.config.configsetting.Window_type_list,self.config.configsetting.Cutoff_list)):
             paramdict=dict(Cutoff=Cutoff,Window_type=Window_type)
             output_prefix=''
             for name in paramdict:
@@ -43,8 +44,8 @@ class plot_FFT_spectrum_plot(object):
                     output_prefix=output_prefix+'%d'%(paramdict[name])+';'
                 else:
                     output_prefix=output_prefix+str(paramdict[name])+';'
-            output_prefix+="log_y%s"%(str(self.param.configsetting.Log_y_scale))
-            if not self.param.configsetting.only_jtot:
+            output_prefix+="log_y%s"%(str(self.config.configsetting.Log_y_scale))
+            if not self.config.configsetting.only_jtot:
                 self.plot_tot_diag_offdiag(Cutoff,Window_type,output_prefix)
             else:
                 self.plot_tot(Cutoff,Window_type,output_prefix)
@@ -52,8 +53,8 @@ class plot_FFT_spectrum_plot(object):
     def plot_tot_diag_offdiag(self,Cutoff,Window_type,output_prefix):
         ax: List[List[Axes]]
         fig, ax = plt.subplots(3,3,figsize=(10,6),dpi=200, sharex=True)
-        fig.suptitle('FFT Spectrum of Current'+self.param.light_label)
-        for jtemp,jdirection,j in [(self.param.jx_data,'x',0),(self.param.jy_data,'y',1),(self.param.jz_data,'z',2)]:
+        fig.suptitle('FFT Spectrum of Current'+self.config.light_label)
+        for jtemp,jdirection,j in [(self.config.jx_data,'x',0),(self.config.jy_data,'y',1),(self.config.jz_data,'z',2)]:
             j: int
             # FFT of different contributions
             # as it is clear from the above graphs that there a transient at 
@@ -66,7 +67,7 @@ class plot_FFT_spectrum_plot(object):
                 i: int
                 ax[i][j].ticklabel_format(style='sci', axis='y', scilimits=(0,0))
                 ax[i][j].yaxis.major.formatter._useMathText = True
-                if self.param.configsetting.Log_y_scale:
+                if self.config.configsetting.Log_y_scale:
                     ax[i][j].set_yscale('log')
             ax[0][0].set_ylabel('$\hat{j}^{tot}(\omega)$ A/cm$^2$')
             ax[1][0].set_ylabel('$\hat{j}^{diag}(\omega)$ A/cm$^2$')
@@ -83,8 +84,8 @@ class plot_FFT_spectrum_plot(object):
     def plot_tot(self,Cutoff,Window_type,output_prefix):
         ax: List[Axes]
         fig, ax = plt.subplots(1,3,figsize=(10,6),dpi=200, sharex=True)
-        fig.suptitle('FFT Spectrum of Current'+self.param.light_label)
-        for jtemp,jdirection,j in [(self.param.jx_data,'x',0),(self.param.jy_data,'y',1),(self.param.jz_data,'z',2)]:
+        fig.suptitle('FFT Spectrum of Current'+self.config.light_label)
+        for jtemp,jdirection,j in [(self.config.jx_data,'x',0),(self.config.jy_data,'y',1),(self.config.jz_data,'z',2)]:
             j: int
             # FFT of different contributions
             # as it is clear from the above graphs that there a transient at 
@@ -97,7 +98,7 @@ class plot_FFT_spectrum_plot(object):
             ax[j].set_title(jdirection)
             ax[j].set_xlabel('$\omega$ (eV)')
             ax[j].plot(f_tot, abs(jw_tot), label='total')
-            if self.param.configsetting.Log_y_scale:
+            if self.config.configsetting.Log_y_scale:
                 ax[j].set_yscale('log')
         fig.tight_layout()
         fig.savefig('./'+output_prefix+'-j-fft.png')
@@ -106,20 +107,20 @@ class plot_FFT_spectrum_plot(object):
     def output_database(self):
         #Calculate information of current spectrums to output for convenience.
         database=pd.DataFrame()
-        for Window_type,Cutoff in list(itertools.product(self.param.configsetting.Window_type_list,self.param.configsetting.Cutoff_list)):
-            paramdict=dict(Cutoff=Cutoff,FFT_integral_start_time_fs=self.param.jx_data[Cutoff,0]/const.fs,FFT_integral_end_time_fs=self.param.jx_data[-1,0]/const.fs,Window_type=Window_type)
+        for Window_type,Cutoff in list(itertools.product(self.config.configsetting.Window_type_list,self.config.configsetting.Cutoff_list)):
+            paramdict=dict(Cutoff=Cutoff,FFT_integral_start_time_fs=self.config.jx_data[Cutoff,0]/const.fs,FFT_integral_end_time_fs=self.config.jx_data[-1,0]/const.fs,Window_type=Window_type)
             database_newline_index=database.shape[0]
-            for jtemp,jdirection,j in [(self.param.jx_data,'x',0),(self.param.jy_data,'y',1),(self.param.jz_data,'z',2)]:
+            for jtemp,jdirection,j in [(self.config.jx_data,'x',0),(self.config.jy_data,'y',1),(self.config.jz_data,'z',2)]:
                 
                 # FFT of different contributions
                 # as it is clear from the above graphs that there a transient at 
                 # at the start of dynamics. The transient can be removed by choosing 
                 # appropriate cutoff below
                 f_tot, jw_tot = fft_of_j(jtemp[:,0:2:1], Cutoff,Window_type)
-                if not self.param.configsetting.only_jtot:
+                if not self.config.configsetting.only_jtot:
                     f_d, jw_d = fft_of_j(jtemp[:,0:3:2], Cutoff,Window_type)
                     f_od, jw_od = fft_of_j(jtemp[:,0:4:3], Cutoff,Window_type)
-                if self.param.configsetting.only_jtot:
+                if self.config.configsetting.only_jtot:
                     resultdisc={'FFT(j'+jdirection+'_tot)(0)':np.real(jw_tot[0]),
                             'j'+jdirection+'_tot_mean': np.mean(jtemp[Cutoff:,1]),
                             'time(fs)':jtemp[Cutoff,0]/const.fs}
@@ -132,9 +133,9 @@ class plot_FFT_spectrum_plot(object):
                 database.loc[database_newline_index,list(paramdict)]=list(paramdict.values())
                 database.loc[database_newline_index,list(resultdisc)]=list(resultdisc.values())
         database=database.transpose()
-        if self.param.configsetting.Summary_output_csv:
-            database.to_csv(self.param.configsetting.Summary_output_filename_csv)
-        if self.param.configsetting.Summary_output_xlsx:
-            database.to_excel(self.param.configsetting.Summary_output_filename_xlsx)
+        if self.config.configsetting.Summary_output_csv:
+            database.to_csv(self.config.configsetting.Summary_output_filename_csv)
+        if self.config.configsetting.Summary_output_xlsx:
+            database.to_excel(self.config.configsetting.Summary_output_filename_xlsx)
             
 

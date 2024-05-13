@@ -5,14 +5,22 @@ This script is used for plotting current images.
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy.signal.windows as sgl
+from pydantic.dataclasses import dataclass
 from scipy.signal import savgol_filter
 
 from ..lib import constant as const
 from .config import DMDana_ini_config_setting_class, config_current
 
 
+@dataclass
+class config_current_plot(config_current):
+    pass
+    def __post_init__(self):
+        self.funcname='current_plot'
+        super().__post_init__()
+
 class plot_current_plot:
-    def __init__(self, config: config_current):
+    def __init__(self, config: config_current_plot):
         self.config = config
         self.configsetting = config.configsetting
         self.fig, self.ax = None, None
@@ -116,8 +124,7 @@ class plot_current_plot:
                     timedata_used = self.timedata[mid - len(data_used) // 2: mid + (len(data_used) + 1) // 2]
         return data_used, timedata_used
 
-def do(DMDana_ini_config_setting: DMDana_ini_config_setting_class):
-    config = config_current(funcname='current_plot', DMDana_ini_config_setting=DMDana_ini_config_setting, show_init_log=True)
+def do(config: config_current_plot):
     plotter = plot_current_plot(config)
     
     if config.configsetting.plot_all:

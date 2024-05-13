@@ -29,8 +29,7 @@ class config_FFT_DC_convergence_test(config_current):
             self.Cutoff_max = self.jx_data.shape[0] - 1
         self.Cutoff_list = range(self.configsetting.Cutoff_min, self.Cutoff_max, self.configsetting.Cutoff_step)
         
-def do(DMDana_ini_config_setting:DMDana_ini_config_setting_class):
-    config=config_FFT_DC_convergence_test(DMDana_ini_config_setting=DMDana_ini_config_setting)
+def do(config:config_FFT_DC_convergence_test):
     plot_FFT_DC_convergence_test(config).do()
 class plot_FFT_DC_convergence_test(object):
     def __init__(self,param: config_FFT_DC_convergence_test):

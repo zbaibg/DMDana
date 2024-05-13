@@ -21,13 +21,15 @@ def save_database(path: str, df: pd.DataFrame) -> None:
 class FolderAnalysis:
     """A class to perform analysis on DMD folders using dynamically provided functions."""
     
-    def __init__(self, DMD_instance: DMD, index: int, analysis_functions: List[Callable], file_prefix: str):
+    def __init__(self, DMD_instance: DMD, index: int, analysis_functions: List[Callable], file_prefix: str, configfile_path: str):
         """Initialize the FolderAnalysis with a DMD instance, an index, analysis functions, and file prefix."""
         self.index = index
         self.DMD_instance = DMD_instance
         self.analysis_functions = analysis_functions
         self.file_prefix=file_prefix
         self.current_folder = os.getcwd()
+        self.configfile_path=os.path.join(self.current_folder,configfile_path)
+        self.DMD_instance.init_analyze(self.configfile_path)
         self.df = pd.DataFrame()
         self.df.loc[self.index, 'folder'] = self.DMD_instance.DMD_folder
         self.subfolder = check_and_create_folder(os.path.join(self.current_folder, f"{self.index}"))
@@ -53,6 +55,7 @@ class FolderAnalysis:
             func_logger = self.get_function_logger(function_name)
             func_logger.info(f"Running {function_name}")
             try:
+                self.DMD_instance.analyze.config_logger(logger=func_logger)
                 function(self, func_logger)
             except Exception as e:
                 func_logger.error(f"Error in {function_name}")
@@ -79,16 +82,19 @@ def read_folders(file_path: str) -> List[str]:
         folders = [line.strip() for line in file if line.strip()]
     return folders
 
-def parallel_folder_analysis(analysis_functions: List[Callable], core_num: int = 1, index_shift: int = 0,file_prefix:str='default') -> pd.DataFrame:
+def parallel_folder_analysis(analysis_functions: List[Callable], core_num: int = 1, index_shift: int = 0,file_prefix:str='default',configfile_path:str='./DMDana.ini') -> pd.DataFrame:
     """Execute FolderAnalysis class instances in parallel."""
     folders = read_folders(FOLDERS_FILE)
     DMD_list = [DMD(folder) for folder in folders]
     file_prefix=file_prefix
     # Use multiprocessing for parallel processing
-    with Pool(core_num) as pool:
-        results = pool.starmap(
+    if core_num==1:
+        results = [subfunc(DMD_instance, i + index_shift, analysis_functions,file_prefix,configfile_path) for i, DMD_instance in enumerate(DMD_list)]
+    else:
+        with Pool(core_num) as pool:
+            results = pool.starmap(
             subfunc,
-            [(DMD_instance, i + index_shift, analysis_functions,file_prefix) for i, DMD_instance in enumerate(DMD_list)]
+            [(DMD_instance, i + index_shift, analysis_functions,file_prefix,configfile_path) for i, DMD_instance in enumerate(DMD_list)]
         )
     
     # Combine results and save to an Excel file
@@ -96,8 +102,8 @@ def parallel_folder_analysis(analysis_functions: List[Callable], core_num: int =
     save_database(os.path.join(file_prefix+'_'+DF_FILE_PATH_OUT), df)
     return df
 
-def subfunc(DMD_instance: DMD, index_after_shift: int, analysis_functions: List[Callable],file_prefix:str) -> pd.DataFrame:
+def subfunc(DMD_instance: DMD, index_after_shift: int, analysis_functions: List[Callable],file_prefix:str,configfile_path:str) -> pd.DataFrame:
     """Subfunction for parallel execution; each subprocess will invoke this function."""
-    analysis_instance = FolderAnalysis(DMD_instance, index_after_shift, analysis_functions,file_prefix=file_prefix)
+    analysis_instance = FolderAnalysis(DMD_instance, index_after_shift, analysis_functions,file_prefix=file_prefix,configfile_path=configfile_path)
     analysis_instance.run_analysis()
     return analysis_instance.finalize_and_return()
