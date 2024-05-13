@@ -1,6 +1,0 @@
-DMDana.lib.DMDdataclass.check\_and\_get\_path
-=============================================
-
-.. currentmodule:: DMDana.lib.DMDdataclass
-
-.. autofunction:: check_and_get_path

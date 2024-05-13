@@ -99,7 +99,7 @@
 <h1>DMDana.lib.matana.Plot_mat<a class="headerlink" href="#dmdana-lib-matana-plot-mat" title="Link to this heading"></a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="DMDana.lib.matana.Plot_mat">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Plot_mat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kveclist</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dpi</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(8,</span> <span class="pre">6)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylabel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DMDana.lib.matana.Plot_mat" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Plot_mat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kveclist</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dpi</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(8,</span> <span class="pre">6)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylabel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/DMDana/lib/matana.html#Plot_mat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#DMDana.lib.matana.Plot_mat" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>A base class for creating and managing plots for matrix data, particularly for visualizing
 k-space vectors or similar scientific data.</p>
@@ -107,7 +107,7 @@ k-space vectors or similar scientific data.</p>
 <dt class="field-odd">Variables<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>kveclist</strong> (<em>numpy.ndarray</em>) – An array of k-vectors, typically representing points in a space.</p></li>
-<li><p><strong>fig</strong> (<a class="reference internal" href="DMDana.do.occup_deriv.Figure.html#DMDana.do.occup_deriv.Figure" title="matplotlib.figure.Figure"><em>Figure</em></a>) – The figure object where the plot(s) will be drawn.</p></li>
+<li><p><strong>fig</strong> (<em>matplotlib.figure.Figure</em>) – The figure object where the plot(s) will be drawn.</p></li>
 <li><p><strong>title</strong> (<em>str</em>) – Title of the overall figure.</p></li>
 <li><p><strong>ylabel</strong> (<em>str</em>) – Label for the Y-axis of the plot.</p></li>
 <li><p><strong>dpi</strong> (<em>int</em>) – Dots per inch, setting the resolution of the figure.</p></li>
@@ -126,7 +126,7 @@ k-space vectors or similar scientific data.</p>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="DMDana.lib.matana.Plot_mat.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kveclist</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dpi</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(8,</span> <span class="pre">6)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylabel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DMDana.lib.matana.Plot_mat.__init__" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kveclist</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dpi</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(8,</span> <span class="pre">6)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylabel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/DMDana/lib/matana.html#Plot_mat.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#DMDana.lib.matana.Plot_mat.__init__" title="Link to this definition"></a></dt>
 <dd><p>Initializes the Plot_mat object with specified parameters and sets up the plotting environment.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -163,13 +163,13 @@ k-space vectors or similar scientific data.</p>
 </table>
 <dl class="py method">
 <dt class="sig sig-object py" id="DMDana.lib.matana.Plot_mat.close">
-<span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#DMDana.lib.matana.Plot_mat.close" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/DMDana/lib/matana.html#Plot_mat.close"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#DMDana.lib.matana.Plot_mat.close" title="Link to this definition"></a></dt>
 <dd><p>Closes the figure, freeing up resources.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="DMDana.lib.matana.Plot_mat.postprocess">
-<span class="sig-name descname"><span class="pre">postprocess</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">colorbartmp</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DMDana.lib.matana.Plot_mat.postprocess" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">postprocess</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">colorbartmp</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/DMDana/lib/matana.html#Plot_mat.postprocess"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#DMDana.lib.matana.Plot_mat.postprocess" title="Link to this definition"></a></dt>
 <dd><p>Adds a color bar to the plot and sets titles and labels.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -183,7 +183,7 @@ k-space vectors or similar scientific data.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="DMDana.lib.matana.Plot_mat.savefig">
-<span class="sig-name descname"><span class="pre">savefig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DMDana.lib.matana.Plot_mat.savefig" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">savefig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/DMDana/lib/matana.html#Plot_mat.savefig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#DMDana.lib.matana.Plot_mat.savefig" title="Link to this definition"></a></dt>
 <dd><p>Saves the figure to a file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -194,7 +194,7 @@ k-space vectors or similar scientific data.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="DMDana.lib.matana.Plot_mat.show">
-<span class="sig-name descname"><span class="pre">show</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#DMDana.lib.matana.Plot_mat.show" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">show</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/DMDana/lib/matana.html#Plot_mat.show"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#DMDana.lib.matana.Plot_mat.show" title="Link to this definition"></a></dt>
 <dd><p>Displays the figure.</p>
 </dd></dl>
 

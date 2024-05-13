@@ -1,6 +1,0 @@
-DMDana.lib.DMDdataclass.get\_DMD\_param
-=======================================
-
-.. currentmodule:: DMDana.lib.DMDdataclass
-
-.. autofunction:: get_DMD_param

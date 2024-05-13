@@ -97,7 +97,7 @@
 <h1>DMDana.do.DMDana_ini_config_setting.section_FFT_spectrum_plot_class<a class="headerlink" href="#dmdana-do-dmdana-ini-config-setting-section-fft-spectrum-plot-class" title="Link to this heading"></a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="DMDana.do.DMDana_ini_config_setting.section_FFT_spectrum_plot_class">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">section_FFT_spectrum_plot_class</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">only_jtot</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">elec_or_hole</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Cutoff_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Window_type_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Log_y_scale</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Summary_output_csv</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Summary_output_xlsx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Summary_output_filename_csv</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Summary_output_filename_xlsx</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DMDana.do.DMDana_ini_config_setting.section_FFT_spectrum_plot_class" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">section_FFT_spectrum_plot_class</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">only_jtot</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">elec_or_hole</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Cutoff_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Window_type_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Log_y_scale</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Summary_output_csv</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Summary_output_xlsx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Summary_output_filename_csv</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Summary_output_filename_xlsx</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/DMDana/do/DMDana_ini_config_setting.html#section_FFT_spectrum_plot_class"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#DMDana.do.DMDana_ini_config_setting.section_FFT_spectrum_plot_class" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="DMDana.do.DMDana_ini_config_setting.sections_current_classes.html#DMDana.do.DMDana_ini_config_setting.sections_current_classes" title="DMDana.do.DMDana_ini_config_setting.sections_current_classes"><code class="xref py py-class docutils literal notranslate"><span class="pre">sections_current_classes</span></code></a></p>
 <p>A class for FFT spectrum plot section configurations.</p>
 <dl class="field-list simple">
@@ -125,7 +125,7 @@ validated to form a valid model.</p>
 <p><cite>self</cite> is explicitly positional-only to allow <cite>self</cite> as a field name.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>data</strong> (<a class="reference internal" href="DMDana.do.config.Any.html#DMDana.do.config.Any" title="typing.Any"><em>Any</em></a>)</p>
+<dd class="field-odd"><p><strong>data</strong> (<em>Any</em>)</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><em>None</em></p>
@@ -272,20 +272,6 @@ validated to form a valid model.</p>
 </tr>
 </tbody>
 </table>
-<dl class="py method">
-<dt class="sig sig-object py" id="DMDana.do.DMDana_ini_config_setting.section_FFT_spectrum_plot_class.model_post_init">
-<span class="sig-name descname"><span class="pre">model_post_init</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_section_FFT_spectrum_plot_class__context</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DMDana.do.DMDana_ini_config_setting.section_FFT_spectrum_plot_class.model_post_init" title="Link to this definition"></a></dt>
-<dd><p>Post-initialization to handle the conversion of Window_type_list and Cutoff_list from string to list.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>__context</strong> – Contextual information for post-initialization.</p></li>
-<li><p><strong>_section_FFT_spectrum_plot_class__context</strong> (<a class="reference internal" href="DMDana.do.config.Any.html#DMDana.do.config.Any" title="typing.Any"><em>Any</em></a>)</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
 <dl class="py attribute">
 <dt class="sig sig-object py" id="DMDana.do.DMDana_ini_config_setting.section_FFT_spectrum_plot_class.model_computed_fields">
 <span class="sig-name descname"><span class="pre">model_computed_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ComputedFieldInfo</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#DMDana.do.DMDana_ini_config_setting.section_FFT_spectrum_plot_class.model_computed_fields" title="Link to this definition"></a></dt>
@@ -304,6 +290,20 @@ validated to form a valid model.</p>
 <dd><p>Metadata about the fields defined on the model,
 mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo].</p>
 <p>This replaces <cite>Model.__fields__</cite> from Pydantic V1.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="DMDana.do.DMDana_ini_config_setting.section_FFT_spectrum_plot_class.model_post_init">
+<span class="sig-name descname"><span class="pre">model_post_init</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_section_FFT_spectrum_plot_class__context</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/DMDana/do/DMDana_ini_config_setting.html#section_FFT_spectrum_plot_class.model_post_init"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#DMDana.do.DMDana_ini_config_setting.section_FFT_spectrum_plot_class.model_post_init" title="Link to this definition"></a></dt>
+<dd><p>Post-initialization to handle the conversion of Window_type_list and Cutoff_list from string to list.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>__context</strong> – Contextual information for post-initialization.</p></li>
+<li><p><strong>_section_FFT_spectrum_plot_class__context</strong> (<em>Any</em>)</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>

@@ -1,6 +1,0 @@
-DMDana.lib.logic\_func.read\_text\_from\_file
-=============================================
-
-.. currentmodule:: DMDana.lib.logic_func
-
-.. autofunction:: read_text_from_file

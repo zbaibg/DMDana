@@ -15,7 +15,6 @@ DMDana.do.occup\_deriv
       :toctree:
       :nosignatures:
    
-      dataclass
       do
    
    
@@ -29,9 +28,6 @@ DMDana.do.occup\_deriv
       :toctree:
       :template: class.rst
    
-      DMDana_ini_config_setting_class
-      Figure
-      config_occup
       config_occup_deriv
       plot_occup_deriv
    

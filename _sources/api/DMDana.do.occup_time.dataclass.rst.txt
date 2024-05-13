@@ -1,6 +1,0 @@
-DMDana.do.occup\_time.dataclass
-===============================
-
-.. currentmodule:: DMDana.do.occup_time
-
-.. autofunction:: dataclass

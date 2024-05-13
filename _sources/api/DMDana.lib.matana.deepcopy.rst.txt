@@ -1,6 +1,0 @@
-DMDana.lib.matana.deepcopy
-==========================
-
-.. currentmodule:: DMDana.lib.matana
-
-.. autofunction:: deepcopy

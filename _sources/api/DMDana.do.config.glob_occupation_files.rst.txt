@@ -1,6 +1,0 @@
-DMDana.do.config.glob\_occupation\_files
-========================================
-
-.. currentmodule:: DMDana.do.config
-
-.. autofunction:: glob_occupation_files

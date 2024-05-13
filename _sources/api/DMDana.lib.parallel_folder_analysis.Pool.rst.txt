@@ -1,6 +1,0 @@
-DMDana.lib.parallel\_folder\_analysis.Pool
-==========================================
-
-.. currentmodule:: DMDana.lib.parallel_folder_analysis
-
-.. autofunction:: Pool

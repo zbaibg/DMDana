@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DMDana.do.occup_time &mdash; DMDana 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=01f34227"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            DMDana
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">DMDana</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">DMDana.do.occup_time</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for DMDana.do.occup_time</h1><div class="highlight"><pre>
+<span></span><span class="ch">#! /usr/bin/env python</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This plots the occupation functions with time, namely f(E,t)  of different styles in batch.</span>
+<span class="sd">Be sure that your occupation filelists include complete number of files and also occupations_t0.out</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">import</span> <span class="nn">matplotlib</span> <span class="k">as</span> <span class="nn">mpl</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">mpl_toolkits.mplot3d.axes3d</span> <span class="kn">import</span> <span class="n">Axes3D</span>
+<span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">Field</span>
+<span class="kn">from</span> <span class="nn">pydantic.dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span> <span class="nn">scipy.optimize</span> <span class="kn">import</span> <span class="n">curve_fit</span>
+
+<span class="kn">from</span> <span class="nn">..lib</span> <span class="kn">import</span> <span class="n">constant</span> <span class="k">as</span> <span class="n">const</span>
+<span class="kn">from</span> <span class="nn">.config</span> <span class="kn">import</span> <span class="n">DMDana_ini_config_setting_class</span><span class="p">,</span> <span class="n">config_occup</span>
+
+
+<div class="viewcode-block" id="config_occup_time">
+<a class="viewcode-back" href="../../../api/DMDana.do.occup_time.config_occup_time.html#DMDana.do.occup_time.config_occup_time">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">config_occup_time</span><span class="p">(</span><span class="n">config_occup</span><span class="p">):</span>
+    <span class="n">cmap</span><span class="p">:</span> <span class="nb">object</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">mpl</span><span class="o">.</span><span class="n">colormaps</span><span class="p">[</span><span class="s1">&#39;rainbow&#39;</span><span class="p">])</span>
+    <span class="n">figsize</span><span class="p">:</span> <span class="nb">tuple</span> <span class="o">=</span> <span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>  <span class="c1"># Width, height in inches.</span>
+    <span class="n">dpi</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">100.0</span>  <span class="c1"># The resolution of the figure in dots-per-inch.</span>
+    
+    <span class="n">Substract_initial_occupation_this</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">figure_style_this</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">occup_time_plot_set_Erange_this</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">occup_time_plot_lowE_this</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">occup_time_plot_highE_this</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">data_fermi</span><span class="p">:</span> <span class="nb">object</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">occup_time_plot_lowE_conduction</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">occup_time_plot_highE_valence</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">fit_Boltzmann_initial_guess_mu</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">fit_Boltzmann_initial_guess_T</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">funcname</span><span class="o">=</span><span class="s1">&#39;occup_time&#39;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__post_init__</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">occup_time_plot_set_Erange_this</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">occup_time_plot_set_Erange_this</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">configsetting</span><span class="o">.</span><span class="n">occup_time_plot_set_Erange</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">occup_time_plot_set_Erange_this</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">occup_time_plot_lowE_this</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">occup_time_plot_lowE_this</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">configsetting</span><span class="o">.</span><span class="n">occup_time_plot_lowE</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">occup_time_plot_highE_this</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">occup_time_plot_highE_this</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">configsetting</span><span class="o">.</span><span class="n">occup_time_plot_highE</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">occup_time_plot_lowE_this</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">occup_time_plot_lowE_this</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">occup_Emin_au</span><span class="o">*</span><span class="n">const</span><span class="o">.</span><span class="n">Hatree_to_eV</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">occup_time_plot_highE_this</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">occup_time_plot_highE_this</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">occup_Emax_au</span><span class="o">*</span><span class="n">const</span><span class="o">.</span><span class="n">Hatree_to_eV</span>   
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">figure_style_this</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">figure_style_this</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">configsetting</span><span class="o">.</span><span class="n">figure_style</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">Substract_initial_occupation_this</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">Substract_initial_occupation_this</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">configsetting</span><span class="o">.</span><span class="n">Substract_initial_occupation</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_fermi</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">data_first</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">occup_selected_files</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">energylist</span><span class="o">=</span><span class="n">data_first</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data_fermi</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">data_first</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data_fermi</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span><span class="o">=</span><span class="n">energylist</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data_fermi</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span><span class="o">=</span><span class="n">fermi</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">temperature_au</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">mu_au</span><span class="p">,</span><span class="n">energylist</span><span class="p">)</span>  
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">occup_time_plot_lowE_conduction</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">occup_time_plot_lowE_conduction</span><span class="o">=</span><span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">EcMin_au</span><span class="o">*</span><span class="n">const</span><span class="o">.</span><span class="n">Hatree_to_eV</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-</span> <span class="mf">0.01</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">occup_time_plot_highE_valence</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">occup_time_plot_highE_valence</span><span class="o">=</span><span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">EvMax_au</span><span class="o">*</span><span class="n">const</span><span class="o">.</span><span class="n">Hatree_to_eV</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="mf">0.01</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">configsetting</span><span class="o">.</span><span class="n">fit_Boltzmann_initial_guess_mu_auto</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fit_Boltzmann_initial_guess_mu</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">EcMin_au</span><span class="o">/</span><span class="n">const</span><span class="o">.</span><span class="n">eV</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fit_Boltzmann_initial_guess_mu</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">configsetting</span><span class="o">.</span><span class="n">fit_Boltzmann_initial_guess_mu</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">configsetting</span><span class="o">.</span><span class="n">fit_Boltzmann_initial_guess_T_auto</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fit_Boltzmann_initial_guess_T</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">temperature_au</span><span class="o">/</span><span class="n">const</span><span class="o">.</span><span class="n">Kelvin</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fit_Boltzmann_initial_guess_T</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">configsetting</span><span class="o">.</span><span class="n">fit_Boltzmann_initial_guess_T</span></div>
+
+<div class="viewcode-block" id="fermi">
+<a class="viewcode-back" href="../../../api/DMDana.do.occup_time.fermi.html#DMDana.do.occup_time.fermi">[docs]</a>
+<span class="k">def</span> <span class="nf">fermi</span><span class="p">(</span><span class="n">temperature_au</span><span class="p">,</span><span class="n">mu_au</span><span class="p">,</span><span class="n">elist</span><span class="p">):</span>
+    <span class="n">ebyt</span> <span class="o">=</span> <span class="p">(</span><span class="n">elist</span> <span class="o">-</span> <span class="n">mu_au</span><span class="p">)</span> <span class="o">/</span> <span class="n">temperature_au</span>
+    <span class="n">occup</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">elist</span><span class="p">))</span>
+    <span class="n">occup</span><span class="p">[</span><span class="n">ebyt</span> <span class="o">&lt;</span> <span class="o">-</span><span class="mi">46</span><span class="p">]</span><span class="o">=</span><span class="mi">1</span>
+    <span class="n">occup</span><span class="p">[</span><span class="n">ebyt</span> <span class="o">&gt;</span> <span class="mi">46</span><span class="p">]</span><span class="o">=</span><span class="mi">0</span>
+    <span class="n">index_middle</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">ebyt</span> <span class="o">&gt;=</span> <span class="o">-</span><span class="mi">46</span><span class="p">,</span> <span class="n">ebyt</span> <span class="o">&lt;=</span> <span class="mi">46</span><span class="p">)</span>
+    <span class="n">occup</span><span class="p">[</span><span class="n">index_middle</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">ebyt</span><span class="p">[</span><span class="n">index_middle</span><span class="p">])</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">occup</span></div>
+
+
+<div class="viewcode-block" id="plot_occup_time">
+<a class="viewcode-back" href="../../../api/DMDana.do.occup_time.plot_occup_time.html#DMDana.do.occup_time.plot_occup_time">[docs]</a>
+<span class="k">class</span> <span class="nc">plot_occup_time</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="plot_occup_time.__init__">
+<a class="viewcode-back" href="../../../api/DMDana.do.occup_time.plot_occup_time.html#DMDana.do.occup_time.plot_occup_time.__init__">[docs]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">param</span><span class="p">:</span> <span class="n">config_occup_time</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">param</span><span class="o">=</span><span class="n">param</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">figure_style_this</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">param</span><span class="o">.</span><span class="n">figure_style_this</span> <span class="c1">#3D or heatmap</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Substract_initial_occupation_this</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">param</span><span class="o">.</span><span class="n">Substract_initial_occupation_this</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">fig</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">figure_style_this</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;3D&#39;</span><span class="p">,</span><span class="s1">&#39;heatmap&#39;</span><span class="p">]</span> <span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;figure_style should be 3D or heatmap&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">occupation_min_for_alldata</span><span class="o">=</span><span class="mi">0</span><span class="c1">#Must be 0, would be updated later</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">occupation_max_for_alldata</span><span class="o">=</span><span class="mi">0</span><span class="c1">#Must be 0, would be updated later</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">figtemp</span><span class="o">=</span><span class="kc">None</span> <span class="c1"># A temp file used for create colorbar</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">plt</span><span class="o">.</span><span class="n">Axes</span><span class="p">,</span><span class="n">Axes3D</span><span class="p">]</span> <span class="o">=</span><span class="kc">None</span> <span class="c1">#Axes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fitted</span><span class="o">=</span><span class="kc">False</span></div>
+
+    <span class="k">def</span> <span class="nf">do</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">param</span><span class="o">.</span><span class="n">figsize</span><span class="p">,</span><span class="n">dpi</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">param</span><span class="o">.</span><span class="n">dpi</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pre_processing</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plot_data</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">post_processing</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_fig</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">read_occup_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">filename</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">firstline_this_file</span><span class="o">=</span><span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+                <span class="n">time_this_file_fs</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">firstline_this_file</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">12</span><span class="p">])</span><span class="o">/</span><span class="n">const</span><span class="o">.</span><span class="n">fs</span> 
+                <span class="c1">#nstep=firstline.split()[9]</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;the occupation file is empty&#39;</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;cannot correctly read occupation file: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="o">%</span><span class="n">filename</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">e</span>
+        <span class="k">return</span> <span class="n">time_this_file_fs</span><span class="p">,</span><span class="n">data</span>
+
+    <span class="k">def</span> <span class="nf">pre_processing</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">figure_style_this</span><span class="o">==</span><span class="s1">&#39;3D&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ax</span> <span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">,</span><span class="n">projection</span><span class="o">=</span><span class="s1">&#39;3d&#39;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">figure_style_this</span><span class="o">==</span><span class="s1">&#39;heatmap&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">plot_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1">#Plot the fermi function at t=0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plot_one_curve</span><span class="p">(</span><span class="n">time_this_file_fs</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">param</span><span class="o">.</span><span class="n">data_fermi</span><span class="p">)</span>
+        <span class="c1">#Plot all the other files</span>
+        <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">param</span><span class="o">.</span><span class="n">occup_selected_files</span><span class="p">:</span>
+            <span class="n">time_this_file_fs</span><span class="p">,</span><span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">read_occup_file</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">time_this_file_fs</span><span class="o">&gt;</span><span class="bp">self</span><span class="o">.</span><span class="n">param</span><span class="o">.</span><span class="n">occup_t_tot</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">param</span><span class="o">.</span><span class="n">occup_timestep_for_selected_file_ps</span><span class="o">*</span><span class="mi">1000</span><span class="o">/</span><span class="mi">2</span><span class="p">:</span>
+                <span class="k">break</span>            
+            <span class="bp">self</span><span class="o">.</span><span class="n">plot_one_curve</span><span class="p">(</span><span class="n">time_this_file_fs</span><span class="p">,</span><span class="n">data</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">plot_one_curve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">time_this_file_fs</span><span class="p">,</span><span class="n">data</span><span class="p">):</span>    
+        <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">Substract_initial_occupation_this</span><span class="p">:</span>
+            <span class="n">data</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span><span class="o">=</span><span class="n">data</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">param</span><span class="o">.</span><span class="n">data_fermi</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">data</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span><span class="o">&gt;</span><span class="bp">self</span><span class="o">.</span><span class="n">param</span><span class="o">.</span><span class="n">occup_time_plot_lowE_this</span><span class="o">/</span><span class="n">const</span><span class="o">.</span><span class="n">Hatree_to_eV</span><span class="p">,</span><span class="n">data</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span><span class="o">&lt;</span><span class="bp">self</span><span class="o">.</span><span class="n">param</span><span class="o">.</span><span class="n">occup_time_plot_highE_this</span><span class="o">/</span><span class="n">const</span><span class="o">.</span><span class="n">Hatree_to_eV</span><span class="p">)]</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;No data found in the energy range (</span><span class="si">%.3e</span><span class="s1">,</span><span class="si">%.3e</span><span class="s1">)&#39;</span><span class="o">%</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">param</span><span class="o">.</span><span class="n">occup_time_plot_lowE_this</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">param</span><span class="o">.</span><span class="n">occup_time_plot_highE_this</span><span class="p">)</span>   
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="p">[</span><span class="kc">None</span><span class="p">]:</span><span class="c1">#Fit Bolzmman</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">param</span><span class="o">.</span><span class="n">configsetting</span><span class="o">.</span><span class="n">fit_Boltzmann</span><span class="p">:</span>
+                <span class="k">break</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">Substract_initial_occupation_this</span><span class="p">:</span>
+                <span class="k">break</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">param</span><span class="o">.</span><span class="n">occup_time_plot_lowE_this</span><span class="o">&gt;=</span><span class="bp">self</span><span class="o">.</span><span class="n">param</span><span class="o">.</span><span class="n">occup_time_plot_lowE_conduction</span><span class="p">:</span>
+                <span class="k">break</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">Boltzmann_fit_and_plot</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="n">time_this_file_fs</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fitted</span><span class="o">=</span><span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">figtemp</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">plot_data_func</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="n">time_this_file_fs</span><span class="p">)</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">occupation_max_for_alldata</span><span class="o">=</span><span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">occupation_max_for_alldata</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">data</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">occupation_min_for_alldata</span><span class="o">=</span><span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">occupation_min_for_alldata</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">data</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]))</span>
+
+    <span class="k">def</span> <span class="nf">Boltzmann_fit_and_plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">data</span><span class="p">,</span><span class="n">time_this_file_fs</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">popt</span><span class="p">,</span><span class="n">pcov</span><span class="o">=</span><span class="n">curve_fit</span><span class="p">(</span><span class="n">Bolzmann</span><span class="p">,</span><span class="n">data</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">const</span><span class="o">.</span><span class="n">Hatree_to_eV</span><span class="p">,</span><span class="n">data</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span><span class="n">p0</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">param</span><span class="o">.</span><span class="n">fit_Boltzmann_initial_guess_mu</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">param</span><span class="o">.</span><span class="n">fit_Boltzmann_initial_guess_T</span><span class="p">])</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Boltzmann fit failed for t(fs) </span><span class="si">%.3e</span><span class="s2">&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">time_this_file_fs</span><span class="p">))</span>
+            <span class="k">return</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Boltzmann Distribution t(fs) </span><span class="si">%.3e</span><span class="s2"> mu(eV) </span><span class="si">%.3e</span><span class="s2"> T(K) </span><span class="si">%.3e</span><span class="s2">&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">time_this_file_fs</span><span class="p">,</span><span class="n">popt</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">popt</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+        <span class="n">data_fit</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">1000</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
+        <span class="n">data_fit</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">param</span><span class="o">.</span><span class="n">occup_time_plot_lowE_this</span><span class="o">/</span><span class="n">const</span><span class="o">.</span><span class="n">Hatree_to_eV</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">param</span><span class="o">.</span><span class="n">occup_time_plot_highE_this</span><span class="o">/</span><span class="n">const</span><span class="o">.</span><span class="n">Hatree_to_eV</span><span class="p">,</span><span class="mi">1000</span><span class="p">)</span>
+        <span class="n">data_fit</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span><span class="o">=</span><span class="n">Bolzmann</span><span class="p">(</span><span class="n">data_fit</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">const</span><span class="o">.</span><span class="n">Hatree_to_eV</span><span class="p">,</span><span class="o">*</span><span class="n">popt</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plot_data_func</span><span class="p">(</span><span class="n">data_fit</span><span class="p">,</span><span class="n">time_this_file_fs</span><span class="p">,</span><span class="n">mode</span><span class="o">=</span><span class="s1">&#39;plot&#39;</span><span class="p">)</span> 
+
+    <span class="k">def</span> <span class="nf">plot_data_func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span><span class="n">time_this_file_fs</span><span class="p">,</span><span class="n">mode</span><span class="o">=</span><span class="s1">&#39;scatter&#39;</span><span class="p">):</span>
+        <span class="n">color</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">rainbow</span><span class="p">(</span><span class="n">time_this_file_fs</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">param</span><span class="o">.</span><span class="n">occup_t_tot</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">mode</span><span class="o">==</span><span class="s1">&#39;scatter&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">figure_style_this</span><span class="o">==</span><span class="s1">&#39;3D&#39;</span><span class="p">:</span> 
+                <span class="n">plot_param</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;xs&#39;</span><span class="p">:</span><span class="n">data</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">const</span><span class="o">.</span><span class="n">Hatree_to_eV</span><span class="p">,</span><span class="s2">&quot;ys&quot;</span><span class="p">:</span><span class="n">data</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;zs&quot;</span><span class="p">:</span><span class="n">time_this_file_fs</span><span class="o">/</span><span class="mi">1000</span><span class="p">,</span> <span class="s2">&quot;zdir&quot;</span><span class="p">:</span><span class="s1">&#39;y&#39;</span><span class="p">,</span><span class="s2">&quot;c&quot;</span><span class="p">:[</span><span class="n">time_this_file_fs</span><span class="o">/</span><span class="mi">1000</span><span class="p">]</span><span class="o">*</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="s2">&quot;cmap&quot;</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">param</span><span class="o">.</span><span class="n">cmap</span><span class="p">,</span> <span class="s2">&quot;vmin&quot;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s2">&quot;vmax&quot;</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">param</span><span class="o">.</span><span class="n">occup_t_tot</span><span class="o">/</span><span class="mi">1000</span><span class="p">}</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="o">**</span><span class="n">plot_param</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%.3e</span><span class="s1"> fs&#39;</span><span class="o">%</span><span class="n">time_this_file_fs</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">figure_style_this</span><span class="o">==</span><span class="s1">&#39;heatmap&#39;</span> <span class="p">:</span>
+                <span class="n">plot_param</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;x&quot;</span><span class="p">:</span><span class="n">data</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">const</span><span class="o">.</span><span class="n">Hatree_to_eV</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">:</span><span class="n">data</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;c&quot;</span><span class="p">:[</span><span class="n">time_this_file_fs</span><span class="o">/</span><span class="mi">1000</span><span class="p">]</span><span class="o">*</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="s2">&quot;cmap&quot;</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">param</span><span class="o">.</span><span class="n">cmap</span><span class="p">,</span> <span class="s2">&quot;vmin&quot;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s2">&quot;vmax&quot;</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">param</span><span class="o">.</span><span class="n">occup_t_tot</span><span class="o">/</span><span class="mi">1000</span><span class="p">}</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="o">**</span><span class="n">plot_param</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%.3e</span><span class="s1"> fs&#39;</span><span class="o">%</span><span class="n">time_this_file_fs</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">mode</span><span class="o">==</span><span class="s1">&#39;plot&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">figure_style_this</span><span class="o">==</span><span class="s1">&#39;3D&#39;</span><span class="p">:</span>
+                <span class="n">plot_param</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;xs&#39;</span><span class="p">:</span><span class="n">data</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">const</span><span class="o">.</span><span class="n">Hatree_to_eV</span><span class="p">,</span><span class="s2">&quot;ys&quot;</span><span class="p">:</span><span class="n">data</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;zs&quot;</span><span class="p">:</span><span class="n">time_this_file_fs</span><span class="o">/</span><span class="mi">1000</span><span class="p">,</span> <span class="s2">&quot;zdir&quot;</span><span class="p">:</span><span class="s1">&#39;y&#39;</span><span class="p">,</span><span class="s1">&#39;c&#39;</span><span class="p">:</span><span class="n">color</span><span class="p">}</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="o">**</span><span class="n">plot_param</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%.3e</span><span class="s1"> fs&#39;</span><span class="o">%</span><span class="n">time_this_file_fs</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">figure_style_this</span><span class="o">==</span><span class="s1">&#39;heatmap&#39;</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">const</span><span class="o">.</span><span class="n">Hatree_to_eV</span><span class="p">,</span> <span class="n">data</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span><span class="n">c</span><span class="o">=</span><span class="n">color</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%.3e</span><span class="s1"> fs&#39;</span><span class="o">%</span><span class="n">time_this_file_fs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">post_processing</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">param</span><span class="o">.</span><span class="n">occup_time_plot_lowE_this</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">param</span><span class="o">.</span><span class="n">occup_Emax_au</span><span class="o">*</span><span class="n">const</span><span class="o">.</span><span class="n">Hatree_to_eV</span> <span class="p">,</span> <span class="s2">&quot;Erange for plot is out of range of the data&quot;</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">param</span><span class="o">.</span><span class="n">occup_time_plot_highE_this</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">param</span><span class="o">.</span><span class="n">occup_Emin_au</span><span class="o">*</span><span class="n">const</span><span class="o">.</span><span class="n">Hatree_to_eV</span> <span class="p">,</span> <span class="s2">&quot;Erange for plot is out of range of the data&quot;</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">param</span><span class="o">.</span><span class="n">occup_time_plot_lowE_this</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">param</span><span class="o">.</span><span class="n">EvMax_au</span><span class="o">*</span><span class="n">const</span><span class="o">.</span><span class="n">Hatree_to_eV</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">param</span><span class="o">.</span><span class="n">occup_time_plot_highE_this</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">param</span><span class="o">.</span><span class="n">EcMin_au</span><span class="o">*</span><span class="n">const</span><span class="o">.</span><span class="n">Hatree_to_eV</span><span class="p">)</span> <span class="p">,</span> <span class="s2">&quot;Erange for plot is out of range of the data&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">param</span><span class="o">.</span><span class="n">occup_time_plot_lowE_this</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">param</span><span class="o">.</span><span class="n">occup_time_plot_highE_this</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;E (eV)&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fig</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">figtemp</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Time (ps)&#39;</span><span class="p">)</span>   
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">figure_style_this</span><span class="o">==</span><span class="s1">&#39;3D&#39;</span><span class="p">:</span>
+             <span class="bp">self</span><span class="o">.</span><span class="n">post_processing_3D_special</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">figure_style_this</span><span class="o">==</span><span class="s1">&#39;heatmap&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">post_processing_heatmap_special</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">param</span><span class="o">.</span><span class="n">configsetting</span><span class="o">.</span><span class="n">showlegend</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">post_processing_3D_special</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">param</span><span class="o">.</span><span class="n">occup_t_tot</span><span class="o">/</span><span class="mi">1000</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">param</span><span class="o">.</span><span class="n">configsetting</span><span class="o">.</span><span class="n">plot_occupation_number_setlimit</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">set_zlim</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">param</span><span class="o">.</span><span class="n">configsetting</span><span class="o">.</span><span class="n">plot_occupation_number_min</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">param</span><span class="o">.</span><span class="n">configsetting</span><span class="o">.</span><span class="n">plot_occupation_number_max</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">set_zlim</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">occupation_min_for_alldata</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">occupation_max_for_alldata</span><span class="p">)</span>          
+        <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;t (ps)&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">Substract_initial_occupation_this</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">set_zlabel</span><span class="p">(</span><span class="s1">&#39;f-f(t=0)&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">set_zlabel</span><span class="p">(</span><span class="s1">&#39;f&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_pane_color</span><span class="p">(</span><span class="s1">&#39;w&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">set_pane_color</span><span class="p">(</span><span class="s1">&#39;w&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">zaxis</span><span class="o">.</span><span class="n">set_pane_color</span><span class="p">(</span><span class="s1">&#39;w&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">view_init</span><span class="p">(</span><span class="n">elev</span><span class="o">=</span><span class="mf">20.</span><span class="p">,</span> <span class="n">azim</span><span class="o">=-</span><span class="mi">70</span><span class="p">,</span> <span class="n">roll</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>  
+        
+    <span class="k">def</span> <span class="nf">post_processing_heatmap_special</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">param</span><span class="o">.</span><span class="n">configsetting</span><span class="o">.</span><span class="n">plot_occupation_number_setlimit</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">param</span><span class="o">.</span><span class="n">configsetting</span><span class="o">.</span><span class="n">plot_occupation_number_min</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">param</span><span class="o">.</span><span class="n">configsetting</span><span class="o">.</span><span class="n">plot_occupation_number_max</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">occupation_min_for_alldata</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">occupation_max_for_alldata</span><span class="p">)</span> 
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">Substract_initial_occupation_this</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;f-f(t=0)&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;f&#39;</span><span class="p">)</span>        
+    <span class="k">def</span> <span class="nf">save_fig</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;occup_time_Ttot</span><span class="si">%.1f</span><span class="s2">fs_Step</span><span class="si">%.1f</span><span class="s2">fs_</span><span class="si">%s</span><span class="s2">_Emin</span><span class="si">%.3f</span><span class="s2">eV_Emax</span><span class="si">%.3f</span><span class="s2">eV</span><span class="si">%s</span><span class="s2">.png&quot;</span><span class="o">%</span>\
+        <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">param</span><span class="o">.</span><span class="n">occup_t_tot</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">param</span><span class="o">.</span><span class="n">occup_timestep_for_selected_file_ps</span><span class="o">*</span><span class="mi">1000</span><span class="p">,</span>\
+         <span class="bp">self</span><span class="o">.</span><span class="n">figure_style_this</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">param</span><span class="o">.</span><span class="n">occup_time_plot_lowE_this</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">param</span><span class="o">.</span><span class="n">occup_time_plot_highE_this</span><span class="p">,</span><span class="s1">&#39;_fitted&#39;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">fitted</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">Substract_initial_occupation_this</span><span class="p">:</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;delta_&quot;</span><span class="o">+</span><span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s2">&quot;tight&quot;</span><span class="p">)</span>   </div>
+
+        
+<div class="viewcode-block" id="do">
+<a class="viewcode-back" href="../../../api/DMDana.do.occup_time.do.html#DMDana.do.occup_time.do">[docs]</a>
+<span class="k">def</span> <span class="nf">do</span><span class="p">(</span><span class="n">DMDana_ini_config_setting</span><span class="p">:</span><span class="n">DMDana_ini_config_setting_class</span><span class="p">):</span>
+    <span class="n">config</span><span class="o">=</span><span class="n">config_occup_time</span><span class="p">(</span><span class="n">DMDana_ini_config_setting</span><span class="o">=</span><span class="n">DMDana_ini_config_setting</span><span class="p">)</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;temperature(K): </span><span class="si">%.3e</span><span class="s1">&#39;</span><span class="o">%</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">temperature_au</span><span class="o">/</span><span class="n">const</span><span class="o">.</span><span class="n">Kelvin</span><span class="p">))</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;mu(eV): </span><span class="si">%.3e</span><span class="s1">&#39;</span><span class="o">%</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">mu_au</span><span class="o">/</span><span class="n">const</span><span class="o">.</span><span class="n">eV</span><span class="p">))</span>
+
+    <span class="n">do_sub</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">configsetting</span><span class="o">.</span><span class="n">plot_conduction_valence</span><span class="p">:</span>
+        <span class="n">config</span><span class="o">.</span><span class="n">occup_time_plot_set_Erange_this</span><span class="o">=</span><span class="kc">True</span>
+        <span class="n">config</span><span class="o">.</span><span class="n">occup_time_plot_highE_this</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">occup_Emax_au</span><span class="o">*</span><span class="n">const</span><span class="o">.</span><span class="n">Hatree_to_eV</span>
+        <span class="n">config</span><span class="o">.</span><span class="n">occup_time_plot_lowE_this</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">occup_time_plot_lowE_conduction</span>
+        <span class="n">do_sub</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+        <span class="n">config</span><span class="o">.</span><span class="n">occup_time_plot_highE_this</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">occup_time_plot_highE_valence</span>
+        <span class="n">config</span><span class="o">.</span><span class="n">occup_time_plot_lowE_this</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">occup_Emin_au</span><span class="o">*</span><span class="n">const</span><span class="o">.</span><span class="n">Hatree_to_eV</span>
+        <span class="n">do_sub</span><span class="p">(</span><span class="n">config</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="do_sub">
+<a class="viewcode-back" href="../../../api/DMDana.do.occup_time.do_sub.html#DMDana.do.occup_time.do_sub">[docs]</a>
+<span class="k">def</span> <span class="nf">do_sub</span><span class="p">(</span><span class="n">config</span><span class="p">:</span> <span class="n">config_occup_time</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">configsetting</span><span class="o">.</span><span class="n">output_all_figure_types</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">figure_style_each</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;3D&#39;</span><span class="p">,</span><span class="s1">&#39;heatmap&#39;</span><span class="p">]:</span>
+            <span class="n">config</span><span class="o">.</span><span class="n">figure_style_this</span><span class="o">=</span><span class="n">figure_style_each</span>
+            <span class="k">for</span> <span class="n">Substract_initial_occupation_each</span> <span class="ow">in</span> <span class="p">[</span><span class="kc">True</span><span class="p">,</span><span class="kc">False</span><span class="p">]:</span>
+                <span class="n">config</span><span class="o">.</span><span class="n">Substract_initial_occupation_this</span><span class="o">=</span><span class="n">Substract_initial_occupation_each</span>
+                <span class="n">plot_object</span><span class="o">=</span><span class="n">plot_occup_time</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+                <span class="n">plot_object</span><span class="o">.</span><span class="n">do</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">plot_object</span><span class="o">=</span><span class="n">plot_occup_time</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+        <span class="n">plot_object</span><span class="o">.</span><span class="n">do</span><span class="p">()</span></div>
+
+
+<span class="c1">#E mu in eV, T in Kelvin</span>
+<div class="viewcode-block" id="Bolzmann">
+<a class="viewcode-back" href="../../../api/DMDana.do.occup_time.Bolzmann.html#DMDana.do.occup_time.Bolzmann">[docs]</a>
+<span class="k">def</span> <span class="nf">Bolzmann</span><span class="p">(</span><span class="n">E</span><span class="p">,</span><span class="n">mu</span><span class="p">,</span><span class="n">T</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">E</span><span class="o">-</span><span class="n">mu</span><span class="p">)</span><span class="o">*</span><span class="n">const</span><span class="o">.</span><span class="n">eV</span><span class="o">/</span><span class="p">(</span><span class="n">T</span><span class="o">*</span><span class="n">const</span><span class="o">.</span><span class="n">Kelvin</span><span class="p">))</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Zihao Bai.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -16,9 +16,6 @@ DMDana.do.occup\_time
       :nosignatures:
    
       Bolzmann
-      Field
-      curve_fit
-      dataclass
       do
       do_sub
       fermi
@@ -34,9 +31,6 @@ DMDana.do.occup\_time
       :toctree:
       :template: class.rst
    
-      Axes3D
-      DMDana_ini_config_setting_class
-      config_occup
       config_occup_time
       plot_occup_time
    

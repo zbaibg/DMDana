@@ -1,6 +1,0 @@
-DMDana.lib.logic\_func.parallel\_folder\_analysis
-=================================================
-
-.. currentmodule:: DMDana.lib.logic_func
-
-.. autofunction:: parallel_folder_analysis

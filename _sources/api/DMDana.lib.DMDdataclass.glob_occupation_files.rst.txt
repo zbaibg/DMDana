@@ -1,6 +1,0 @@
-DMDana.lib.DMDdataclass.glob\_occupation\_files
-===============================================
-
-.. currentmodule:: DMDana.lib.DMDdataclass
-
-.. autofunction:: glob_occupation_files

@@ -15,9 +15,7 @@ DMDana.do.FFT\_spectrum\_plot
       :toctree:
       :nosignatures:
    
-      dataclass
       do
-      fft_of_j
    
    
 
@@ -30,10 +28,7 @@ DMDana.do.FFT\_spectrum\_plot
       :toctree:
       :template: class.rst
    
-      Axes
-      DMDana_ini_config_setting_class
       config_FFT_spectrum_plot
-      config_current
       plot_FFT_spectrum_plot
    
    

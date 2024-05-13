@@ -21,16 +21,6 @@ DMDana.do.FeynWann\_Current
 
    
    
-   .. rubric:: Classes
-
-   .. autosummary::
-      :nosignatures:
-      :toctree:
-      :template: class.rst
-   
-      DMDana_ini_config_setting_class
-      config_current
-   
    
 
    

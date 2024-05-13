@@ -20,7 +20,6 @@ DMDana.lib.param\_in\_class
       :toctree:
       :template: class.rst
    
-      BaseModel
       param_class
    
    

@@ -1,6 +1,0 @@
-DMDana.do.config.get\_DMD\_param
-================================
-
-.. currentmodule:: DMDana.do.config
-
-.. autofunction:: get_DMD_param

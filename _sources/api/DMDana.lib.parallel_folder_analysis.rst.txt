@@ -15,7 +15,6 @@ DMDana.lib.parallel\_folder\_analysis
       :toctree:
       :nosignatures:
    
-      Pool
       check_and_create_folder
       parallel_folder_analysis
       read_folders
@@ -33,7 +32,6 @@ DMDana.lib.parallel\_folder\_analysis
       :toctree:
       :template: class.rst
    
-      DMD
       FolderAnalysis
    
    

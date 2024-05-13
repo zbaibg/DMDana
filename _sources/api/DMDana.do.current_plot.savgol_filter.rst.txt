@@ -1,6 +1,0 @@
-DMDana.do.current\_plot.savgol\_filter
-======================================
-
-.. currentmodule:: DMDana.do.current_plot
-
-.. autofunction:: savgol_filter

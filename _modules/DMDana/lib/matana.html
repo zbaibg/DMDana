@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DMDana.lib.matana &mdash; DMDana 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=01f34227"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            DMDana
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">DMDana</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">DMDana.lib.matana</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for DMDana.lib.matana</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">numpy.linalg</span> <span class="k">as</span> <span class="nn">LA</span>
+
+<span class="kn">from</span> <span class="nn">DMDana.lib</span> <span class="kn">import</span> <span class="n">DMDparser</span>
+
+<span class="kn">from</span> <span class="nn">.constant</span> <span class="kn">import</span> <span class="o">*</span>
+
+
+<div class="viewcode-block" id="JDFTx_MatrixAnalyzer">
+<a class="viewcode-back" href="../../../api/DMDana.lib.matana.JDFTx_MatrixAnalyzer.html#DMDana.lib.matana.JDFTx_MatrixAnalyzer">[docs]</a>
+<span class="k">class</span> <span class="nc">JDFTx_MatrixAnalyzer</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class for analyzing JDFTx matrix data related to electronic structure calculations.</span>
+
+<span class="sd">    :param folder: The folder path containing the data files.</span>
+<span class="sd">    :param kmesh_num: The number of k-points in each direction (knx, kny, knz).</span>
+<span class="sd">    :param nb_dft: The number of DFT bands.</span>
+<span class="sd">    :ivar vmat_dft: Matrix of DFT data loaded from files.</span>
+<span class="sd">    :ivar kveclist: List of k-vectors associated with the matrix.</span>
+<span class="sd">    :ivar vmat_minus_k: Matrix of -k corresponding to the given k-points.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="JDFTx_MatrixAnalyzer.__init__">
+<a class="viewcode-back" href="../../../api/DMDana.lib.matana.JDFTx_MatrixAnalyzer.html#DMDana.lib.matana.JDFTx_MatrixAnalyzer.__init__">[docs]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">folder</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">kmesh_num</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="n">nb_dft</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initializes the JDFTx_MatrixAnalyzer object.</span>
+
+<span class="sd">        :param folder: The folder path containing the data files.</span>
+<span class="sd">        :param kmesh_num: The number of k-points in each direction (knx, kny, knz).</span>
+<span class="sd">        :param nb_dft: The number of DFT bands.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">folder</span> <span class="o">=</span> <span class="n">folder</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kmesh_num</span> <span class="o">=</span> <span class="n">kmesh_num</span>  <span class="c1"># (knx, kny, knz)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nb_dft</span> <span class="o">=</span> <span class="n">nb_dft</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vmat_dft</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kveclist</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vmat_minus_k</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">load_data</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vmat_minus_k</span> <span class="o">=</span> <span class="n">get_mat_of_minus_k</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vmat_dft</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">kmesh_num</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">kveclist</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="JDFTx_MatrixAnalyzer.load_data">
+<a class="viewcode-back" href="../../../api/DMDana.lib.matana.JDFTx_MatrixAnalyzer.html#DMDana.lib.matana.JDFTx_MatrixAnalyzer.load_data">[docs]</a>
+    <span class="k">def</span> <span class="nf">load_data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Loads the DFT matrix data and k-vectors from specified files within the given folder.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">vmat_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">folder</span><span class="si">}</span><span class="s1">/totalE.momenta&#39;</span>
+        <span class="n">kvec_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">folder</span><span class="si">}</span><span class="s1">/totalE.kPts&#39;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">vmat_dft</span> <span class="o">=</span> <span class="n">mat_init</span><span class="p">(</span><span class="n">vmat_path</span><span class="p">,</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kmesh_num</span><span class="p">),</span> <span class="mi">3</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nb_dft</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nb_dft</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">complex_</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kveclist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">kvec_path</span><span class="p">,</span> <span class="n">usecols</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kveclist</span> <span class="o">=</span> <span class="n">shift_kvec</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kveclist</span><span class="p">)</span>
+
+        <span class="k">assert</span> <span class="n">validate_kveclist</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kveclist</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">kmesh_num</span><span class="p">),</span> <span class="s2">&quot;Validation of kveclist failed.&quot;</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="DMD_MatrixAnalyzer">
+<a class="viewcode-back" href="../../../api/DMDana.lib.matana.DMD_MatrixAnalyzer.html#DMDana.lib.matana.DMD_MatrixAnalyzer">[docs]</a>
+<span class="k">class</span> <span class="nc">DMD_MatrixAnalyzer</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class for analyzing DMD (Density Matrix Decomposition) matrix data from electronic structure computations.</span>
+
+<span class="sd">    :param DMDfolder: Path to the folder containing the DMD data files.</span>
+<span class="sd">    :ivar kmesh: Number of k-points in each direction (x, y, z).</span>
+<span class="sd">    :ivar nb: Number of bands.</span>
+<span class="sd">    :ivar bBot_dm: Lower band index for DMD.</span>
+<span class="sd">    :ivar bTop_dm: Upper band index for DMD.</span>
+<span class="sd">    :ivar nb_dm: Number of DMD bands.</span>
+<span class="sd">    :ivar nk: Number of k-points.</span>
+<span class="sd">    :ivar kstep: Step size between k-points in each direction.</span>
+<span class="sd">    :ivar denmat: Density matrix from DMD calculations.</span>
+<span class="sd">    :ivar vmat: Potential matrix from DMD calculations.</span>
+<span class="sd">    :ivar Emat: Energy matrix from DMD calculations.</span>
+<span class="sd">    :ivar kveclist: List of k-vectors.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="DMD_MatrixAnalyzer.__init__">
+<a class="viewcode-back" href="../../../api/DMDana.lib.matana.DMD_MatrixAnalyzer.html#DMDana.lib.matana.DMD_MatrixAnalyzer.__init__">[docs]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">DMDfolder</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initializes the DMD_MatrixAnalyzer object.</span>
+
+<span class="sd">        :param DMDfolder: The folder path containing the DMD data files.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">DMDfolder</span> <span class="o">=</span> <span class="n">DMDfolder</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kmesh</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">load_basic_data</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="DMD_MatrixAnalyzer.load_basic_data">
+<a class="viewcode-back" href="../../../api/DMDana.lib.matana.DMD_MatrixAnalyzer.html#DMDana.lib.matana.DMD_MatrixAnalyzer.load_basic_data">[docs]</a>
+    <span class="k">def</span> <span class="nf">load_basic_data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Loads all the necessary matrix data and configurations from the DMD files.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Define paths to the data files</span>
+        <span class="n">paths</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;vmat&#39;</span><span class="p">:</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">DMDfolder</span><span class="si">}</span><span class="s1">/ldbd_data/ldbd_vmat.bin&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;denmat&#39;</span><span class="p">:</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">DMDfolder</span><span class="si">}</span><span class="s1">/restart/denmat_restart.bin&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;Emat&#39;</span><span class="p">:</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">DMDfolder</span><span class="si">}</span><span class="s1">/ldbd_data/ldbd_ek.bin&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;size_data&#39;</span><span class="p">:</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">DMDfolder</span><span class="si">}</span><span class="s1">/ldbd_data/ldbd_size.dat&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;kvec&#39;</span><span class="p">:</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">DMDfolder</span><span class="si">}</span><span class="s1">/ldbd_data/ldbd_kvec.bin&#39;</span>
+        <span class="p">}</span>
+        
+        <span class="c1"># Read size data from file and store it</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nb</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bBot_dm</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bTop_dm</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nk</span><span class="p">,</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">kmesh</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">kmesh</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">kmesh</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">DMDparser</span><span class="o">.</span><span class="n">read_text_from_file</span><span class="p">(</span>
+                <span class="n">paths</span><span class="p">[</span><span class="s1">&#39;size_data&#39;</span><span class="p">],</span>
+                <span class="p">[</span><span class="s2">&quot;# nb nv bBot_dm&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span> <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;# nk_full&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">4</span><span class="p">,</span>
+                <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span>
+                <span class="kc">True</span><span class="p">,</span>
+                <span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">*</span> <span class="mi">7</span>
+            <span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">nb_dm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bTop_dm</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">bBot_dm</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kstep</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">kmesh</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">denmat</span> <span class="o">=</span> <span class="n">mat_init</span><span class="p">(</span><span class="n">paths</span><span class="p">[</span><span class="s1">&#39;denmat&#39;</span><span class="p">],</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nk</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nb_dm</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nb_dm</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">complex_</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vmat</span> <span class="o">=</span> <span class="n">mat_init</span><span class="p">(</span><span class="n">paths</span><span class="p">[</span><span class="s1">&#39;vmat&#39;</span><span class="p">],</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nk</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nb_dm</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nb</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">complex_</span><span class="p">)[:,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bBot_dm</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">bTop_dm</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Emat</span> <span class="o">=</span> <span class="n">mat_init</span><span class="p">(</span><span class="n">paths</span><span class="p">[</span><span class="s1">&#39;Emat&#39;</span><span class="p">],</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nk</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nb</span><span class="p">),</span> <span class="nb">float</span><span class="p">)[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bBot_dm</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">bTop_dm</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kveclist</span> <span class="o">=</span> <span class="n">mat_init</span><span class="p">(</span><span class="n">paths</span><span class="p">[</span><span class="s1">&#39;kvec&#39;</span><span class="p">],</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nk</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="nb">float</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kveclist</span> <span class="o">=</span> <span class="n">shift_kvec</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kveclist</span><span class="p">)</span>
+
+        <span class="c1"># Validate data integrity and properties</span>
+        <span class="k">assert</span> <span class="n">validate_kveclist</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kveclist</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kmesh</span><span class="p">)),</span> <span class="s2">&quot;K-vector list validation failed.&quot;</span>
+        <span class="k">assert</span> <span class="n">checkhermitian</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">denmat</span><span class="p">),</span> <span class="s1">&#39;Density matrix is not Hermitian.&#39;</span>
+        <span class="k">assert</span> <span class="n">checkhermitian</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vmat</span><span class="p">),</span> <span class="s1">&#39;Potential matrix is not Hermitian.&#39;</span></div>
+</div>
+
+        
+        
+<div class="viewcode-block" id="checkhermitian">
+<a class="viewcode-back" href="../../../api/DMDana.lib.matana.checkhermitian.html#DMDana.lib.matana.checkhermitian">[docs]</a>
+<span class="k">def</span> <span class="nf">checkhermitian</span><span class="p">(</span><span class="n">mat</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Checks if a matrix is Hermitian along its last two dimensions.</span>
+
+<span class="sd">    :param mat: The matrix to be checked, which should be at least two-dimensional.</span>
+<span class="sd">    :type mat: numpy.ndarray</span>
+<span class="sd">    :return: Returns True if the matrix is Hermitian, False otherwise. A matrix is Hermitian</span>
+<span class="sd">             if it is equal to its complex conjugate transpose.</span>
+<span class="sd">    :rtype: bool</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Reorder the last two dimensions of the matrix to prepare for transpose</span>
+    <span class="n">axessequence</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">ndim</span><span class="p">)</span>
+    <span class="n">axessequence</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span> <span class="o">=</span> <span class="n">axessequence</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:][::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    
+    <span class="c1"># Check if the original matrix is close to its conjugate transpose within numerical tolerance</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">mat</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="n">axessequence</span><span class="p">)</span><span class="o">.</span><span class="n">conj</span><span class="p">(),</span> <span class="n">mat</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-13</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="shift_kvec">
+<a class="viewcode-back" href="../../../api/DMDana.lib.matana.shift_kvec.html#DMDana.lib.matana.shift_kvec">[docs]</a>
+<span class="k">def</span> <span class="nf">shift_kvec</span><span class="p">(</span><span class="n">kveclist</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Shifts k-vectors to ensure all components are within the range [-0.5, 0.5).</span>
+
+<span class="sd">    :param kveclist: The array of k-vectors.</span>
+<span class="sd">    :type kveclist: numpy.ndarray</span>
+<span class="sd">    :return: The shifted array of k-vectors.</span>
+<span class="sd">    :rtype: numpy.ndarray</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Shift each k-vector component to be within the specified range</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">kveclist</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">%</span> <span class="mi">1</span> <span class="o">-</span> <span class="mf">0.5</span></div>
+
+
+
+<div class="viewcode-block" id="get_mat_of_minus_k">
+<a class="viewcode-back" href="../../../api/DMDana.lib.matana.get_mat_of_minus_k.html#DMDana.lib.matana.get_mat_of_minus_k">[docs]</a>
+<span class="k">def</span> <span class="nf">get_mat_of_minus_k</span><span class="p">(</span><span class="n">mat</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">kmesh_num</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="n">kveclist</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Constructs a matrix corresponding to the negative k-vectors from a given matrix.</span>
+
+<span class="sd">    :param mat: The input matrix whose rows/columns correspond to k-points. Expected to be a complex matrix.</span>
+<span class="sd">    :type mat: np.ndarray</span>
+<span class="sd">    :param kmesh_num: The number of k-points in each direction of the k-space mesh (knx, kny, knz).</span>
+<span class="sd">    :type kmesh_num: Tuple[int, int, int]</span>
+<span class="sd">    :param kveclist: The list of k-vectors associated with the matrix rows/columns. Expected to contain float entries.</span>
+<span class="sd">    :type kveclist: np.ndarray</span>
+<span class="sd">    :return: A new matrix where each entry is mapped to the corresponding -k vector from the input matrix.</span>
+<span class="sd">    :rtype: np.ndarray</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Shift k-vectors to standard range and calculate mesh indices</span>
+    <span class="n">kveclist_shifted</span> <span class="o">=</span> <span class="n">shift_kvec</span><span class="p">(</span><span class="n">kveclist</span><span class="p">)</span>
+    <span class="n">kmeshlist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">kveclist_shifted</span> <span class="o">*</span> <span class="n">kmesh_num</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+    
+    <span class="c1"># Initialize mapping from mesh indices to matrix indices</span>
+    <span class="n">kmesh_to_knum</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">kmesh_num</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">knum_tmp</span><span class="p">,</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">kmeshlist</span><span class="p">):</span>
+        <span class="n">kmesh_to_knum</span><span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">idx</span><span class="p">)]</span> <span class="o">=</span> <span class="n">knum_tmp</span>
+
+    <span class="c1"># Map each k-point to its corresponding -k-point in the matrix</span>
+    <span class="n">mat_minus_k</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">mat</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">knum_tmp</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">kmeshlist</span><span class="p">)):</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="o">-</span><span class="n">kmeshlist</span><span class="p">[</span><span class="n">knum_tmp</span><span class="p">]</span> <span class="o">%</span> <span class="n">kmesh_num</span><span class="p">)</span>  <span class="c1"># Negative index adjusted by mesh size</span>
+        <span class="n">minusknum_tmp</span> <span class="o">=</span> <span class="n">kmesh_to_knum</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+        <span class="n">mat_minus_k</span><span class="p">[</span><span class="n">minusknum_tmp</span><span class="p">]</span> <span class="o">=</span> <span class="n">mat</span><span class="p">[</span><span class="n">knum_tmp</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">mat_minus_k</span></div>
+
+
+<div class="viewcode-block" id="plot_hist">
+<a class="viewcode-back" href="../../../api/DMDana.lib.matana.plot_hist.html#DMDana.lib.matana.plot_hist">[docs]</a>
+<span class="k">def</span> <span class="nf">plot_hist</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> 
+              <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> 
+              <span class="n">ylabel</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> 
+              <span class="n">xlabel</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> 
+              <span class="n">logbin</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> 
+              <span class="n">density</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> 
+              <span class="n">scale</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> 
+              <span class="n">dpi</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Plots a histogram of the provided data with extensive customization for display properties.</span>
+
+<span class="sd">    :param data: Data to be plotted in the histogram.</span>
+<span class="sd">    :type data: numpy.ndarray</span>
+<span class="sd">    :param title: Title of the histogram plot.</span>
+<span class="sd">    :type title: str</span>
+<span class="sd">    :param ylabel: Label for the Y-axis.</span>
+<span class="sd">    :type ylabel: str</span>
+<span class="sd">    :param xlabel: Label for the X-axis.</span>
+<span class="sd">    :type xlabel: str</span>
+<span class="sd">    :param logbin: Number of logarithmic bins in the histogram.</span>
+<span class="sd">    :type logbin: int</span>
+<span class="sd">    :param density: If True, normalize the histogram; otherwise, count frequencies.</span>
+<span class="sd">    :type density: bool</span>
+<span class="sd">    :param scale: Scale of the plot axes (&#39;linear&#39;, &#39;log&#39;, etc.).</span>
+<span class="sd">    :type scale: str</span>
+<span class="sd">    :param dpi: Resolution of the plot in dots per inch.</span>
+<span class="sd">    :type dpi: int</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">dpi</span><span class="o">=</span><span class="n">dpi</span><span class="p">)</span>
+    <span class="n">hist</span><span class="p">,</span> <span class="n">bins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="n">logbin</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="n">density</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">bins</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">*</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">hist</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xscale</span><span class="p">(</span><span class="n">scale</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">yscale</span><span class="p">(</span><span class="n">scale</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="n">ylabel</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="n">xlabel</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="mat_init">
+<a class="viewcode-back" href="../../../api/DMDana.lib.matana.mat_init.html#DMDana.lib.matana.mat_init">[docs]</a>
+<span class="k">def</span> <span class="nf">mat_init</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">shape</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span> <span class="n">dtype</span><span class="p">:</span> <span class="n">Type</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Initializes a matrix from a binary file.</span>
+
+<span class="sd">    :param path: File path to the binary data.</span>
+<span class="sd">    :type path: str</span>
+<span class="sd">    :param shape: Expected shape of the matrix. Tuple elements represent dimensions sizes.</span>
+<span class="sd">    :type shape: Tuple[int, ...]</span>
+<span class="sd">    :param dtype: Data type of the matrix elements, e.g., np.int32, np.float64.</span>
+<span class="sd">    :type dtype: dtype</span>
+<span class="sd">    :return: The matrix loaded from the specified binary file.</span>
+<span class="sd">    :rtype: numpy.ndarray</span>
+<span class="sd">    :raises AssertionError: If the number of elements read from the file does not match the expected product of the shape dimensions.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Read the binary file content into a numpy array</span>
+    <span class="n">mat_raw</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fromfile</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">mat_raw</span><span class="p">)</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">shape</span><span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;File </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2"> size does not match expected size </span><span class="si">{</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="c1"># Reshape the raw data to the specified shape</span>
+    <span class="n">mat</span> <span class="o">=</span> <span class="n">mat_raw</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="s1">&#39;C&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">mat</span></div>
+
+
+<div class="viewcode-block" id="validate_kveclist">
+<a class="viewcode-back" href="../../../api/DMDana.lib.matana.validate_kveclist.html#DMDana.lib.matana.validate_kveclist">[docs]</a>
+<span class="k">def</span> <span class="nf">validate_kveclist</span><span class="p">(</span><span class="n">kveclist</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">kmesh_num</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Validates that all k-points in the kveclist are within the specified kmesh grid and their opposite points are also present.</span>
+
+<span class="sd">    :param kveclist: The list of k-vectors to validate.</span>
+<span class="sd">    :type kveclist: numpy.ndarray</span>
+<span class="sd">    :param kmesh_num: The dimensions of the k-mesh grid (knx, kny, knz), specifying the number of k-points in each direction.</span>
+<span class="sd">    :type kmesh_num: Tuple[int, int, int]</span>
+<span class="sd">    :return: True if all k-points and their opposites are valid within the kmesh, False otherwise.</span>
+<span class="sd">    :rtype: bool</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Create a grid of k-points for the kmesh</span>
+    <span class="n">kmesh_points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mgrid</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">kmesh_num</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">0</span><span class="p">:</span><span class="n">kmesh_num</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">0</span><span class="p">:</span><span class="n">kmesh_num</span><span class="p">[</span><span class="mi">2</span><span class="p">]]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">T</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">kmesh_num</span><span class="p">)</span> <span class="o">-</span> <span class="mf">0.5</span>
+    
+    <span class="c1"># Check if every k-vector in kveclist is close to any point in the kmesh_points</span>
+    <span class="n">k_in_mesh</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">kvec</span><span class="p">,</span> <span class="n">kmesh_points</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1.e-5</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span> <span class="k">for</span> <span class="n">kvec</span> <span class="ow">in</span> <span class="n">kveclist</span><span class="p">])</span>
+    
+    <span class="c1"># Check if the opposite of every k-vector in kveclist is close to any other k-vector in kveclist</span>
+    <span class="n">k_in_mesh_opposite</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">shift_kvec</span><span class="p">(</span><span class="o">-</span><span class="n">kvec</span><span class="p">),</span> <span class="n">kveclist</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1.e-5</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span> <span class="k">for</span> <span class="n">kvec</span> <span class="ow">in</span> <span class="n">kveclist</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">k_in_mesh</span><span class="p">)</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">k_in_mesh_opposite</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="Plot_mat">
+<a class="viewcode-back" href="../../../api/DMDana.lib.matana.Plot_mat.html#DMDana.lib.matana.Plot_mat">[docs]</a>
+<span class="k">class</span> <span class="nc">Plot_mat</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A base class for creating and managing plots for matrix data, particularly for visualizing </span>
+<span class="sd">    k-space vectors or similar scientific data.</span>
+
+<span class="sd">    :ivar kveclist: An array of k-vectors, typically representing points in a space.</span>
+<span class="sd">    :vartype kveclist: numpy.ndarray</span>
+<span class="sd">    :ivar fig: The figure object where the plot(s) will be drawn.</span>
+<span class="sd">    :vartype fig: matplotlib.figure.Figure</span>
+<span class="sd">    :ivar title: Title of the overall figure.</span>
+<span class="sd">    :vartype title: str</span>
+<span class="sd">    :ivar ylabel: Label for the Y-axis of the plot.</span>
+<span class="sd">    :vartype ylabel: str</span>
+<span class="sd">    :ivar dpi: Dots per inch, setting the resolution of the figure.</span>
+<span class="sd">    :vartype dpi: int</span>
+<span class="sd">    :ivar figsize: Dimensions of the figure (width, height) in inches.</span>
+<span class="sd">    :vartype figsize: Tuple[int, int]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Plot_mat.__init__">
+<a class="viewcode-back" href="../../../api/DMDana.lib.matana.Plot_mat.html#DMDana.lib.matana.Plot_mat.__init__">[docs]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kveclist</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">list</span><span class="p">],</span> <span class="n">dpi</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span> 
+                 <span class="n">figsize</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="n">title</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">ylabel</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initializes the Plot_mat object with specified parameters and sets up the plotting environment.</span>
+<span class="sd">        </span>
+<span class="sd">        :param kveclist: List or array of k-vectors. If a list is provided, it will be converted to an np.ndarray.</span>
+<span class="sd">        :type kveclist: Union[numpy.ndarray, list]</span>
+<span class="sd">        :param dpi: Resolution of the plot in dots per inch. Default is 100.</span>
+<span class="sd">        :type dpi: int</span>
+<span class="sd">        :param figsize: Size of the figure (width, height) in inches. Default is (8, 6).</span>
+<span class="sd">        :type figsize: Tuple[int, int]</span>
+<span class="sd">        :param title: Title of the overall figure. Default is an empty string.</span>
+<span class="sd">        :type title: str</span>
+<span class="sd">        :param ylabel: Label for the Y-axis of the plot. Default is an empty string.</span>
+<span class="sd">        :type ylabel: str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kveclist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">kveclist</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">dpi</span><span class="o">=</span><span class="n">dpi</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="n">figsize</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="n">title</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ylabel</span> <span class="o">=</span> <span class="n">ylabel</span></div>
+
+
+<div class="viewcode-block" id="Plot_mat.postprocess">
+<a class="viewcode-back" href="../../../api/DMDana.lib.matana.Plot_mat.html#DMDana.lib.matana.Plot_mat.postprocess">[docs]</a>
+    <span class="k">def</span> <span class="nf">postprocess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">colorbartmp</span><span class="p">:</span> <span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">ScalarMappable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Adds a color bar to the plot and sets titles and labels.</span>
+
+<span class="sd">        :param colorbartmp: The ScalarMappable instance from which the colorbar is created.</span>
+<span class="sd">        :type colorbartmp: matplotlib.cm.ScalarMappable</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fig</span><span class="o">.</span><span class="n">subplots_adjust</span><span class="p">(</span><span class="n">right</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
+        <span class="n">cbar_ax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fig</span><span class="o">.</span><span class="n">add_axes</span><span class="p">([</span><span class="mf">0.85</span><span class="p">,</span> <span class="mf">0.15</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">])</span>  <span class="c1"># Adjust these values as necessary to fit layout</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fig</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">colorbartmp</span><span class="p">,</span> <span class="n">cax</span><span class="o">=</span><span class="n">cbar_ax</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">title</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ylabel</span><span class="p">:</span>  <span class="c1"># Ensuring ylabel is not empty</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ylabel</span><span class="p">)</span></div>
+
+            
+<div class="viewcode-block" id="Plot_mat.show">
+<a class="viewcode-back" href="../../../api/DMDana.lib.matana.Plot_mat.html#DMDana.lib.matana.Plot_mat.show">[docs]</a>
+    <span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Displays the figure.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="Plot_mat.savefig">
+<a class="viewcode-back" href="../../../api/DMDana.lib.matana.Plot_mat.html#DMDana.lib.matana.Plot_mat.savefig">[docs]</a>
+    <span class="k">def</span> <span class="nf">savefig</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Saves the figure to a file.</span>
+
+<span class="sd">        :param path: The path (and filename) to save the figure to.</span>
+<span class="sd">        :type path: str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">path</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Plot_mat.close">
+<a class="viewcode-back" href="../../../api/DMDana.lib.matana.Plot_mat.html#DMDana.lib.matana.Plot_mat.close">[docs]</a>
+    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Closes the figure, freeing up resources.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fig</span><span class="p">)</span></div>
+</div>
+
+
+<div class="viewcode-block" id="Plot_mat2D">
+<a class="viewcode-back" href="../../../api/DMDana.lib.matana.Plot_mat2D.html#DMDana.lib.matana.Plot_mat2D">[docs]</a>
+<span class="k">class</span> <span class="nc">Plot_mat2D</span><span class="p">(</span><span class="n">Plot_mat</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class for visualizing 2D matrices representing data along specified paths in k-space.</span>
+<span class="sd">    It visualizes data points across multiple bands and directions using color gradients,</span>
+<span class="sd">    ideal for examining electronic structures in materials science and physics.</span>
+
+<span class="sd">    :param kveclist: List or array of k-vectors. Shape: (num_kpoints, 3).</span>
+<span class="sd">    :type kveclist: Union[numpy.ndarray, List[List[float]]]</span>
+<span class="sd">    :param data: The y-values for the plot, indexed by bands, directions, and k-points. Shape: (num_bands, num_directions, num_kpoints).</span>
+<span class="sd">    :type data: np.ndarray</span>
+<span class="sd">    :param colors: The colors corresponding to the data values, same shape as data. Shape: (num_bands, num_directions, num_kpoints).</span>
+<span class="sd">    :type colors: np.ndarray</span>
+<span class="sd">    :param kpaths: List of arrays, each representing a path through k-space. Shape: (num_paths, M, 3).</span>
+<span class="sd">    :type kpaths: List[np.ndarray]</span>
+<span class="sd">    :param labels: List of lists, each containing labels for the points in corresponding kpaths. Shape: (num_paths, M).</span>
+<span class="sd">    :type labels: List[List[str]]</span>
+<span class="sd">    :param tolerance: Numerical tolerance used for matching k-points to k-paths.</span>
+<span class="sd">    :type tolerance: float</span>
+<span class="sd">    :param separate: If True, plots each band-direction combination in a separate subplot. Default is True.</span>
+<span class="sd">    :type separate: bool, optional</span>
+<span class="sd">    :param title: Title for the entire figure. Default is an empty string.</span>
+<span class="sd">    :type title: str, optional</span>
+<span class="sd">    :param ylabel: Label for the Y-axis of the plot. Default is an empty string.</span>
+<span class="sd">    :type ylabel: str, optional</span>
+<span class="sd">    :param gap: Gap between consecutive k-paths on the x-axis. Default is 0.1.</span>
+<span class="sd">    :type gap: float, optional</span>
+<span class="sd">    :param vmin: Minimum value for color scaling. Default is the minimum value in the data.</span>
+<span class="sd">    :type vmin: Union[None, float], optional</span>
+<span class="sd">    :param vmax: Maximum value for color scaling. Default is the maximum value in the data.</span>
+<span class="sd">    :type vmax: Union[None, float], optional</span>
+<span class="sd">    :param dpi: Resolution of the plot in dots per inch. Default is 100.</span>
+<span class="sd">    :type dpi: int, optional</span>
+<span class="sd">    :param figsize: Size of the figure (width, height) in inches. Default is (8, 6).</span>
+<span class="sd">    :type figsize: Tuple[int, int], optional</span>
+<span class="sd">    :inherits: Plot_mat: A base plotting class that provides a figure and common functionalities.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Plot_mat2D.__init__">
+<a class="viewcode-back" href="../../../api/DMDana.lib.matana.Plot_mat2D.html#DMDana.lib.matana.Plot_mat2D.__init__">[docs]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kveclist</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]]],</span> <span class="n">data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">colors</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+                 <span class="n">kpaths</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">labels</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span> <span class="n">tolerance</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                 <span class="n">separate</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">title</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">ylabel</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">gap</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span>
+                 <span class="n">vmin</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">vmax</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">dpi</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span> <span class="n">figsize</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">8</span><span class="p">)):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initializes the Plot_mat2D object with specified parameters and setups the plotting environment.</span>
+
+<span class="sd">        :param kveclist: List or array of k-vectors, where each k-vector is a list of three floats.</span>
+<span class="sd">        :type kveclist: Union[numpy.ndarray, List[List[float]]]</span>
+<span class="sd">        :param data: The y-values for the plot, indexed by bands, directions, and k-points.</span>
+<span class="sd">        :type data: np.ndarray</span>
+<span class="sd">        :param colors: The colors corresponding to the data values, same shape as data.</span>
+<span class="sd">        :type colors: np.ndarray</span>
+<span class="sd">        :param kpaths: List of arrays, each representing a path through k-space.</span>
+<span class="sd">        :type kpaths: List[np.ndarray]</span>
+<span class="sd">        :param labels: List of lists, each containing labels for the points in corresponding kpaths.</span>
+<span class="sd">        :type labels: List[List[str]]</span>
+<span class="sd">        :param tolerance: Numerical tolerance used for matching k-points to k-paths.</span>
+<span class="sd">        :type tolerance: float</span>
+<span class="sd">        :param separate: If True, plots each band-direction combination in a separate subplot.</span>
+<span class="sd">        :type separate: bool, optional</span>
+<span class="sd">        :param title: Title for the entire figure.</span>
+<span class="sd">        :type title: str, optional</span>
+<span class="sd">        :param ylabel: Label for the Y-axis of the plot.</span>
+<span class="sd">        :type ylabel: str, optional</span>
+<span class="sd">        :param gap: Gap between consecutive k-paths on the x-axis.</span>
+<span class="sd">        :type gap: float, optional</span>
+<span class="sd">        :param vmin: Minimum value for color scaling.</span>
+<span class="sd">        :type vmin: Union[None, float], optional</span>
+<span class="sd">        :param vmax: Maximum value for color scaling.</span>
+<span class="sd">        :type vmax: Union[None, float], optional</span>
+<span class="sd">        :param dpi: Resolution of the plot in dots per inch.</span>
+<span class="sd">        :type dpi: int, optional</span>
+<span class="sd">        :param figsize: Size of the figure (width, height) in inches.</span>
+<span class="sd">        :type figsize: Tuple[int, int], optional</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">kveclist</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="n">dpi</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="n">figsize</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">,</span> <span class="n">ylabel</span><span class="o">=</span><span class="n">ylabel</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">colors</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">colors</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kpaths</span> <span class="o">=</span> <span class="n">kpaths</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">labels</span> <span class="o">=</span> <span class="n">labels</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">separate</span> <span class="o">=</span> <span class="n">separate</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gap</span> <span class="o">=</span> <span class="n">gap</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tolerance</span> <span class="o">=</span> <span class="n">tolerance</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vmin</span> <span class="o">=</span> <span class="n">vmin</span> <span class="k">if</span> <span class="n">vmin</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vmax</span> <span class="o">=</span> <span class="n">vmax</span> <span class="k">if</span> <span class="n">vmax</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_bands</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_directions</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setup_figure</span><span class="p">()</span></div>
+
+        
+<div class="viewcode-block" id="Plot_mat2D.setup_figure">
+<a class="viewcode-back" href="../../../api/DMDana.lib.matana.Plot_mat2D.html#DMDana.lib.matana.Plot_mat2D.setup_figure">[docs]</a>
+    <span class="k">def</span> <span class="nf">setup_figure</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set up the figure with subplots configured for separate bands and directions if specified.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">axlist</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">separate</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_bands</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_directions</span><span class="p">):</span>
+                    <span class="n">ax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_bands</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_directions</span><span class="p">,</span> <span class="n">b</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_directions</span> <span class="o">+</span> <span class="n">d</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">axlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ax</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">axlist</span> <span class="o">=</span> <span class="p">[</span><span class="n">ax</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_bands</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_directions</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">plot_data</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="Plot_mat2D.plot_data">
+<a class="viewcode-back" href="../../../api/DMDana.lib.matana.Plot_mat2D.html#DMDana.lib.matana.Plot_mat2D.plot_data">[docs]</a>
+    <span class="k">def</span> <span class="nf">plot_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Plots the data on the prepared subplots.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">colorbartmp</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># To capture the last colorbar mappable for postprocess</span>
+        <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">ax</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">axlist</span><span class="p">):</span>
+            <span class="n">b</span><span class="p">,</span> <span class="n">d</span> <span class="o">=</span> <span class="nb">divmod</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_directions</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">path</span><span class="p">,</span> <span class="n">x_positions</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kpaths</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">process_paths</span><span class="p">()):</span>
+                <span class="n">k_indices</span><span class="p">,</span> <span class="n">projections</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">match_kpoints_to_path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">k_index</span><span class="p">,</span> <span class="n">projection</span><span class="p">,</span> <span class="n">x_pos</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">k_indices</span><span class="p">,</span> <span class="n">projections</span><span class="p">,</span><span class="n">x_positions</span><span class="p">):</span>
+                    <span class="n">colorbartmp</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">x_pos</span> <span class="o">+</span> <span class="n">projection</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">b</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">k_index</span><span class="p">],</span> <span class="n">c</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">colors</span><span class="p">[</span><span class="n">b</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">k_index</span><span class="p">],</span> <span class="n">vmin</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">vmin</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">vmax</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;viridis&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">colorbartmp</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">postprocess</span><span class="p">(</span><span class="n">colorbartmp</span><span class="p">)</span>  <span class="c1"># Use the inherited postprocess method</span></div>
+
+
+<div class="viewcode-block" id="Plot_mat2D.postprocess">
+<a class="viewcode-back" href="../../../api/DMDana.lib.matana.Plot_mat2D.html#DMDana.lib.matana.Plot_mat2D.postprocess">[docs]</a>
+    <span class="k">def</span> <span class="nf">postprocess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">colorbartmp</span><span class="p">:</span> <span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">ScalarMappable</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Adds a color bar to the plot, adjust xlims, and sets titles and labels.</span>
+
+<span class="sd">        :param colorbartmp: The ScalarMappable instance from which the colorbar is created.</span>
+<span class="sd">        :type colorbartmp: matplotlib.cm.ScalarMappable</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">separate</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">ax</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">axlist</span><span class="p">):</span>
+                <span class="n">b</span><span class="p">,</span> <span class="n">d</span> <span class="o">=</span> <span class="nb">divmod</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_directions</span><span class="p">)</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">([</span><span class="n">x</span> <span class="k">for</span> <span class="n">x_of_path</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">process_paths</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">x_of_path</span><span class="p">],</span> <span class="p">[])</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">process_paths</span><span class="p">()[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+                
+                <span class="k">if</span> <span class="n">b</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_bands</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;k-path&#39;</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">labels</span><span class="p">:</span>
+                        <span class="n">ax</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">([</span><span class="n">x</span> <span class="k">for</span> <span class="n">x_of_path</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">process_paths</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">x_of_path</span><span class="p">],</span> <span class="p">[</span><span class="n">label</span> <span class="k">for</span> <span class="n">label_of_path</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">labels</span> <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">label_of_path</span><span class="p">])</span>
+                <span class="k">if</span> <span class="n">b</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Direction </span><span class="si">{</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;y&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;z&#39;</span><span class="p">][</span><span class="n">d</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fig</span><span class="o">.</span><span class="n">supylabel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ylabel</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">axlist</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">([</span><span class="n">x</span> <span class="k">for</span> <span class="n">x_of_path</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">process_paths</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">x_of_path</span><span class="p">],</span> <span class="p">[])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">axlist</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">process_paths</span><span class="p">()[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">axlist</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;k-path&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">labels</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">axlist</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">([</span><span class="n">x</span> <span class="k">for</span> <span class="n">x_of_path</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">process_paths</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">x_of_path</span><span class="p">],</span> <span class="p">[</span><span class="n">label</span> <span class="k">for</span> <span class="n">label_of_path</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">labels</span> <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">label_of_path</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">axlist</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ylabel</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">axlist</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">title</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">postprocess</span><span class="p">(</span><span class="n">colorbartmp</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Plot_mat2D.process_paths">
+<a class="viewcode-back" href="../../../api/DMDana.lib.matana.Plot_mat2D.html#DMDana.lib.matana.Plot_mat2D.process_paths">[docs]</a>
+    <span class="k">def</span> <span class="nf">process_paths</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate x-axis positions for plotting based on the specified k-paths.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">x_positions</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">x_offset</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">kpaths</span><span class="p">:</span>
+            <span class="n">distances</span> <span class="o">=</span> <span class="n">LA</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">distances</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">distances</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="n">cumulative_distances</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">distances</span><span class="p">)</span> <span class="o">+</span> <span class="n">x_offset</span>
+            <span class="n">x_positions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cumulative_distances</span><span class="p">)</span>
+            <span class="n">x_offset</span> <span class="o">=</span> <span class="n">cumulative_distances</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">gap</span>
+        <span class="k">return</span> <span class="n">x_positions</span></div>
+
+
+<div class="viewcode-block" id="Plot_mat2D.match_kpoints_to_path">
+<a class="viewcode-back" href="../../../api/DMDana.lib.matana.Plot_mat2D.html#DMDana.lib.matana.Plot_mat2D.match_kpoints_to_path">[docs]</a>
+    <span class="k">def</span> <span class="nf">match_kpoints_to_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Finds k-points from kveclist that are close to the given k-path.</span>
+<span class="sd">        Returns indices of matched k-points and their projections along the path.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">k_indices</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">projections</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">path</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">path</span><span class="p">[</span><span class="mi">1</span><span class="p">:]):</span>
+            <span class="n">direction</span> <span class="o">=</span> <span class="n">end</span> <span class="o">-</span> <span class="n">start</span>
+            <span class="n">projected_distances</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">kveclist</span> <span class="o">-</span> <span class="n">start</span><span class="p">),</span> <span class="n">direction</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">direction</span><span class="p">)</span>
+            <span class="n">perpendicular_distances</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kveclist</span> <span class="o">-</span> <span class="n">start</span><span class="p">,</span> <span class="n">direction</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">direction</span><span class="p">)),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">projected_distances</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">projected_distances</span> <span class="o">&lt;=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">direction</span><span class="p">))</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">perpendicular_distances</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tolerance</span><span class="p">)</span>
+            <span class="n">k_indices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">mask</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">projections</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">projected_distances</span><span class="p">[</span><span class="n">mask</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">k_indices</span><span class="p">,</span> <span class="n">projections</span></div>
+</div>
+
+
+
+
+<div class="viewcode-block" id="Plot_mat3D">
+<a class="viewcode-back" href="../../../api/DMDana.lib.matana.Plot_mat3D.html#DMDana.lib.matana.Plot_mat3D">[docs]</a>
+<span class="k">class</span> <span class="nc">Plot_mat3D</span><span class="p">(</span><span class="n">Plot_mat</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class for visualizing 3D matrices representing data along specified paths in k-space.</span>
+<span class="sd">    It visualizes data points across multiple bands and directions using color gradients.</span>
+
+<span class="sd">    :param kveclist: List of all k-vectors of Kmesh to be analyzed. Shape: (total number of k-points, number of dimensions).</span>
+<span class="sd">    :param color_b_k: Colors corresponding to the data points. Shape: (total number of k-points).</span>
+<span class="sd">    :param vmin: Minimum color scale value. Defaults to None.</span>
+<span class="sd">    :param vmax: Maximum color scale value. Defaults to None.</span>
+<span class="sd">    :param title: Title of the plot. Defaults to an empty string.</span>
+<span class="sd">    :param rownum: Number of rows in the subplot grid. Defaults to 1.</span>
+<span class="sd">    :param index_str_for_subtitle: String for subplot subtitles. Defaults to &#39;i&#39;.</span>
+<span class="sd">    :param subtitle_on: Whether to display subtitles. Defaults to True.</span>
+<span class="sd">    :param dpi: Dots per inch for plot resolution. Defaults to 100.</span>
+<span class="sd">    :param figsize: Dimensions of the figure (width, height) in inches. Defaults to (12, 6).</span>
+
+<span class="sd">    Inherits:</span>
+<span class="sd">        Plot_mat: A base plotting class that provides figure setup and post-processing.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Plot_mat3D.__init__">
+<a class="viewcode-back" href="../../../api/DMDana.lib.matana.Plot_mat3D.html#DMDana.lib.matana.Plot_mat3D.__init__">[docs]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kveclist</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">color_b_k</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> 
+                 <span class="n">vmin</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">vmax</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
+                 <span class="n">title</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">rownum</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">index_str_for_subtitle</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;i&#39;</span><span class="p">,</span> 
+                 <span class="n">subtitle_on</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">dpi</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span> 
+                 <span class="n">figsize</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">6</span><span class="p">)):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initializes the Plot_mat3D object with specified parameters and sets up the plotting environment.</span>
+
+<span class="sd">        :param kveclist: List or array of k-vectors.</span>
+<span class="sd">        :param color_b_k: Colors corresponding to the data points.</span>
+<span class="sd">        :param vmin: Minimum color scale value. If None, defaults to the minimum value in the data.</span>
+<span class="sd">        :param vmax: Maximum color scale value. If None, defaults to the maximum value in the data.</span>
+<span class="sd">        :param title: Title of the plot. Defaults to an empty string if not provided.</span>
+<span class="sd">        :param rownum: Number of rows in the subplot grid. Defaults to 1.</span>
+<span class="sd">        :param index_str_for_subtitle: String for subplot subtitles. Defaults to &#39;i&#39;.</span>
+<span class="sd">        :param subtitle_on: Whether to display subtitles. Defaults to True.</span>
+<span class="sd">        :param dpi: Dots per inch for plot resolution. Defaults to 100.</span>
+<span class="sd">        :param figsize: Dimensions of the figure (width, height) in inches. Defaults to (12, 6).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">kveclist</span><span class="o">=</span><span class="n">kveclist</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="n">dpi</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="n">figsize</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">color_b_k</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">color_b_k</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vmin</span> <span class="o">=</span> <span class="n">vmin</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vmax</span> <span class="o">=</span> <span class="n">vmax</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rownum</span> <span class="o">=</span> <span class="n">rownum</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">index_str_for_subtitle</span> <span class="o">=</span> <span class="n">index_str_for_subtitle</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">subtitle_on</span> <span class="o">=</span> <span class="n">subtitle_on</span>
+
+        <span class="c1"># Verify rownum is valid</span>
+        <span class="n">b_num</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">color_b_k</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">b_num</span> <span class="o">&gt;=</span> <span class="n">rownum</span><span class="p">,</span> <span class="s1">&#39;rownum should be equal to or smaller than the number of figures&#39;</span>
+
+        <span class="c1"># Calculate subplot layout</span>
+        <span class="n">columnnum</span> <span class="o">=</span> <span class="n">b_num</span> <span class="o">//</span> <span class="n">rownum</span> <span class="o">+</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">b_num</span> <span class="o">%</span> <span class="n">rownum</span> <span class="o">!=</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">b_num</span> <span class="o">//</span> <span class="n">rownum</span>
+
+        <span class="c1"># Create subplots</span>
+        <span class="n">axlist</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">rownum</span><span class="p">,</span> <span class="n">columnnum</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">projection</span><span class="o">=</span><span class="s1">&#39;3d&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">b_num</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span>
+
+        <span class="c1"># Determine color scale range</span>
+        <span class="n">colormax</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">color_b_k</span><span class="p">))</span> <span class="k">if</span> <span class="n">vmax</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">vmax</span>
+        <span class="n">colormin</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">color_b_k</span><span class="p">))</span> <span class="k">if</span> <span class="n">vmin</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">vmin</span>
+
+        <span class="c1"># Plot data</span>
+        <span class="k">for</span> <span class="n">b</span><span class="p">,</span> <span class="n">color_k</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">color_b_k</span><span class="p">):</span>
+            <span class="n">ax</span> <span class="o">=</span> <span class="n">axlist</span><span class="p">[</span><span class="n">b</span><span class="p">]</span>
+            <span class="n">colorbartmp</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">kveclist</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">kveclist</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">kveclist</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">c</span><span class="o">=</span><span class="n">color_k</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;rainbow&#39;</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="n">colormin</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="n">colormax</span><span class="p">)</span>
+
+        <span class="c1"># Post-process subplots</span>
+        <span class="k">for</span> <span class="n">ax_i</span><span class="p">,</span> <span class="n">ax</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">axlist</span><span class="p">):</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;kx&#39;</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;ky&#39;</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_zlabel</span><span class="p">(</span><span class="s1">&#39;kz&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">subtitle_on</span><span class="p">:</span>
+                <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1"> </span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">index_str_for_subtitle</span><span class="p">,</span> <span class="n">ax_i</span><span class="p">))</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">postprocess</span><span class="p">(</span><span class="n">colorbartmp</span><span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Zihao Bai.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

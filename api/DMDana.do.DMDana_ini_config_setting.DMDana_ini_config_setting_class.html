@@ -22,7 +22,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="DMDana.do.DMDana_ini_config_setting.section_FFT_DC_convergence_test_class" href="DMDana.do.DMDana_ini_config_setting.section_FFT_DC_convergence_test_class.html" />
-    <link rel="prev" title="DMDana.do.DMDana_ini_config_setting.BaseModel" href="DMDana.do.DMDana_ini_config_setting.BaseModel.html" /> 
+    <link rel="prev" title="DMDana.do.DMDana_ini_config_setting.get_DMDana_ini_config_setting" href="DMDana.do.DMDana_ini_config_setting.get_DMDana_ini_config_setting.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -97,8 +97,8 @@
 <h1>DMDana.do.DMDana_ini_config_setting.DMDana_ini_config_setting_class<a class="headerlink" href="#dmdana-do-dmdana-ini-config-setting-dmdana-ini-config-setting-class" title="Link to this heading"></a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="DMDana.do.DMDana_ini_config_setting.DMDana_ini_config_setting_class">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">DMDana_ini_config_setting_class</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">section_DEFAULT</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">section_current_plot</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">section_FFT_DC_convergence_test</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">section_FFT_spectrum_plot</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">section_occup_time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">section_occup_deriv</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DMDana.do.DMDana_ini_config_setting.DMDana_ini_config_setting_class" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="DMDana.lib.param_in_class.BaseModel.html#DMDana.lib.param_in_class.BaseModel" title="pydantic.main.BaseModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></a></p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">DMDana_ini_config_setting_class</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">section_DEFAULT</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">section_current_plot</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">section_FFT_DC_convergence_test</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">section_FFT_spectrum_plot</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">section_occup_time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">section_occup_deriv</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/DMDana/do/DMDana_ini_config_setting.html#DMDana_ini_config_setting_class"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#DMDana.do.DMDana_ini_config_setting.DMDana_ini_config_setting_class" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></p>
 <p>A class to manage all configuration settings for DMDana.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -121,7 +121,7 @@ validated to form a valid model.</p>
 <p><cite>self</cite> is explicitly positional-only to allow <cite>self</cite> as a field name.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>data</strong> (<a class="reference internal" href="DMDana.do.config.Any.html#DMDana.do.config.Any" title="typing.Any"><em>Any</em></a>)</p>
+<dd class="field-odd"><p><strong>data</strong> (<em>Any</em>)</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><em>None</em></p>
@@ -249,7 +249,7 @@ validated to form a valid model.</p>
 </table>
 <dl class="py method">
 <dt class="sig sig-object py" id="DMDana.do.DMDana_ini_config_setting.DMDana_ini_config_setting_class.items">
-<span class="sig-name descname"><span class="pre">items</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#DMDana.do.DMDana_ini_config_setting.DMDana_ini_config_setting_class.items" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">items</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/DMDana/do/DMDana_ini_config_setting.html#DMDana_ini_config_setting_class.items"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#DMDana.do.DMDana_ini_config_setting.DMDana_ini_config_setting_class.items" title="Link to this definition"></a></dt>
 <dd><p>Retrieve all items of a section as a dictionary.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -289,7 +289,7 @@ mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo].</
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="DMDana.do.DMDana_ini_config_setting.BaseModel.html" class="btn btn-neutral float-left" title="DMDana.do.DMDana_ini_config_setting.BaseModel" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="DMDana.do.DMDana_ini_config_setting.get_DMDana_ini_config_setting.html" class="btn btn-neutral float-left" title="DMDana.do.DMDana_ini_config_setting.get_DMDana_ini_config_setting" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="DMDana.do.DMDana_ini_config_setting.section_FFT_DC_convergence_test_class.html" class="btn btn-neutral float-right" title="DMDana.do.DMDana_ini_config_setting.section_FFT_DC_convergence_test_class" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 

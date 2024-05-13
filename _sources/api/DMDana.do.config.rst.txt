@@ -15,13 +15,6 @@ DMDana.do.config
       :toctree:
       :nosignatures:
    
-      dataclass
-      get_DMD_param
-      get_DMDana_ini_config_setting
-      get_current_data
-      get_erange
-      get_mu_temperature
-      glob_occupation_files
       workflow
    
    
@@ -35,18 +28,9 @@ DMDana.do.config
       :toctree:
       :template: class.rst
    
-      Any
-      DMDana_ini_config_setting_class
       config_base
       config_current
       config_occup
-      param_class
-      section_FFT_DC_convergence_test_class
-      section_FFT_spectrum_plot_class
-      section_current_plot_class
-      section_default_class
-      section_occup_deriv_class
-      section_occup_time_class
    
    
 

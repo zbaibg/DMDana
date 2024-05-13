@@ -1,6 +1,0 @@
-DMDana.lib.logic\_func.field
-============================
-
-.. currentmodule:: DMDana.lib.logic_func
-
-.. autofunction:: field

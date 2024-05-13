@@ -1,6 +1,0 @@
-DMDana.lib.DMDdataclass.get\_mu\_temperature
-============================================
-
-.. currentmodule:: DMDana.lib.DMDdataclass
-
-.. autofunction:: get_mu_temperature

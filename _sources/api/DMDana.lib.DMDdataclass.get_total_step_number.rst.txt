@@ -1,6 +1,0 @@
-DMDana.lib.DMDdataclass.get\_total\_step\_number
-================================================
-
-.. currentmodule:: DMDana.lib.DMDdataclass
-
-.. autofunction:: get_total_step_number

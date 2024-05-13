@@ -1,6 +1,0 @@
-DMDana.lib.logic\_func.fermi
-============================
-
-.. currentmodule:: DMDana.lib.logic_func
-
-.. autofunction:: fermi

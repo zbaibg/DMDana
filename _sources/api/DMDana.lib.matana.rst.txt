@@ -16,7 +16,6 @@ DMDana.lib.matana
       :nosignatures:
    
       checkhermitian
-      deepcopy
       get_mat_of_minus_k
       mat_init
       plot_hist

@@ -28,15 +28,6 @@ DMDana.lib.DMDparser
 
    
    
-   .. rubric:: Classes
-
-   .. autosummary::
-      :nosignatures:
-      :toctree:
-      :template: class.rst
-   
-      param_class
-   
    
 
    
